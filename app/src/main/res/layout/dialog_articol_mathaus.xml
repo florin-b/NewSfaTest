@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="0.5"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/imageview_art"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="5dip"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/textLabelDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:layout_marginTop="10dip"
+            android:gravity="left|center_horizontal"
+            android:text="Descriere"
+            android:textColor="#2E2E2E"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/textDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:layout_marginTop="5dip"
+            android:gravity="left|end"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            android:textColor="#424242"
+            android:textSize="17sp"
+            android:typeface="sans" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btnBack"
+                style="@style/ok_button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dip"
+                android:layout_gravity="left"
+                android:layout_marginBottom="50dip"
+                android:background="@drawable/ok_button_style"
+                android:paddingLeft="40dip"
+                android:paddingRight="40dip"
+                android:text="Inapoi la lista" />
+
+            <View
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1" />
+
+            <Button
+                android:id="@+id/btnStoc"
+                style="@style/ok_button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dip"
+                android:layout_gravity="right"
+                android:layout_marginBottom="50dip"
+                android:background="@drawable/ok_button_style"
+                android:paddingLeft="40dip"
+                android:paddingRight="40dip"
+                android:text="Verifica stoc" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="40dp"
+        android:layout_weight="0.5"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/textLabelStoc"
+                android:layout_width="100dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:layout_marginTop="5dip"
+                android:gravity="left|end"
+                android:text="Stoc "
+                android:textColor="#424242"
+                android:textSize="20sp"
+                android:typeface="sans" />
+
+            <TextView
+                android:id="@+id/textValStoc"
+                android:layout_width="120dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:layout_marginTop="5dip"
+                android:gravity="center"
+                android:text="30"
+                android:textColor="#424242"
+                android:textSize="18sp"
+                android:typeface="sans" />
+
+            <TextView
+                android:id="@+id/textUmStoc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:layout_marginTop="5dip"
+                android:gravity="left|end"
+                android:text="buc"
+                android:textColor="#424242"
+                android:textSize="18sp"
+                android:typeface="sans" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/textLabelCantitate"
+                android:layout_width="100dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:layout_marginTop="5dip"
+                android:gravity="left|end"
+                android:text="Cantitate "
+                android:textColor="#424242"
+                android:textSize="20sp"
+                android:typeface="sans" />
+
+            <EditText
+                android:id="@+id/textValCant"
+                android:layout_width="120dip"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:text="1"
+                android:textSize="20sp"
+                android:typeface="sans" />
+
+            <TextView
+                android:id="@+id/textUmCant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:layout_marginTop="5dip"
+                android:gravity="left|end"
+                android:text=" buc "
+                android:textColor="#424242"
+                android:textSize="20sp"
+                android:typeface="sans" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/textLabelPret"
+                android:layout_width="100dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:layout_marginTop="5dip"
+                android:gravity="left|end"
+                android:text="Pret "
+                android:textColor="#424242"
+                android:textSize="20sp"
+                android:typeface="sans" />
+
+            <EditText
+                android:id="@+id/textValPret"
+                android:layout_width="120dip"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:text="29.99"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:typeface="sans" />
+
+            <TextView
+                android:id="@+id/textUmPret"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:layout_marginTop="5dip"
+                android:gravity="left|end"
+                android:text=" lei/buc "
+                android:textColor="#424242"
+                android:textSize="20sp"
+                android:typeface="sans" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dip"
+            android:layout_marginTop="50dp"
+            android:orientation="horizontal" >
+
+            <View
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.7" />
+
+            <Button
+                android:id="@+id/btnOk"
+                style="@style/ok_button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dip"
+                android:layout_gravity="right"
+                android:background="@drawable/ok_button_style"
+                android:paddingLeft="40dip"
+                android:paddingRight="40dip"
+                android:text="Adauga" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
