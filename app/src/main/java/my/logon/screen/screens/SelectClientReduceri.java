@@ -4,34 +4,12 @@
  */
 package my.logon.screen.screens;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
-
-import my.logon.screen.listeners.SearchClientListener;
-import my.logon.screen.model.HandleJSONData;
-import my.logon.screen.model.UserInfo;
-import my.logon.screen.R;
-
-import org.ksoap2.HeaderProperty;
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
-
-import my.logon.screen.connectors.ConnectionStrings;
-
-import my.logon.screen.beans.BeanClient;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -43,6 +21,25 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import org.ksoap2.HeaderProperty;
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+
+import my.logon.screen.R;
+import my.logon.screen.beans.BeanClient;
+import my.logon.screen.connectors.ConnectionStrings;
+import my.logon.screen.listeners.SearchClientListener;
+import my.logon.screen.model.HandleJSONData;
+import my.logon.screen.model.UserInfo;
 
 public class SelectClientReduceri extends Activity implements Observer {
 
@@ -418,7 +415,7 @@ public class SelectClientReduceri extends Activity implements Observer {
 					listClientDetails(result);
 				}
 			} catch (Exception e) {
-				Log.e("Error", e.toString());
+				Toast.makeText(mContext, e.toString(), Toast.LENGTH_LONG).show();
 			}
 		}
 

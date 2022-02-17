@@ -26,6 +26,7 @@ public class OperatiiAgent implements AsyncTaskListener {
 	private OperatiiAgentListener listener;
 
 	private OperatiiAgent() {
+
 	}
 
 	public static OperatiiAgent getInstance() {

@@ -7,7 +7,6 @@ package my.logon.screen.adapters;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -197,7 +196,7 @@ public class VanzariDocumenteAdapter extends BaseAdapter {
 					populateArtCmdList(result);
 				}
 			} catch (Exception e) {
-				Log.e("Error", e.toString());
+				Toast.makeText(mContext, e.toString(), Toast.LENGTH_LONG).show();
 			}
 
 		}

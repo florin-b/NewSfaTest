@@ -3,7 +3,6 @@ package my.logon.screen.listeners;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.ksoap2.HeaderProperty;
@@ -123,7 +122,7 @@ public class SearchClientListener extends Observable {
 					setSearchResult(result);
 				}
 			} catch (Exception e) {
-				Log.e("Error", e.toString());
+				Toast.makeText(mContext, e.toString(), Toast.LENGTH_LONG).show();
 			} finally {
 				triggerObservers();
 			}

@@ -79,8 +79,6 @@ public class AdaugaAdresaGpsClienti extends Fragment implements ClientSelectionL
 		super.onCreate(savedInstanceState);
 		v = inflater.inflate(R.layout.locatie_client, container, false);
 
-		// v.setBackgroundResource(R.drawable.articole64);
-
 		addLayoutComponents();
 		selectedItemView = new View(getActivity());
 		clientSelected.setClientSelectionListener(this);

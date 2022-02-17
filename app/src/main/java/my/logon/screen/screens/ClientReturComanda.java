@@ -1,6 +1,7 @@
 package my.logon.screen.screens;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,12 +119,12 @@ public class ClientReturComanda extends Fragment implements OperatiiClientListen
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(Context context) {
+		super.onAttach(context);
 		try {
 			clientListener = (ClientReturListener) getActivity();
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString());
+			throw new ClassCastException(context.toString());
 		}
 	}
 
@@ -159,10 +159,13 @@ public class ClientReturComanda extends Fragment implements OperatiiClientListen
 			params.put("depart", "00");
 			params.put("departAg", UserInfo.getInstance().getCodDepart());
 			params.put("unitLog", UserInfo.getInstance().getUnitLog());
+			params.put("tipCmd","CMD");
+
 			if (UtilsUser.isUserGed() || tipComanda == EnumTipComanda.GED)
 				opClient.getListClientiCV(params);
 			else
 				opClient.getListClienti(params);
+
 			hideSoftKeyboard();
 
 		}

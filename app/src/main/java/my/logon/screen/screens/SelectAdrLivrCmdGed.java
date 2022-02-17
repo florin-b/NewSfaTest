@@ -162,12 +162,14 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
+		try {
+
 		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
 		setTheme(R.style.LRTheme);
 		setContentView(R.layout.selectadrlivrcmd_ged_header);
 
-		try {
+
 
 			ActionBar actionBar = getActionBar();
 			actionBar.setTitle("Date livrare");

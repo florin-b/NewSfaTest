@@ -141,7 +141,7 @@ public class SearchArtListener extends Observable {
 
 				}
 			} catch (Exception e) {
-				Log.e("Error", e.toString());
+				Toast.makeText(mContext, e.toString(), Toast.LENGTH_LONG).show();
 			} finally {
 				triggerObservers();
 			}

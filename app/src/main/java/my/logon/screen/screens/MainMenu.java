@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -885,6 +884,7 @@ public class MainMenu extends Activity {
 				}
 
 			} catch (Exception e) {
+				Toast.makeText(mContext, e.toString(), Toast.LENGTH_LONG).show();
 			}
 		}
 
@@ -1040,6 +1040,7 @@ public class MainMenu extends Activity {
 					startInstall();
 				}
 			} catch (Exception e) {
+				Toast.makeText(mContext, e.toString(), Toast.LENGTH_LONG).show();
 			}
 		}
 
@@ -1158,7 +1159,7 @@ public class MainMenu extends Activity {
 					startModifCmdBtnAnimation(result);
 				}
 			} catch (Exception e) {
-				Log.e("Error", e.toString());
+				Toast.makeText(mContext, e.toString(), Toast.LENGTH_LONG).show();
 			}
 
 		}

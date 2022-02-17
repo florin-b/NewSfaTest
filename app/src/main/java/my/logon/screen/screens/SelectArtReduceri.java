@@ -4,31 +4,12 @@
  */
 package my.logon.screen.screens;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import my.logon.screen.listeners.OperatiiArticolListener;
-import my.logon.screen.model.OperatiiArticol;
-import my.logon.screen.model.OperatiiArticolFactory;
-import my.logon.screen.model.UserInfo;
-import my.logon.screen.R;
-
-import org.ksoap2.HeaderProperty;
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
-
-import my.logon.screen.utils.UtilsGeneral;
-import my.logon.screen.adapters.CautareArticoleAdapter;
 import android.app.ActionBar;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,9 +23,27 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import org.ksoap2.HeaderProperty;
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import my.logon.screen.R;
+import my.logon.screen.adapters.CautareArticoleAdapter;
 import my.logon.screen.beans.ArticolDB;
 import my.logon.screen.connectors.ConnectionStrings;
 import my.logon.screen.enums.EnumArticoleDAO;
+import my.logon.screen.listeners.OperatiiArticolListener;
+import my.logon.screen.model.OperatiiArticol;
+import my.logon.screen.model.OperatiiArticolFactory;
+import my.logon.screen.model.UserInfo;
+import my.logon.screen.utils.UtilsGeneral;
 
 public class SelectArtReduceri extends ListActivity implements OperatiiArticolListener {
 
@@ -541,7 +540,7 @@ public class SelectArtReduceri extends ListActivity implements OperatiiArticolLi
 					selectArtUmVanz(result);
 				}
 			} catch (Exception e) {
-				Log.e("Error", e.toString());
+				Toast.makeText(mContext, e.toString(), Toast.LENGTH_LONG).show();
 			}
 		}
 

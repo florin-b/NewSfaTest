@@ -126,7 +126,7 @@ public class ClientiInactivi extends Activity {
 	private void addListViewMenuListener() {
 		listViewMenu.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, final int pos, long id) {
-				drawer.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+				drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
 
 				});
 

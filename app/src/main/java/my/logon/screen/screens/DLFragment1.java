@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.Time;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -558,7 +557,7 @@ public class DLFragment1 extends Fragment implements OperatiiAdresaListener, Map
 
 		@Override
 		protected void onPostExecute(String result) {
-			// TODO
+
 
 			try {
 				if (dialog != null) {
@@ -573,7 +572,7 @@ public class DLFragment1 extends Fragment implements OperatiiAdresaListener, Map
 					listClientDetails(result);
 				}
 			} catch (Exception e) {
-				Log.e("Error", e.toString());
+				Toast.makeText(mContext, e.toString(), Toast.LENGTH_LONG).show();
 			}
 		}
 
@@ -701,7 +700,7 @@ public class DLFragment1 extends Fragment implements OperatiiAdresaListener, Map
 
 		@Override
 		protected void onPostExecute(String result) {
-			// TODO
+
 
 			try {
 				if (dialog != null) {
@@ -716,7 +715,7 @@ public class DLFragment1 extends Fragment implements OperatiiAdresaListener, Map
 					listClients(result);
 				}
 			} catch (Exception e) {
-				Log.e("Error", e.toString());
+				Toast.makeText(mContext, e.toString(), Toast.LENGTH_LONG).show();
 			}
 		}
 
@@ -1405,7 +1404,7 @@ public class DLFragment1 extends Fragment implements OperatiiAdresaListener, Map
 					populateAgentiList(result);
 				}
 			} catch (Exception e) {
-				Log.e("Error", e.toString());
+				Toast.makeText(mContext, e.toString(), Toast.LENGTH_LONG).show();
 			}
 		}
 

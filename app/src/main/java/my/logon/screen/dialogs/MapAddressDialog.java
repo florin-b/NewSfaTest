@@ -50,15 +50,22 @@ public class MapAddressDialog extends Dialog implements OnMapReadyCallback {
 
 	public MapAddressDialog(Address address, Context context, FragmentManager fm) {
 		super(context);
-		this.context = context;
-		this.address = address;
 
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.adresa_harta);
-		setTitle("Pozitionare adresa");
-		setCancelable(true);
-		this.fm = fm;
-		getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		try {
+			this.context = context;
+			this.address = address;
+
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+			setContentView(R.layout.adresa_harta);
+			setTitle("Pozitionare adresa");
+			setCancelable(true);
+			this.fm = fm;
+			getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		}
+		catch(Exception ex){
+			Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show();
+		}
+
 
 	}
 
@@ -111,17 +118,23 @@ public class MapAddressDialog extends Dialog implements OnMapReadyCallback {
 
 			@Override
 			public void onMapClick(LatLng latLng) {
-				MarkerOptions markerOptions = new MarkerOptions();
-				markerOptions.position(latLng);
-				map.clear();
-				map.addMarker(markerOptions);
-				addZoneBucuresti(map);
-				map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+				try {
 
-				android.location.Address locAddress = MapUtils.getAddressFromCoordinate(latLng, context);
+					MarkerOptions markerOptions = new MarkerOptions();
+					markerOptions.position(latLng);
+					map.clear();
+					map.addMarker(markerOptions);
+					addZoneBucuresti(map);
+					map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
-				if (mapListener != null)
-					mapListener.addressSelected(latLng, locAddress);
+					android.location.Address locAddress = MapUtils.getAddressFromCoordinate(latLng, context);
+
+					if (mapListener != null)
+						mapListener.addressSelected(latLng, locAddress);
+				}
+				catch(Exception ex){
+					Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show();
+				}
 
 			}
 		});
@@ -152,20 +165,34 @@ public class MapAddressDialog extends Dialog implements OnMapReadyCallback {
 	}
 
 	private void addMapMarker(GoogleMap map) {
-		if (coords != null && coords.latitude > 0) {
-			MarkerOptions marker = new MarkerOptions();
 
-			marker.position(coords);
-			map.clear();
-			map.addMarker(marker);
+		try {
+
+			if (coords != null && coords.latitude > 0) {
+				MarkerOptions marker = new MarkerOptions();
+
+				marker.position(coords);
+				map.clear();
+				map.addMarker(marker);
+			}
+		}
+		catch(Exception ex){
+			Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show();
 		}
 
 	}
 
 	private void removeMap() {
-		SupportMapFragment f = (SupportMapFragment) fm.findFragmentById(R.id.map);
-		if (f != null)
-			fm.beginTransaction().remove(f).commit();
+
+		try {
+
+			SupportMapFragment f = (SupportMapFragment) fm.findFragmentById(R.id.map);
+			if (f != null)
+				fm.beginTransaction().remove(f).commit();
+		}
+		catch(Exception ex){
+				Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show();
+			}
 
 	}
 

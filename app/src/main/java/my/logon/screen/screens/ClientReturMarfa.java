@@ -1,6 +1,7 @@
 package my.logon.screen.screens;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,12 +91,12 @@ public class ClientReturMarfa extends Fragment implements OperatiiClientListener
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(Context context) {
+		super.onAttach(context);
 		try {
 			clientListener = (ClientReturListener) getActivity();
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString());
+			throw new ClassCastException(context.toString());
 		}
 	}
 
