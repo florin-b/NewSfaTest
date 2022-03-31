@@ -37,16 +37,7 @@ import my.logon.screen.adapters.DrawerMenuAdapter;
 import my.logon.screen.model.UserInfo;
 import my.logon.screen.model.VanzariAgenti;
 
-/*
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-*/
+
 
 public class VanzariAgentiActivity extends Activity {
 

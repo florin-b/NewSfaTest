@@ -1,30 +1,29 @@
 package my.logon.screen.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import my.logon.screen.listeners.AsyncTaskListener;
-import my.logon.screen.listeners.OperatiiReturListener;
-import my.logon.screen.screens.AsyncTaskWSCall;
+import android.content.Context;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import android.content.Context;
-import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 import my.logon.screen.beans.BeanAdresaLivrare;
 import my.logon.screen.beans.BeanArticolRetur;
-import my.logon.screen.beans.BeanCablu05;
 import my.logon.screen.beans.BeanComandaRetur;
 import my.logon.screen.beans.BeanComandaReturAfis;
 import my.logon.screen.beans.BeanDocumentRetur;
 import my.logon.screen.beans.BeanPersoanaContact;
 import my.logon.screen.beans.PozaArticol;
 import my.logon.screen.enums.EnumRetur;
+import my.logon.screen.listeners.AsyncTaskListener;
+import my.logon.screen.listeners.OperatiiReturListener;
+import my.logon.screen.screens.AsyncTaskWSCall;
 
 public class OperatiiReturMarfa implements AsyncTaskListener {
 
@@ -75,6 +74,12 @@ public class OperatiiReturMarfa implements AsyncTaskListener {
 		call.getCallResultsFromFragment();
 	}
 
+	public void getStocReturAvansat(HashMap<String, String> params) {
+		numeComanda = EnumRetur.GET_STOC_RETUR_AVANSAT;
+		AsyncTaskWSCall call = new AsyncTaskWSCall(numeComanda.getComanda(), params, (AsyncTaskListener) this, context);
+		call.getCallResultsFromFragment();
+	}
+
 	public void opereazaComanda(HashMap<String, String> params) {
 		numeComanda = EnumRetur.OPEREAZA_COMANDA;
 		AsyncTaskWSCall call = new AsyncTaskWSCall(numeComanda.getComanda(), params, (AsyncTaskListener) this, context);
@@ -112,6 +117,26 @@ public class OperatiiReturMarfa implements AsyncTaskListener {
 					docRetur.setData(jsonObj.getString("data"));
 					docRetur.setTipTransport(jsonObj.getString("tipTransport"));
 					docRetur.setDataLivrare(jsonObj.getString("dataLivrare"));
+
+					JSONObject objectExtra = new JSONObject(jsonObj.getString("extraDate"));
+
+					List<BeanAdresaLivrare> listAdreseDoc = new ArrayList<BeanAdresaLivrare>();
+					BeanAdresaLivrare adresaDoc = new BeanAdresaLivrare();
+					adresaDoc.setCodAdresa(objectExtra.getString("codAdresa"));
+					adresaDoc.setCodJudet(objectExtra.getString("codJudet"));
+					adresaDoc.setOras(objectExtra.getString("localitate"));
+					adresaDoc.setStrada(objectExtra.getString("strada"));
+					adresaDoc.setNrStrada("");
+					listAdreseDoc.add(adresaDoc);
+					docRetur.setListAdrese(listAdreseDoc);
+
+					List<BeanPersoanaContact> listPersoaneDoc = new ArrayList<BeanPersoanaContact>();
+					BeanPersoanaContact persoanaDoc = new BeanPersoanaContact();
+					persoanaDoc.setNume(objectExtra.getString("numeContact"));
+					persoanaDoc.setTelefon(objectExtra.getString("telContact"));
+					listPersoaneDoc.add(persoanaDoc);
+					docRetur.setListPersoane(listPersoaneDoc);
+
 					listDocumente.add(docRetur);
 
 				}

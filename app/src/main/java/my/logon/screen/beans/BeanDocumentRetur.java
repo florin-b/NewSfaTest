@@ -1,10 +1,14 @@
 package my.logon.screen.beans;
 
+import java.util.List;
+
 public class BeanDocumentRetur {
 	private String numar;
 	private String data;
 	private String tipTransport;
 	private String dataLivrare;
+	private List<BeanAdresaLivrare> listAdrese;
+	private List<BeanPersoanaContact> listPersoane;
 
 	public BeanDocumentRetur() {
 
@@ -42,4 +46,19 @@ public class BeanDocumentRetur {
 		this.dataLivrare = dataLivrare;
 	}
 
+	public List<BeanAdresaLivrare> getListAdrese() {
+		return listAdrese;
+	}
+
+	public void setListAdrese(List<BeanAdresaLivrare> listAdrese) {
+		this.listAdrese = listAdrese;
+	}
+
+	public List<BeanPersoanaContact> getListPersoane() {
+		return listPersoane;
+	}
+
+	public void setListPersoane(List<BeanPersoanaContact> listPersoane) {
+		this.listPersoane = listPersoane;
+	}
 }

@@ -497,7 +497,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 			// ***************sf. cantar
 
 			textFactRed.setText(UtilsGeneral.getTipReducere(dateLivrareInstance.getRedSeparat()));
-			textTipPlata.setText(UtilsGeneral.getDescTipPlata(dateLivrareInstance.getTipPlata()));
+			textTipPlata.setText(UtilsGeneral.getDescTipPlata(dateLivrareInstance.getTipPlata(), dateLivrareInstance.getTermenPlata()));
 			textTransport.setText(UtilsGeneral.getDescTipTransport(dateLivrareInstance.getTransport()));
 
 			if (!isUserCV() && !isComandaGed()) {
@@ -633,7 +633,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
 						prepareArtForDelivery();
 
-						if (dateLivrareInstance.getTipPlata().equals("E") && totalComanda > 5000 && tipClientVar.equals("PJ")) {
+						if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("N") || dateLivrareInstance.getTipPlata().equals("E1") || dateLivrareInstance.getTipPlata().equals("R")) && totalComanda > 5000 && tipClientVar.equals("PJ")) {
 							Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT).show();
 							return;
 						}
@@ -1519,7 +1519,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 		textPersContact.setText(dateLivrare.getPersContact());
 		textTelefon.setText(dateLivrare.getNrTel());
 		textCantar.setText(UtilsGeneral.getTipCantarire(dateLivrare.getCantar()));
-		textTipPlata.setText(UtilsGeneral.getDescTipPlata(dateLivrare.getTipPlata()));
+		textTipPlata.setText(UtilsGeneral.getDescTipPlata(dateLivrare.getTipPlata(), dateLivrare.getTermenPlata()));
 		textTransport.setText(UtilsGeneral.getDescTipTransport(dateLivrare.getTransport()));
 		textFactRed.setText(UtilsGeneral.getTipReducere(dateLivrare.getRedSeparat()));
 

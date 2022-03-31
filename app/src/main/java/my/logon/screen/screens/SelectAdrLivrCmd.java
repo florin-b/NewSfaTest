@@ -69,6 +69,7 @@ import my.logon.screen.enums.EnumJudete;
 import my.logon.screen.enums.EnumLocalitate;
 import my.logon.screen.enums.EnumOperatiiAdresa;
 import my.logon.screen.enums.EnumOperatiiObiective;
+import my.logon.screen.enums.TipCmdDistrib;
 import my.logon.screen.helpers.HelperAdreseLivrare;
 import my.logon.screen.listeners.AsyncTaskListener;
 import my.logon.screen.listeners.AutocompleteDialogListener;
@@ -102,7 +103,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 	int posJudetSel = 0;
 
 
-	private String[] tipPlataContract = { "LC - Limita credit" };
+	private String[] tipPlataContract = { "LC - Limita credit", "N - Numerar in filiala", "OPA - OP avans", "R - ramburs" };
 	private String[] tipPlataClBlocat = { "N - Numerar in filiala", "OPA - OP avans", "R - ramburs"  };
 	private String[] tipPlataRest = { "N - Numerar in filiala", "OPA - OP avans", "R - ramburs" };
 
@@ -287,6 +288,8 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
 			if (!CreareComanda.tipPlataContract.trim().isEmpty()) {
 				((TextView) findViewById(R.id.tipPlataContract)).setText("Contract: " + CreareComanda.tipPlataContract);
+				DateLivrare.getInstance().setTipPlata("LC");
+				spinnerPlata.setSelection(0);
 			}
 			adapterSpinnerPlata = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipPlataContract);
 		} else
@@ -296,11 +299,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 		spinnerPlata.setAdapter(adapterSpinnerPlata);
 		addListenerTipPlata();
 
-		if (!DateLivrare.getInstance().isClientBlocat()
-				&& (!CreareComanda.tipPlataContract.trim().isEmpty() || DateLivrare.getInstance().getTipPlata().equals("LC")))
-			spinnerPlata.setEnabled(false);
-		else
-			spinnerPlata.setEnabled(true);
+
 
 		if (HelperAdreseLivrare.isConditiiCurierRapid()) {
 
@@ -910,7 +909,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
 	private void performGetJudete() {
 
-		if (isComandaClp() || isComandaBV() || isComandaDl() || DateLivrare.getInstance().isClientFurnizor()) {
+		if (isComandaClp() || isComandaBV() || isComandaDl() || DateLivrare.getInstance().isClientFurnizor() || isLivrareCustodie()) {
 			fillJudeteClient(EnumJudete.getRegionCodes());
 
 		} else {
@@ -935,6 +934,10 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 	private boolean isComandaDl() {
 		return DateLivrare.getInstance().getFurnizorComanda() != null && !DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa().isEmpty()
 				&& DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa().length() > 4;
+	}
+
+	private boolean isLivrareCustodie(){
+		return DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.LIVRARE_CUSTODIE);
 	}
 
 	private void fillJudeteClient(String arrayJudete) {
@@ -984,8 +987,11 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
 				checkAviz.setEnabled(true);
 				spinnerResponsabil.setEnabled(true);
+				spinnerTermenPlata.setEnabled(false);
+				((TextView) findViewById(R.id.tipPlataContract)).setVisibility(View.INVISIBLE);
 
-				if (spinnerPlata.getSelectedItem().toString().substring(0, 1).equals("N")) {
+
+				if (spinnerPlata.getSelectedItem().toString().substring(0, 1).equals("N") || spinnerPlata.getSelectedItem().toString().substring(0, 1).equals("R")) {
 
 					if (isComandaBV()) {
 						checkAviz.setEnabled(false);
@@ -993,15 +999,29 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 					}
 					spinnerResponsabil.setSelection(2);
 					spinnerResponsabil.setEnabled(false);
+					spinnerTermenPlata.setSelection(0);
+				}
+
+				if (spinnerPlata.getSelectedItem().toString().substring(0, 1).equals("O")) {
+					spinnerTermenPlata.setEnabled(true);
+					spinnerResponsabil.setSelection(0);
+				}
+
+				if (spinnerPlata.getSelectedItem().toString().substring(0, 1).equals("R")) {
+					spinnerResponsabil.setEnabled(true);
+					spinnerResponsabil.setSelection(1);
+				}
+
+				if (spinnerPlata.getSelectedItem().toString().substring(0, 1).equals("L")) {
+					spinnerTermenPlata.setSelection(adapterTermenPlata.getCount() -1);
+					((TextView) findViewById(R.id.tipPlataContract)).setVisibility(View.VISIBLE);
 				}
 
 				if (pos == 0 || pos == 1 || pos == 2 || pos == 3) {
 					spinnerTermenPlata.setVisibility(View.VISIBLE);
 				}
 
-				if (pos == 2) {
-					Toast.makeText(getApplicationContext(), "Valoare maxima comanda pentru PJ: 5000 RON", Toast.LENGTH_SHORT).show();
-				}
+
 
 				if (pos == 2 && spinnerResponsabil.getSelectedItemPosition() == 1) {
 					layoutValoareIncasare.setVisibility(View.VISIBLE);
@@ -1668,7 +1688,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 				MapAddressDialog mapDialog = new MapAddressDialog(address, SelectAdrLivrCmd.this, fm);
 				mapDialog.setCoords(DateLivrare.getInstance().getCoordonateAdresa());
 				mapDialog.setMapListener(SelectAdrLivrCmd.this);
-				mapDialog.show();
+				//mapDialog.show();
 			}
 		});
 	}

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,6 +31,7 @@ import my.logon.screen.R;
 import my.logon.screen.beans.Address;
 import my.logon.screen.beans.GeocodeAddress;
 import my.logon.screen.listeners.MapListener;
+import my.logon.screen.screens.ExceptionHandler;
 import my.logon.screen.utils.MapUtils;
 
 
@@ -44,16 +46,23 @@ public class MapAddressDialog extends Dialog implements OnMapReadyCallback {
 	private MapListener mapListener;
 	private TextView textLabel;
 	private LatLng coords;
+	private LatLng addressCoords;
 
 	private static final int DETAIL_MEDIUM = 15;
 	private static final int DETAIL_HIGH = 18;
 
-	public MapAddressDialog(Address address, Context context, FragmentManager fm) {
+	public MapAddressDialog(Address address, @NonNull Context context, FragmentManager fm) {
 		super(context);
 
 		try {
 			this.context = context;
 			this.address = address;
+
+			Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(context));
+
+			GeocodeAddress geoAddress = MapUtils.geocodeAddress(address, context);
+
+			addressCoords = geoAddress.getCoordinates();
 
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			setContentView(R.layout.adresa_harta);
@@ -61,6 +70,13 @@ public class MapAddressDialog extends Dialog implements OnMapReadyCallback {
 			setCancelable(true);
 			this.fm = fm;
 			getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+
+			textLabel = (TextView) findViewById(R.id.textLabel);
+			btnCloseDialog = (Button) findViewById(R.id.btnCloseDialog);
+			setListenerCloseDialog();
+
+			((SupportMapFragment) fm.findFragmentById(R.id.map)).getMapAsync(this);
+
 		}
 		catch(Exception ex){
 			Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show();
@@ -71,45 +87,51 @@ public class MapAddressDialog extends Dialog implements OnMapReadyCallback {
 
 	@Override
 	public void show() {
+		try{
+
 		((SupportMapFragment) fm.findFragmentById(R.id.map)).getMapAsync(this);
+
+
+
+
 		super.show();
+		} catch (Exception e) {
+			Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	private void setupLayout() {
 
 		try {
 
-			textLabel = (TextView) findViewById(R.id.textLabel);
-
 			int detailLevel = DETAIL_MEDIUM;
 
 			if (address.getStreet() != null && address.getStreet().trim().length() > 1)
 				detailLevel = DETAIL_HIGH;
 
+			/*
 			GeocodeAddress geoAddress = MapUtils.geocodeAddress(address, context);
-
 			LatLng coord = geoAddress.getCoordinates();
+			 */
 
-			if (coord.latitude == 0) {
+			if (addressCoords.latitude == 0) {
 				textLabel.setText("Adresa inexistenta.");
 				removeMap();
 			} else {
 				map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
 				map.getUiSettings().setZoomControlsEnabled(true);
 				addMapMarker(map);
-
 				addZoneBucuresti(map);
-				map.moveCamera(CameraUpdateFactory.newLatLngZoom(coord, detailLevel));
+				map.moveCamera(CameraUpdateFactory.newLatLngZoom(addressCoords, detailLevel));
 
 				setMapListener();
+
 			}
 
 		} catch (Exception e) {
 			Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
 		}
-
-		btnCloseDialog = (Button) findViewById(R.id.btnCloseDialog);
-		setListenerCloseDialog();
 
 	}
 
@@ -148,12 +170,21 @@ public class MapAddressDialog extends Dialog implements OnMapReadyCallback {
 	}
 
 	private List<LatLng> getGoogleCoords(List<beans.LatLng> brutCoords) {
+
 		List<LatLng> listCoords = new ArrayList<LatLng>();
+
+		try{
+
+
 
 		for (beans.LatLng coord : brutCoords) {
 			LatLng oneCoord = new LatLng(coord.getLat(), coord.getLng());
 			listCoords.add(oneCoord);
 
+		}
+
+		} catch (Exception e) {
+			Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
 		}
 
 		return listCoords;
@@ -170,7 +201,6 @@ public class MapAddressDialog extends Dialog implements OnMapReadyCallback {
 
 			if (coords != null && coords.latitude > 0) {
 				MarkerOptions marker = new MarkerOptions();
-
 				marker.position(coords);
 				map.clear();
 				map.addMarker(marker);
@@ -242,8 +272,20 @@ public class MapAddressDialog extends Dialog implements OnMapReadyCallback {
 
 	@Override
 	public void onMapReady(GoogleMap googleMap) {
-		map = googleMap;
-		setupLayout();
+
+
+		try{
+
+			if (googleMap != null) {
+				super.show();
+				map = googleMap;
+				setupLayout();
+
+			}
+
+		} catch (Exception e) {
+			Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+		}
 	}
 
 }

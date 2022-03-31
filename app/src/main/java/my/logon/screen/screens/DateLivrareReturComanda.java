@@ -164,7 +164,7 @@ public class DateLivrareReturComanda extends Fragment implements OnItemClickList
 				if (position > 0) {
 					tipTransport = UtilsGeneral.getTipTransport(spinnerTransport.getSelectedItem().toString());
 					if (tipTransport.contains("TRAP")) {
-						layoutTranspBack.setVisibility(View.VISIBLE);
+						layoutTranspBack.setVisibility(View.GONE);
 					} else
 						layoutTranspBack.setVisibility(View.GONE);
 				} else {

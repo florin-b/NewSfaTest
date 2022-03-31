@@ -656,7 +656,7 @@ public class AdrLivrCustodie extends AppCompatActivity implements OnTouchListene
 				MapAddressDialog mapDialog = new MapAddressDialog(address, AdrLivrCustodie.this, fm);
 				mapDialog.setCoords(DateLivrare.getInstance().getCoordonateAdresa());
 				mapDialog.setMapListener(AdrLivrCustodie.this);
-				mapDialog.show();
+
 			}
 		});
 	}

@@ -4,7 +4,7 @@
  */
 package my.logon.screen.screens;
 
-//import android.app.ActionBar;
+
 
 import android.content.Intent;
 import android.os.Bundle;

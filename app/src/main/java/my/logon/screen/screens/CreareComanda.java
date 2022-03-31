@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -50,10 +51,6 @@ import java.util.Observer;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import my.logon.screen.helpers.HelperCostDescarcare;
-import my.logon.screen.helpers.HelperCreareComanda;
-import my.logon.screen.helpers.HelperDialog;
-import my.logon.screen.helpers.HelperMathaus;
 import my.logon.screen.R;
 import my.logon.screen.adapters.ArticoleCreareAdapter;
 import my.logon.screen.beans.AntetCmdMathaus;
@@ -77,6 +74,10 @@ import my.logon.screen.enums.EnumComenziDAO;
 import my.logon.screen.enums.EnumDaNuOpt;
 import my.logon.screen.enums.EnumPaleti;
 import my.logon.screen.enums.TipCmdDistrib;
+import my.logon.screen.helpers.HelperCostDescarcare;
+import my.logon.screen.helpers.HelperCreareComanda;
+import my.logon.screen.helpers.HelperDialog;
+import my.logon.screen.helpers.HelperMathaus;
 import my.logon.screen.listeners.ArtComplDialogListener;
 import my.logon.screen.listeners.AsyncTaskListener;
 import my.logon.screen.listeners.ComandaMathausListener;
@@ -186,6 +187,22 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 		try {
 
 			super.onCreate(savedInstanceState);
+
+			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+					.detectCustomSlowCalls()
+					.detectDiskReads()
+					.detectDiskWrites()
+					.detectNetwork()
+					.penaltyLog()
+					.penaltyFlashScreen()
+					.build());
+
+			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+					.detectLeakedSqlLiteObjects()
+					.detectLeakedClosableObjects()
+					.penaltyLog()
+					.build());
+
 			Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
 			setTheme(R.style.LRTheme);
@@ -965,7 +982,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
 						DateLivrare dateLivrareInstance = DateLivrare.getInstance();
 
-						if (dateLivrareInstance.getTipPlata().equals("E") && totalComanda > 5000 && CreareComanda.tipClientVar.equals("PJ")) {
+						if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("N") || dateLivrareInstance.getTipPlata().equals("R")) && totalComanda > 5000 && CreareComanda.tipClientVar.equals("PJ")) {
 							Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT).show();
 							return;
 						}

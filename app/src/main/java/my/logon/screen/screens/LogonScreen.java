@@ -1,6 +1,5 @@
 /**
  * @author florinb
- *
  */
 package my.logon.screen.screens;
 
@@ -15,8 +14,10 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.provider.Settings;
 import android.text.InputType;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -50,592 +51,617 @@ import my.logon.screen.utils.UtilsUser;
 
 public class LogonScreen extends Activity implements AsyncTaskListener {
 
-	private EditText etUsername;
-	private EditText etPassword;
-	private TextView lblResult;
+    private EditText etUsername;
+    private EditText etPassword;
+    private TextView lblResult;
 
-	private static final String SOAP_ACTION = "http://SFATest.org/userLogon";
-	private static final String METHOD_NAME = "userLogon";
-	private static final String NAMESPACE = "http://SFATest.org/";
-	private static final String URL = "http://10.1.0.57/AndroidWebServices/service1.asmx";
+    private static final String SOAP_ACTION = "http://SFATest.org/userLogon";
+    private static final String METHOD_NAME = "userLogon";
+    private static final String NAMESPACE = "http://SFATest.org/";
+    private static final String URL = "http://10.1.0.57/AndroidWebServices/service1.asmx";
 
-	public static String codInitDepart = "00";
-	public static String numeInitDepart = "NEDE", globalMyIP = "0.0.0.0";
+    public static String codInitDepart = "00";
+    public static String numeInitDepart = "NEDE", globalMyIP = "0.0.0.0";
 
-	public static Double discMaxAV = 0.0, discMaxSD = 0.0, discMaxDV = 0.0;
+    public static Double discMaxAV = 0.0, discMaxSD = 0.0, discMaxDV = 0.0;
 
-	private ProgressBar mProgress;
-	private Timer myTimer;
-	private int progressVal = 0;
-	private Handler logonHandler = new Handler();
+    private ProgressBar mProgress;
+    private Timer myTimer;
+    private int progressVal = 0;
+    private Handler logonHandler = new Handler();
 
-	MySwitch slideToUnLock;
+    MySwitch slideToUnLock;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
 
-		System.setProperty("http.keepAlive", "false");
-		
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectCustomSlowCalls()
+                .detectDiskReads()
+                .detectDiskWrites()
+                .detectNetwork()
+                .penaltyLog()
+                .penaltyFlashScreen()
+                .build());
 
-		// formatare data si numere = en
-		String languageToLoad = "en";
-		Locale locale = new Locale(languageToLoad);
-		Locale.setDefault(locale);
-		Configuration config = new Configuration();
-		config.locale = locale;
-		getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-		//
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedClosableObjects()
+                .penaltyLog()
+                .build());
 
-		setTheme(R.style.LiteTheme);
-		setContentView(R.layout.main);
+        super.onCreate(savedInstanceState);
 
-		if (isDebugMode(this)) {
-			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
-			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects().detectLeakedClosableObjects().penaltyLog().penaltyDeath()
-					.build());
-		}
+        if (Build.VERSION.SDK_INT >= 30) {
+            if (!Environment.isExternalStorageManager()) {
+                Intent getpermission = new Intent();
+                getpermission.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                startActivity(getpermission);
+            }
+        }
 
-		slideToUnLock = (MySwitch) findViewById(R.id.switchLogon);
-		slideToUnLock.toggle();
-		slideToUnLock.disableClick();
-		slideToUnLock.fixate(false);
-		slideToUnLock.requestFocus();
 
-		addListenerSlider();
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
-		etUsername = (EditText) findViewById(R.id.txtUserName);
-		etPassword = (EditText) findViewById(R.id.txtPassword);
-		lblResult = (TextView) findViewById(R.id.result);
+        System.setProperty("http.keepAlive", "false");
 
-		etUsername.setHint("Utilizator");
-		etPassword.setHint("Parola");
 
-		etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        // formatare data si numere = en
+        String languageToLoad = "en";
+        Locale locale = new Locale(languageToLoad);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+        //
 
-		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        setTheme(R.style.LiteTheme);
+        setContentView(R.layout.main);
 
-		addListenerUserName();
-		addListenerPassword();
+        if (isDebugMode(this)) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects().detectLeakedClosableObjects().penaltyLog().penaltyDeath()
+                    .build());
+        }
 
-		// globalMyIP = getIPConnection();
+        slideToUnLock = (MySwitch) findViewById(R.id.switchLogon);
+        slideToUnLock.toggle();
+        slideToUnLock.disableClick();
+        slideToUnLock.fixate(false);
+        slideToUnLock.requestFocus();
 
-		globalMyIP = getDeviceId();
+        addListenerSlider();
 
-		 //etUsername.setText("androsd");
-		 //etPassword.setText("112");
+        etUsername = (EditText) findViewById(R.id.txtUserName);
+        etPassword = (EditText) findViewById(R.id.txtPassword);
+        lblResult = (TextView) findViewById(R.id.result);
 
-		 etUsername.setText("CBARLA");
-		 etPassword.setText("BJvtx3");
+        etUsername.setHint("Utilizator");
+        etPassword.setHint("Parola");
 
-		// etUsername.setText("ITURIAC");
-		// etPassword.setText("FmqZkw");
+        etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
-		//etUsername.setText("EPETRESCU");
-		//etPassword.setText("VRf24f");
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-		// etUsername.setText("DIVANOV1"); //SD 01 BV
-		// etPassword.setText("xzn6Dg");
+        addListenerUserName();
+        addListenerPassword();
 
-		// etUsername.setText("IBOANCA"); // cons wood
-		// etPassword.setText("KPRDz2");N
+        // globalMyIP = getIPConnection();
 
-		// etUsername.setText("CCAMARUTA"); //cvr
-		// etPassword.setText("wD8BdG");
+        globalMyIP = getDeviceId();
 
-		// etUsername.setText("BANDREESCU"); //sd07 BU
-		// etPassword.setText("tVFYqj");
-		
-		 //etUsername.setText("MVOICU"); //sd07 BU
-		 //etPassword.setText("mGbhyN");
+        //etUsername.setText("androsd");
+        //etPassword.setText("112");
 
-		// etUsername.setText("FROTARU"); // KA Gl
-		// etPassword.setText("89mLcn");
+        // etUsername.setText("CBARLA");
+        // etPassword.setText("BJvtx3");
 
-		// etUsername.setText("VURSACHE1"); // SDIP IS
-		// etPassword.setText("46DrX3");
+        // etUsername.setText("ITURIAC");
+        // etPassword.setText("FmqZkw");
 
-		// etUsername.setText("SSTEFAN3"); // AMOB
-		// etPassword.setText("G6CNTy");
+        //etUsername.setText("EPETRESCU");
+        //etPassword.setText("VRf24f");
 
-		// etUsername.setText("TIMPUSCATU"); //
-		// etPassword.setText("5Pkz53");
+        // etUsername.setText("DIVANOV1"); //SD 01 BV
+        // etPassword.setText("xzn6Dg");
 
-		// etUsername.setText("FENE"); //
-		// etPassword.setText("uq94fC");
+        // etUsername.setText("IBOANCA"); // cons wood
+        // etPassword.setText("KPRDz2");N
 
-		// etUsername.setText("PADURARU"); //
-		// etPassword.setText("L9HTLM");
+        // etUsername.setText("CCAMARUTA"); //cvr
+        // etPassword.setText("wD8BdG");
 
-		// etUsername.setText("VURSACHE1"); //SDIP
-		// etPassword.setText("46DrX3");
+        // etUsername.setText("BANDREESCU"); //sd07 BU
+        // etPassword.setText("tVFYqj");
 
-		// etUsername.setText("VANECULASEI");
-		// etPassword.setText("VfFThR");
+        //etUsername.setText("MVOICU"); //sd07 BU
+        //etPassword.setText("mGbhyN");
 
-		// etUsername.setText("CGRIGORAS1"); //OIVPD
-		// etPassword.setText("267Jvj");
+        // etUsername.setText("FROTARU"); // KA Gl
+        // etPassword.setText("89mLcn");
 
-		// etUsername.setText("DAGAPE"); //INFO - CGED
-		// etPassword.setText("ynP6kH");
+        // etUsername.setText("VURSACHE1"); // SDIP IS
+        // etPassword.setText("46DrX3");
 
-		// etUsername.setText("pamorar"); //cvw
-		// etPassword.setText("1Pm2Rar");
+        // etUsername.setText("SSTEFAN3"); // AMOB
+        // etPassword.setText("G6CNTy");
 
-		// etUsername.setText("ABOT"); //CVIP
-		// etPassword.setText("rMLKTX");
+        // etUsername.setText("TIMPUSCATU"); //
+        // etPassword.setText("5Pkz53");
 
-		// etUsername.setText("LPADURARU");
-		// etPassword.setText("tTXHRk");
+        // etUsername.setText("FENE"); //
+        // etPassword.setText("uq94fC");
 
-		// etUsername.setText("APONT");
-		// etPassword.setText("qgQPK7");
+        // etUsername.setText("PADURARU"); //
+        // etPassword.setText("L9HTLM");
 
-		// etUsername.setText("ORAPOTAN");
-		// etPassword.setText("4THzK9");
+        // etUsername.setText("VURSACHE1"); //SDIP
+        // etPassword.setText("46DrX3");
 
-		// etUsername.setText("androsd");
-		// etPassword.setText("112");
+        // etUsername.setText("VANECULASEI");
+        // etPassword.setText("VfFThR");
 
-		 //etUsername.setText("MDINICA"); //SD04
-		 //etPassword.setText("rxtw93");
+        // etUsername.setText("CGRIGORAS1"); //OIVPD
+        // etPassword.setText("267Jvj");
 
-		checkBundleExtra();
+        // etUsername.setText("DAGAPE"); //INFO - CGED
+        // etPassword.setText("ynP6kH");
 
-	}
+        // etUsername.setText("pamorar"); //cvw
+        // etPassword.setText("1Pm2Rar");
 
-	private void checkBundleExtra() {
+        // etUsername.setText("ABOT"); //CVIP
+        // etPassword.setText("rMLKTX");
 
-		if (getIntent().hasExtra("UserInfo")) {
-			UtilsUser.deserializeUserInfo(getIntent().getExtras().getString("UserInfo"), getApplicationContext());
-			startMainMenuActivity();
-		}
-	}
+        // etUsername.setText("LPADURARU");
+        // etPassword.setText("tTXHRk");
 
-	private void startMainMenuActivity() {
-		Intent nextScreen = new Intent(getApplicationContext(), MainMenu.class);
-		startActivity(nextScreen);
-		finish();
-	}
+        // etUsername.setText("APONT");
+        // etPassword.setText("qgQPK7");
 
-	private void addListenerSlider() {
-		slideToUnLock.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        // etUsername.setText("ORAPOTAN");
+        // etPassword.setText("4THzK9");
 
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
-				if (buttonView.isChecked()) {
+        // etUsername.setText("androsd");
+        // etPassword.setText("112");
 
-				} else {
-					if (etUsername.getText().toString().trim().length() == 0) {
-						Toast.makeText(getApplicationContext(), "Completati utilizatorul!", Toast.LENGTH_SHORT).show();
-						slideToUnLock.setChecked(true);
-						return;
+        //etUsername.setText("MDINICA"); //SD04
+        //etPassword.setText("rxtw93");
 
-					}
-					if (etPassword.getText().toString().trim().length() == 0) {
-						Toast.makeText(getApplicationContext(), "Completati parola!", Toast.LENGTH_SHORT).show();
-						slideToUnLock.setChecked(true);
-						return;
-					}
-					if (etUsername.getText().toString().trim().length() > 0 && etPassword.getText().toString().trim().length() > 0) {
+        checkBundleExtra();
 
-						InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-						mgr.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
+    }
 
-						performLoginThread();
+    private void checkBundleExtra() {
 
-					}
+        if (getIntent().hasExtra("UserInfo")) {
+            UtilsUser.deserializeUserInfo(getIntent().getExtras().getString("UserInfo"), getApplicationContext());
+            startMainMenuActivity();
+        }
+    }
 
-				}
+    private void startMainMenuActivity() {
+        Intent nextScreen = new Intent(getApplicationContext(), MainMenu.class);
+        startActivity(nextScreen);
+        finish();
+    }
 
-			}
-		});
-	}
+    private void addListenerSlider() {
+        slideToUnLock.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-	@SuppressWarnings("deprecation")
-	private String getIPConnection() {
-		String myIP = "0.0.0.0";
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // TODO Auto-generated method stub
+                if (buttonView.isChecked()) {
 
-		try {
+                } else {
+                    if (etUsername.getText().toString().trim().length() == 0) {
+                        Toast.makeText(getApplicationContext(), "Completati utilizatorul!", Toast.LENGTH_SHORT).show();
+                        slideToUnLock.setChecked(true);
+                        return;
 
-			ConnectivityManager connMgr = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+                    }
+                    if (etPassword.getText().toString().trim().length() == 0) {
+                        Toast.makeText(getApplicationContext(), "Completati parola!", Toast.LENGTH_SHORT).show();
+                        slideToUnLock.setChecked(true);
+                        return;
+                    }
+                    if (etUsername.getText().toString().trim().length() > 0 && etPassword.getText().toString().trim().length() > 0) {
 
-			final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        mgr.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
 
-			final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+                        performLoginThread();
 
-			if (wifi.isAvailable()) {
+                    }
 
-				WifiManager myWifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
-				WifiInfo myWifiInfo = myWifiManager.getConnectionInfo();
-				int ipAddress = myWifiInfo.getIpAddress();
+                }
 
-				myIP = android.text.format.Formatter.formatIpAddress(ipAddress);
+            }
+        });
+    }
 
-			}
-			if (mobile.isAvailable()) {
+    @SuppressWarnings("deprecation")
+    private String getIPConnection() {
+        String myIP = "0.0.0.0";
 
-				myIP = GetLocalIpAddress();
-			} else {
-				myIP = "0.0.0.0";
-			}
-		} catch (Exception ex) {
-			Log.e("Error", ex.toString());
-		}
+        try {
 
-		return myIP;
+            ConnectivityManager connMgr = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-	}
+            final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-	private String getDeviceId() {
+            final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-		/*
-		 * TelephonyManager tm = (TelephonyManager)
-		 * getSystemService(Context.TELEPHONY_SERVICE); return tm.getDeviceId();
-		 */
+            if (wifi.isAvailable()) {
 
-		return Build.VERSION.RELEASE;
+                WifiManager myWifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+                WifiInfo myWifiInfo = myWifiManager.getConnectionInfo();
+                int ipAddress = myWifiInfo.getIpAddress();
 
-	}
+                myIP = android.text.format.Formatter.formatIpAddress(ipAddress);
 
-	private String GetLocalIpAddress() {
-		String retVal = "0.0.0.0";
-		try {
+            }
+            if (mobile.isAvailable()) {
 
-			for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
-				NetworkInterface intf = en.nextElement();
-				for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
-					InetAddress inetAddress = enumIpAddr.nextElement();
-					if (!inetAddress.isLoopbackAddress()) {
-						retVal = inetAddress.getHostAddress().toString();
-					}
-				}
-			}
-		} catch (SocketException ex) {
-			Log.e("Error", ex.toString());
-			retVal = "IP Error";
-		}
+                myIP = GetLocalIpAddress();
+            } else {
+                myIP = "0.0.0.0";
+            }
+        } catch (Exception ex) {
+            Log.e("Error", ex.toString());
+        }
 
-		return retVal;
-	}
+        return myIP;
 
-	public static boolean isDebugMode(Context context) {
-		PackageManager pm = context.getPackageManager();
-		try {
-			ApplicationInfo info = pm.getApplicationInfo(context.getPackageName(), 0);
-			return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
-		} catch (Exception e) {
-			Log.e("Error", e.toString());
-		}
-		return true;
-	}
+    }
 
-	public void addListenerUserName() {
+    private String getDeviceId() {
 
-		etUsername.setOnTouchListener(new View.OnTouchListener() {
+        /*
+         * TelephonyManager tm = (TelephonyManager)
+         * getSystemService(Context.TELEPHONY_SERVICE); return tm.getDeviceId();
+         */
 
-			public boolean onTouch(View v, MotionEvent event) {
+        return Build.VERSION.RELEASE;
 
-				if (etUsername.getText().toString().compareTo("Utilizator") == 0) {
-					etUsername.setText("");
-				}
+    }
 
-				return false;
-			}
-		});
+    private String GetLocalIpAddress() {
+        String retVal = "0.0.0.0";
+        try {
 
-	}
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress()) {
+                        retVal = inetAddress.getHostAddress().toString();
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            Log.e("Error", ex.toString());
+            retVal = "IP Error";
+        }
 
-	public void addListenerPassword() {
+        return retVal;
+    }
 
-		etPassword.setOnTouchListener(new View.OnTouchListener() {
+    public static boolean isDebugMode(Context context) {
+        PackageManager pm = context.getPackageManager();
+        try {
+            ApplicationInfo info = pm.getApplicationInfo(context.getPackageName(), 0);
+            return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        } catch (Exception e) {
+            Log.e("Error", e.toString());
+        }
+        return true;
+    }
 
-			public boolean onTouch(View v, MotionEvent event) {
+    public void addListenerUserName() {
 
-				if (etPassword.getText().toString().compareTo("Parola") == 0) {
-					etPassword.setText("");
-				}
+        etUsername.setOnTouchListener(new View.OnTouchListener() {
 
-				return false;
-			}
-		});
+            public boolean onTouch(View v, MotionEvent event) {
 
-	}
+                if (etUsername.getText().toString().compareTo("Utilizator") == 0) {
+                    etUsername.setText("");
+                }
 
-	public void performLoginThread() {
-		// start login thread
-		try {
+                return false;
+            }
+        });
 
-			HashMap<String, String> params = new HashMap<String, String>();
+    }
 
-			String userN = etUsername.getText().toString().trim();
-			String passN = etPassword.getText().toString().trim();
+    public void addListenerPassword() {
 
-			params.put("userId", userN);
-			params.put("userPass", passN);
-			params.put("ipAdr", globalMyIP);
-			params.put("deviceInfo", new OperatiiMeniu(getApplicationContext()).serializeDeviceInfo(new UtilsDevice().getDeviceInfo(getApplicationContext())));
+        etPassword.setOnTouchListener(new View.OnTouchListener() {
 
-			AsyncTaskWSCall call = new AsyncTaskWSCall(this, METHOD_NAME, params);
-			call.getCallResults();
+            public boolean onTouch(View v, MotionEvent event) {
 
-		} catch (Exception e) {
-			Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-		}
-	}
+                if (etPassword.getText().toString().compareTo("Parola") == 0) {
+                    etPassword.setText("");
+                }
 
-	public String getFiliala(String numeFiliala) {
-		String fl = "NN10";
+                return false;
+            }
+        });
 
-		if (numeFiliala.equals("BACAU"))
-			fl = "BC10";
+    }
 
-		if (numeFiliala.equals("BUZAU"))
-			fl = "BZ10";
+    public void performLoginThread() {
+        // start login thread
+        try {
 
-		if (numeFiliala.equals("GALATI"))
-			fl = "GL10";
+            HashMap<String, String> params = new HashMap<String, String>();
 
-		if (numeFiliala.equals("PITESTI"))
-			fl = "AG10";
+            String userN = etUsername.getText().toString().trim();
+            String passN = etPassword.getText().toString().trim();
 
-		if (numeFiliala.equals("TIMISOARA"))
-			fl = "TM10";
+            params.put("userId", userN);
+            params.put("userPass", passN);
+            params.put("ipAdr", globalMyIP);
+            params.put("deviceInfo", new OperatiiMeniu(getApplicationContext()).serializeDeviceInfo(new UtilsDevice().getDeviceInfo(getApplicationContext())));
 
-		if (numeFiliala.equals("ORADEA"))
-			fl = "BH10";
+            AsyncTaskWSCall call = new AsyncTaskWSCall(this, METHOD_NAME, params);
+            call.getCallResults();
 
-		if (numeFiliala.equals("FOCSANI"))
-			fl = "VN10";
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
+    }
 
-		if (numeFiliala.equals("GLINA"))
-			fl = "BU10";
+    public String getFiliala(String numeFiliala) {
+        String fl = "NN10";
 
-		if (numeFiliala.equals("ANDRONACHE"))
-			fl = "BU13";
+        if (numeFiliala.equals("BACAU"))
+            fl = "BC10";
 
-		if (numeFiliala.equals("OTOPENI"))
-			fl = "BU12";
+        if (numeFiliala.equals("BUZAU"))
+            fl = "BZ10";
 
-		if (numeFiliala.equals("CLUJ"))
-			fl = "CJ10";
+        if (numeFiliala.equals("GALATI"))
+            fl = "GL10";
 
-		if (numeFiliala.equals("BAIA"))
-			fl = "MM10";
+        if (numeFiliala.equals("PITESTI"))
+            fl = "AG10";
 
-		if (numeFiliala.equals("MILITARI"))
-			fl = "BU11";
+        if (numeFiliala.equals("TIMISOARA"))
+            fl = "TM10";
 
-		if (numeFiliala.equals("CONSTANTA"))
-			fl = "CT10";
+        if (numeFiliala.equals("ORADEA"))
+            fl = "BH10";
 
-		if (numeFiliala.equals("BRASOV"))
-			fl = "BV10";
+        if (numeFiliala.equals("FOCSANI"))
+            fl = "VN10";
 
-		if (numeFiliala.equals("PLOIESTI"))
-			fl = "PH10";
+        if (numeFiliala.equals("GLINA"))
+            fl = "BU10";
 
-		if (numeFiliala.equals("PIATRA"))
-			fl = "NT10";
+        if (numeFiliala.equals("ANDRONACHE"))
+            fl = "BU13";
 
-		if (numeFiliala.equals("MURES"))
-			fl = "MS10";
+        if (numeFiliala.equals("OTOPENI"))
+            fl = "BU12";
 
-		if (numeFiliala.equals("IASI"))
-			fl = "IS10";
+        if (numeFiliala.equals("CLUJ"))
+            fl = "CJ10";
 
-		if (numeFiliala.equals("CRAIOVA"))
-			fl = "DJ10";
+        if (numeFiliala.equals("BAIA"))
+            fl = "MM10";
 
-		if (numeFiliala.equals("SIBIU"))
-			fl = "SB10";
+        if (numeFiliala.equals("MILITARI"))
+            fl = "BU11";
 
-		if (numeFiliala.equals("DEVA"))
-			fl = "HD10";
+        if (numeFiliala.equals("CONSTANTA"))
+            fl = "CT10";
 
-		return fl;
+        if (numeFiliala.equals("BRASOV"))
+            fl = "BV10";
 
-	}
+        if (numeFiliala.equals("PLOIESTI"))
+            fl = "PH10";
 
-	public String getDepart(String numeDepart) {
-		String dpt = "00";
+        if (numeFiliala.equals("PIATRA"))
+            fl = "NT10";
 
-		if (numeDepart.equals("CHIM"))
-			dpt = "07";
+        if (numeFiliala.equals("MURES"))
+            fl = "MS10";
 
-		if (numeDepart.equals("DIVE"))
-			dpt = "10";
+        if (numeFiliala.equals("IASI"))
+            fl = "IS10";
 
-		if (numeDepart.equals("ELEC"))
-			dpt = "05";
+        if (numeFiliala.equals("CRAIOVA"))
+            fl = "DJ10";
 
-		if (numeDepart.equals("FERO"))
-			dpt = "02";
+        if (numeFiliala.equals("SIBIU"))
+            fl = "SB10";
 
-		if (numeDepart.equals("GIPS"))
-			dpt = "06";
+        if (numeFiliala.equals("DEVA"))
+            fl = "HD10";
 
-		if (numeDepart.equals("INST"))
-			dpt = "08";
+        return fl;
 
-		if (numeDepart.equals("LEMN"))
-			dpt = "01";
+    }
 
-		if (numeDepart.equals("MATE"))
-			dpt = "04";
+    public String getDepart(String numeDepart) {
+        String dpt = "00";
 
-		if (numeDepart.equals("PARC"))
-			dpt = "03";
+        if (numeDepart.equals("CHIM"))
+            dpt = "07";
 
-		if (numeDepart.equals("CHIM"))
-			dpt = "07";
+        if (numeDepart.equals("DIVE"))
+            dpt = "10";
 
-		if (numeDepart.equals("HIDR"))
-			dpt = "09";
+        if (numeDepart.equals("ELEC"))
+            dpt = "05";
 
-		if (numeDepart.equals("LEFA"))
-			dpt = "02";
+        if (numeDepart.equals("FERO"))
+            dpt = "02";
 
-		return dpt;
+        if (numeDepart.equals("GIPS"))
+            dpt = "06";
 
-	}
+        if (numeDepart.equals("INST"))
+            dpt = "08";
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
+        if (numeDepart.equals("LEMN"))
+            dpt = "01";
 
-	}
+        if (numeDepart.equals("MATE"))
+            dpt = "04";
 
-	@Override
-	public void onUserLeaveHint() { // this only executes when Home is selected.
-		finish();
-	}
+        if (numeDepart.equals("PARC"))
+            dpt = "03";
 
-	public void validateLogin(String result) {
+        if (numeDepart.equals("CHIM"))
+            dpt = "07";
 
+        if (numeDepart.equals("HIDR"))
+            dpt = "09";
 
+        if (numeDepart.equals("LEFA"))
+            dpt = "02";
 
-		if (!result.equals("-1") && result.length() > 0) {
-			String[] token = result.split("#");
+        return dpt;
 
-			if (token[0].equals("0")) {
-				lblResult.setText("Cont inexistent!");
-				slideToUnLock.setChecked(true);
-			}
-			if (token[0].equals("1")) {
-				lblResult.setText("Cont blocat 60 de minute.");
-				slideToUnLock.setChecked(true);
-			}
-			if (token[0].equals("2")) {
-				lblResult.setText("Parola incorecta!");
-				slideToUnLock.setChecked(true);
-			}
-			if (token[0].equals("3")) {
+    }
 
-				if (token[5].equals("8") || token[5].equals("9") || token[5].equals("10") || token[5].equals("14") || token[5].equals("12")
-						|| token[5].equals("27") || token[5].equals("35") || token[5].equals("17") || token[5].equals("18") || token[5].equals("32")
-						|| token[5].equals("41") || token[5].equals("43") || token[5].equals("44") || token[5].equals("45") || token[5].equals("39")
-						|| token[5].equals("51") || token[5].equals("50") || token[5].equals("62")) // doar
-				// agentii,
-				// admin , sd , dv, dd, ka, dir ka, cons, sm
-				{
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
-					UserInfo uInfo = UserInfo.getInstance();
+    }
 
-					String tempAgCod = token[4].toString();
+    @Override
+    public void onUserLeaveHint() { // this only executes when Home is selected.
+        finish();
+    }
 
-					if (tempAgCod.equalsIgnoreCase("-1")) {
-						lblResult.setText("Utilizator nedefinit!");
-						slideToUnLock.setChecked(true);
-						return;
-					}
+    public void validateLogin(String result) {
 
-					for (int i = 0; i < 8 - token[4].length(); i++) {
-						tempAgCod = "0" + tempAgCod;
-					}
 
-					// coeficienti consilieri si sm
-					if (token[5].equals("17") || token[5].equals("18") || token[10].equals("KA3")) {
-						String[] coeficientiCV = token[6].split("!");
-						uInfo.setComisionCV(Double.valueOf(coeficientiCV[0]));
-						uInfo.setCoefCorectie(coeficientiCV[1]);
+        if (!result.equals("-1") && result.length() > 0) {
+            String[] token = result.split("#");
 
-					}
+            if (token[0].equals("0")) {
+                lblResult.setText("Cont inexistent!");
+                slideToUnLock.setChecked(true);
+            }
+            if (token[0].equals("1")) {
+                lblResult.setText("Cont blocat 60 de minute.");
+                slideToUnLock.setChecked(true);
+            }
+            if (token[0].equals("2")) {
+                lblResult.setText("Parola incorecta!");
+                slideToUnLock.setChecked(true);
+            }
+            if (token[0].equals("3")) {
 
-					discMaxSD = 0.0;
-					discMaxDV = 0.0;
+                if (token[5].equals("8") || token[5].equals("9") || token[5].equals("10") || token[5].equals("14") || token[5].equals("12")
+                        || token[5].equals("27") || token[5].equals("35") || token[5].equals("17") || token[5].equals("18") || token[5].equals("32")
+                        || token[5].equals("41") || token[5].equals("43") || token[5].equals("44") || token[5].equals("45") || token[5].equals("39")
+                        || token[5].equals("51") || token[5].equals("50") || token[5].equals("62")) // doar
+                // agentii,
+                // admin , sd , dv, dd, ka, dir ka, cons, sm
+                {
 
-					uInfo.setNume(token[3].toString());
-					uInfo.setFiliala(token[2].toString());
-					uInfo.setCod(tempAgCod);
-					uInfo.setNumeDepart(token[1].toString());
-					uInfo.setCodDepart(getDepart(token[1].toString()));
-					uInfo.setUnitLog(getFiliala(token[2].toString()));
-					uInfo.setInitUnitLog(getFiliala(token[2].toString()));
-					uInfo.setTipAcces(token[5].toString());
+                    UserInfo uInfo = UserInfo.getInstance();
 
-					if (token[10].toLowerCase(Locale.getDefault()).equals("w")) {
-						uInfo.setTipUser("WOOD");
-						uInfo.setTipUserSap("WOOD");
-					} else {
-						uInfo.setTipUser(InfoStrings.getTipUser(token[5].toString()));
-						uInfo.setTipUserSap(token[10]);
-					}
+                    String tempAgCod = token[4].toString();
 
-					uInfo.setParentScreen("logon");
-					uInfo.setFilialeDV(token[9]);
-					uInfo.setAltaFiliala(false);
-					uInfo.setUserSite(token[8]);
-					uInfo.setDepartExtra(token[7]);
+                    if (tempAgCod.equalsIgnoreCase("-1")) {
+                        lblResult.setText("Utilizator nedefinit!");
+                        slideToUnLock.setChecked(true);
+                        return;
+                    }
 
-					uInfo.setExtraFiliale(token[11]);
+                    for (int i = 0; i < 8 - token[4].length(); i++) {
+                        tempAgCod = "0" + tempAgCod;
+                    }
 
-					if (uInfo.getTipAcces().equals("27") || uInfo.getTipAcces().equals("35") || uInfo.getTipAcces().equals("17")
-							|| uInfo.getTipAcces().equals("18")) {
+                    // coeficienti consilieri si sm
+                    if (token[5].equals("17") || token[5].equals("18") || token[10].equals("KA3")) {
+                        String[] coeficientiCV = token[6].split("!");
+                        uInfo.setComisionCV(Double.valueOf(coeficientiCV[0]));
+                        uInfo.setCoefCorectie(coeficientiCV[1]);
 
-						uInfo.setCodDepart("01");
-						uInfo.setNumeDepart("LEMN");
-					}
+                    }
 
-					uInfo.setFilHome(Boolean.valueOf(token[12]));
-					uInfo.setFtpIP(token[13]);
-					uInfo.setInitDivizie(token[14]);
-					uInfo.setIsMeniuBlocat(Boolean.parseBoolean(UtilsGeneral.getStareMeniu(token[15])[0]));
-					uInfo.setCodPinMeniu(UtilsGeneral.getStareMeniu(token[15])[1]);
-					uInfo.setCodDepart(UtilsGeneral.getDepart(token[1]));
+                    discMaxSD = 0.0;
+                    discMaxDV = 0.0;
 
-					if (uInfo.getTipUserSap().equals(Constants.tipSuperAv) || uInfo.getTipUserSap().equals(Constants.tipInfoAv) || UtilsUser.isSMR()
-							|| UtilsUser.isCVR() || UtilsUser.isSSCM() || UtilsUser.isCGED() || UtilsUser.isOIVPD())
-						uInfo.setCodSuperUser(uInfo.getCod());
+                    uInfo.setNume(token[3].toString());
+                    uInfo.setFiliala(token[2].toString());
+                    uInfo.setCod(tempAgCod);
+                    uInfo.setNumeDepart(token[1].toString());
+                    uInfo.setCodDepart(getDepart(token[1].toString()));
+                    uInfo.setUnitLog(getFiliala(token[2].toString()));
+                    uInfo.setInitUnitLog(getFiliala(token[2].toString()));
+                    uInfo.setTipAcces(token[5].toString());
 
-					Intent nextScreen = new Intent(getApplicationContext(), MainMenu.class);
-					startActivity(nextScreen);
-					finish();
+                    if (token[10].toLowerCase(Locale.getDefault()).equals("w")) {
+                        uInfo.setTipUser("WOOD");
+                        uInfo.setTipUserSap("WOOD");
+                    } else {
+                        uInfo.setTipUser(InfoStrings.getTipUser(token[5].toString()));
+                        uInfo.setTipUserSap(token[10]);
+                    }
 
-				} else {
-					lblResult.setText("Acces interzis!");
-					slideToUnLock.setChecked(true);
-				}
-			}
-			if (token[0].equals("4")) {
-				lblResult.setText("Cont inactiv!");
-				slideToUnLock.setChecked(true);
+                    uInfo.setParentScreen("logon");
+                    uInfo.setFilialeDV(token[9]);
+                    uInfo.setAltaFiliala(false);
+                    uInfo.setUserSite(token[8]);
+                    uInfo.setDepartExtra(token[7]);
 
-			}
-		} else {
-			Toast toast = Toast.makeText(getApplicationContext(), "Autentificare esuata!", Toast.LENGTH_SHORT);
-			toast.show();
-			slideToUnLock.setChecked(true);
-		}
+                    uInfo.setExtraFiliale(token[11]);
 
-	}
+                    if (uInfo.getTipAcces().equals("27") || uInfo.getTipAcces().equals("35") || uInfo.getTipAcces().equals("17")
+                            || uInfo.getTipAcces().equals("18")) {
 
-	public void onTaskComplete(String methodName, Object result) {
-		if (methodName.equals(METHOD_NAME)) {
-			validateLogin((String) result);
-		}
+                        uInfo.setCodDepart("01");
+                        uInfo.setNumeDepart("LEMN");
+                    }
 
-	}
+                    uInfo.setFilHome(Boolean.valueOf(token[12]));
+                    uInfo.setFtpIP(token[13]);
+                    uInfo.setInitDivizie(token[14]);
+                    uInfo.setIsMeniuBlocat(Boolean.parseBoolean(UtilsGeneral.getStareMeniu(token[15])[0]));
+                    uInfo.setCodPinMeniu(UtilsGeneral.getStareMeniu(token[15])[1]);
+                    uInfo.setCodDepart(UtilsGeneral.getDepart(token[1]));
+
+                    if (uInfo.getTipUserSap().equals(Constants.tipSuperAv) || uInfo.getTipUserSap().equals(Constants.tipInfoAv) || UtilsUser.isSMR()
+                            || UtilsUser.isCVR() || UtilsUser.isSSCM() || UtilsUser.isCGED() || UtilsUser.isOIVPD())
+                        uInfo.setCodSuperUser(uInfo.getCod());
+
+                    Intent nextScreen = new Intent(getApplicationContext(), MainMenu.class);
+                    startActivity(nextScreen);
+                    finish();
+
+                } else {
+                    lblResult.setText("Acces interzis!");
+                    slideToUnLock.setChecked(true);
+                }
+            }
+            if (token[0].equals("4")) {
+                lblResult.setText("Cont inactiv!");
+                slideToUnLock.setChecked(true);
+
+            }
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(), "Autentificare esuata!", Toast.LENGTH_SHORT);
+            toast.show();
+            slideToUnLock.setChecked(true);
+        }
+
+    }
+
+    public void onTaskComplete(String methodName, Object result) {
+        if (methodName.equals(METHOD_NAME)) {
+            validateLogin((String) result);
+        }
+
+    }
 
 }

@@ -721,9 +721,13 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 		return UserInfo.getInstance().getTipUserSap().toUpperCase().startsWith("CAG");
 	}
 
+	private boolean isUserCVA() {
+		return UserInfo.getInstance().getTipUserSap().toUpperCase().startsWith("CVA");
+	}
+
 	private void CreateMenu(Menu menu) {
 
-		if ((UtilsUser.isUserExceptieBV90Ged() || UtilsUser.isUserSite() || isWood() || UtilsUser.isUserIP() || isUserCAG())
+		if ((UtilsUser.isUserExceptieBV90Ged() || UtilsUser.isUserSite() || isWood() || UtilsUser.isUserIP() || isUserCAG() || isUserCVA())
 				&& CreareComandaGed.tipComandaGed == TipCmdGed.COMANDA_VANZARE) {
 			MenuItem mnu1 = menu.add(0, 0, 0, "Filiala");
 			{
@@ -819,7 +823,7 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 	}
 
 	private void showFilialaDialogBox() {
-		if (UtilsUser.isUserExceptieBV90Ged() || isWood() || UtilsUser.isUserIP() || isUserCAG()) {
+		if (UtilsUser.isUserExceptieBV90Ged() || isWood() || UtilsUser.isUserIP() || isUserCAG() || isUserCVA()) {
 			showFilialaDialogBV90();
 		} else if (UtilsUser.isUserSite()) {
 			showFilialaDialogUserSite();

@@ -77,33 +77,29 @@ import my.logon.screen.utils.UtilsGeneral;
 public class AfisComenziSimulate extends Activity implements AsyncTaskListener, ComenziDAOListener, OperatiiArticolListener, OfertaMailListener,
 		SelectClientListener {
 
-	Button creeazaCmdSimBtn, stergeCmdSimBtn;
-	String filiala = "", nume = "", cod = "";
 	public static String unitLog = "";
 	public static String numeDepart = "";
 	public static String codDepart = "";
-	private SimpleAdapter adapter;
-
-	private Spinner spinnerCmd;
-	private SimpleAdapter adapterComenzi;
-	private static ArrayList<HashMap<String, String>> listComenzi = new ArrayList<HashMap<String, String>>();
-	private static ArrayList<HashMap<String, String>> list1 = new ArrayList<HashMap<String, String>>();
 	public static String selectedCmd = "", selectedCmdSAP = "";
-
-	private String selectedClientCode = "-1";
-	private String cmdNr = null, tipSelCmd = "";
-	private TextView textTipPlata, textAdrLivr, textOras, textJudet;
-	private TextView textPersContact, textTelefon, textTransport;
-
 	public static String codClientVar = "";
 	public static String numeClientVar = "";
 	public static String articoleComanda = "", numeArtSelContextMenu = "", codArtSelContextMenu = "";
 	public static double totalComanda = 0, stocArtCond = 0;
 	public static String dateLivrare = "", tipOpCmd = "-1";
-
+	public static String tipAcces;
+	private static ArrayList<HashMap<String, String>> listComenzi = new ArrayList<HashMap<String, String>>();
+	private static ArrayList<HashMap<String, String>> list1 = new ArrayList<HashMap<String, String>>();
+	Button creeazaCmdSimBtn, stergeCmdSimBtn;
+	String filiala = "", nume = "", cod = "";
+	private SimpleAdapter adapter;
+	private Spinner spinnerCmd;
+	private SimpleAdapter adapterComenzi;
+	private String selectedClientCode = "-1";
+	private String cmdNr = null, tipSelCmd = "";
+	private TextView textTipPlata, textAdrLivr, textOras, textJudet;
+	private TextView textPersContact, textTelefon, textTransport;
 	private boolean touched = false;
 	private Dialog dialogSelClient;
-	public static String tipAcces;
 	private ListView listArticoleSimulate;
 
 	private String selectedClient = "";
@@ -677,7 +673,7 @@ public class AfisComenziSimulate extends Activity implements AsyncTaskListener, 
 
 		listArticoleSimulate.setVisibility(View.VISIBLE);
 
-		textTipPlata.setText(UtilsGeneral.getDescTipPlata(dateLivrareCmdCurent.getTipPlata()));
+		textTipPlata.setText(UtilsGeneral.getDescTipPlata(dateLivrareCmdCurent.getTipPlata(), dateLivrareCmdCurent.getTermenPlata()));
 		textTransport.setText(UtilsGeneral.getDescTipTransport(dateLivrareCmdCurent.getTransport()));
 		textOras.setText(dateLivrareCmdCurent.getOras());
 		textJudet.setText(InfoStrings.numeJudet(dateLivrareCmdCurent.getCodJudet()));

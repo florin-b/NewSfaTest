@@ -1,11 +1,5 @@
 package my.logon.screen.dialogs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import my.logon.screen.listeners.TipCmdDistribListener;
-import my.logon.screen.R;
-import my.logon.screen.model.UserInfo;
 import android.app.Dialog;
 import android.content.Context;
 import android.view.View;
@@ -14,7 +8,14 @@ import android.widget.RadioButton;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import my.logon.screen.R;
 import my.logon.screen.enums.TipCmdDistrib;
+import my.logon.screen.listeners.TipCmdDistribListener;
+import my.logon.screen.model.UserInfo;
 
 public class TipComandaDistributieDialog extends Dialog {
 
@@ -51,6 +52,7 @@ public class TipComandaDistributieDialog extends Dialog {
 		final RadioButton radioDL = (RadioButton) findViewById(R.id.radioDL);
 		final RadioButton radioCC = (RadioButton) findViewById(R.id.radioCC);
 		final RadioButton radioCLP = (RadioButton) findViewById(R.id.radioCLP);
+		final RadioButton radioACZC = (RadioButton) findViewById(R.id.radioACZC);
 
 		final Spinner spinnerFilialeClp = (Spinner) findViewById(R.id.spinFilialaCLP);
 

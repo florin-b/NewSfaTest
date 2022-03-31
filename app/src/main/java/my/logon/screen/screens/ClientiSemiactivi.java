@@ -31,18 +31,13 @@ import my.logon.screen.model.UserInfo;
 public class ClientiSemiactivi extends Activity {
 
 	public static String var1 = "Main var";
-	private static ArrayList<HashMap<String, String>> menuList = new ArrayList<HashMap<>>();
-
 	public static ArrayList<String> clientListName = new ArrayList<>();
 	public static ArrayList<String> clientListCode = new ArrayList<>();
-
 	public static ArrayList<String> artSelListName = new ArrayList<String>();
 	public static ArrayList<String> artSelListCode = new ArrayList<String>();
-
-	private static ArrayList<String> docSelList = new ArrayList<String>();
-
 	public static String selectedFiliala = "-1", selectedAgent = "-1", tipComanda = "E";
-
+	private static ArrayList<HashMap<String, String>> menuList = new ArrayList<>();
+	private static ArrayList<String> docSelList = new ArrayList<String>();
 	ListView listViewMenu;
 	DrawerMenuAdapterClInact menuAdapter;
 	DrawerLayout drawer;

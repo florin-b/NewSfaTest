@@ -317,7 +317,7 @@ public class AdaugaAdresaGpsClienti extends Fragment implements ClientSelectionL
 			HashMap<String, String> temp;
 
 			for (int i = 0; i < clientArray.size(); i++) {
-				temp = new HashMap<String, String>();
+				temp = new HashMap<>();
 
 				temp.put("numeClient", clientArray.get(i).getNumeClient());
 				temp.put("codClient", clientArray.get(i).getCodClient());
@@ -345,7 +345,7 @@ public class AdaugaAdresaGpsClienti extends Fragment implements ClientSelectionL
 
 	private void getAdreseGpsClient(String codClient) {
 
-		HashMap<String, String> params = new HashMap<String, String>();
+		HashMap<String, String> params = new HashMap<>();
 		params.put("codAgent", UserInfo.getInstance().getCod());
 		params.put("codClient", codClient);
 
@@ -455,7 +455,7 @@ public class AdaugaAdresaGpsClienti extends Fragment implements ClientSelectionL
 		HandleJSONData objAdreseList = new HandleJSONData(getActivity(), adreseList);
 		adreseArray = objAdreseList.decodeJSONAdreseGpsClient();
 
-		ArrayList<HashMap<String, String>> listAdrese = new ArrayList<HashMap<String, String>>();
+		ArrayList<HashMap<String, String>> listAdrese = new ArrayList<>();
 		adapterAdrese = new SimpleAdapter(getActivity(), listAdrese, R.layout.customrow_adresaclient, new String[] {
 				"id", "tipAdresa", "adresa" }, new int[] { R.id.textId, R.id.textTipAdresa, R.id.textAdresa });
 		isAdrSediuSocial = false;
@@ -470,7 +470,7 @@ public class AdaugaAdresaGpsClienti extends Fragment implements ClientSelectionL
 			HashMap<String, String> temp;
 
 			for (int i = 0; i < adreseArray.size(); i++) {
-				temp = new HashMap<String, String>();
+				temp = new HashMap<>();
 
 				temp.put("id", adreseArray.get(i).getId() + ".");
 

@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,7 +38,7 @@ public class MapAddressDialogF4 extends Dialog implements OnMapReadyCallback {
 	private static final int DETAIL_MEDIUM = 15;
 	private static final int DETAIL_HIGH = 18;
 
-	public MapAddressDialogF4(Address address, Context context, FragmentManager fm2) {
+	public MapAddressDialogF4(Address address, @NonNull Context context, FragmentManager fm2) {
 		super(context);
 		this.context = context;
 		this.address = address;

@@ -8,7 +8,9 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -35,6 +37,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -158,9 +162,24 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 	private CheckBox checkFactura, checkAviz;
 	private BeanAdreseJudet listAdreseJudet, listAlteAdrese;
 
+	private ActivityResultLauncher<Intent> startActivityForResult;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+				.detectCustomSlowCalls()
+				.detectDiskReads()
+				.detectDiskWrites()
+				.detectNetwork()
+				.penaltyLog()
+				.penaltyFlashScreen()
+				.build());
 
+		StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+				.detectLeakedSqlLiteObjects()
+				.detectLeakedClosableObjects()
+				.penaltyLog()
+				.build());
 		super.onCreate(savedInstanceState);
 		try {
 
@@ -169,9 +188,8 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 		setTheme(R.style.LRTheme);
 		setContentView(R.layout.selectadrlivrcmd_ged_header);
 
+		ActionBar actionBar = getActionBar();
 
-
-			ActionBar actionBar = getActionBar();
 			actionBar.setTitle("Date livrare");
 			actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -266,9 +284,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 				adapterSpinnerTransp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipTransport);
 			}
 
-			if (isComandaDl()) {
-				adapterSpinnerPlata = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipPlataDL);
-			} else if (DateLivrare.getInstance().isClientBlocat()) {
+			 if (DateLivrare.getInstance().isClientBlocat()) {
 				if (CreareComandaGed.tipClient.equals("IP"))
 					adapterSpinnerPlata = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipPlataClBlocatIP);
 				else
@@ -290,7 +306,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
 			}
 
-			if (!DateLivrare.getInstance().isClientBlocat() && !isComandaDl()
+			if (!DateLivrare.getInstance().isClientBlocat()
 					&& (!CreareComandaGed.tipPlataContract.trim().isEmpty() || DateLivrare.getInstance().getTipPlata().equals("LC")))
 				spinnerPlata.setEnabled(false);
 			else
@@ -344,7 +360,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 			if (CreareComandaGed.listTermenPlata != null && CreareComandaGed.listTermenPlata.size() > 0) {
 				adapterTermenPlata.addAll(CreareComandaGed.listTermenPlata);
 
-				if (UserInfo.getInstance().getTipUserSap().equals("CGED") || UtilsUser.isSSCM()) {
+				if (UserInfo.getInstance().getTipUserSap().equals("CGED") || UtilsUser.isSSCM() || UtilsUser.isUserIP()) {
 					spinnerTermenPlata.setSelection(CreareComandaGed.listTermenPlata.size() - 1);
 				}
 
@@ -479,6 +495,17 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 					btnStergeObiectiv.setVisibility(View.VISIBLE);
 				}
 			}
+
+
+			startActivityForResult = registerForActivityResult(
+					new ActivityResultContracts.StartActivityForResult(),
+					result -> {
+						if (result.getResultCode() == 1) {
+							DateLivrare.getInstance().setCoordonateAdresa(result.getData().getParcelableExtra("coord"));
+							setAdresaLivrare(MapUtils.getAddress(result.getData().getParcelableExtra("address")));
+						}
+					}
+			);
 
 			if (UtilsUser.isCGED() || UtilsUser.isSSCM() || CreareComandaGed.tipClient.equals("IP")) {
 				getDateLivrareClient();
@@ -1124,12 +1151,12 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 						spinnerTermenPlata.setVisibility(View.VISIBLE);
 				}
 
-				if (pos == 2 || rawTipPlataStr.contains("E1")) {
 
-					if (DateLivrare.getInstance().getTipPersClient().equals("PJ"))
-						Toast.makeText(getApplicationContext(), "Valoare maxima comanda: 5000 RON", Toast.LENGTH_SHORT).show();
-
-				}
+				if (rawTipPlataStr.toLowerCase().contains("numerar")) {
+					checkAviz.setChecked(false);
+					checkAviz.setEnabled(false);
+				} else
+					checkAviz.setEnabled(true);
 
 			}
 
@@ -1738,7 +1765,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
 	}
 
-	private void setAdresaLivrare(Address address) {
+	private  void setAdresaLivrare(Address address) {
 
 		if (radioAdresaSediu.isChecked()) {
 
@@ -1871,11 +1898,28 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 				if (!isAdresaComplet())
 					return;
 
+
 				MapAddressDialog mapDialog = new MapAddressDialog(getAddressFromForm(), SelectAdrLivrCmdGed.this, fm);
 				mapDialog.setMapListener(SelectAdrLivrCmdGed.this);
 				mapDialog.show();
+
+				/*
+				Intent intent = new Intent(getApplicationContext(), MapTest.class);
+				intent.putExtra("adresa", getAddressFromForm());
+				startActivityForResult.launch(intent);
+				 */
+
+
+
+
 			}
 		});
+	}
+
+
+
+	private void testMe(){
+
 	}
 
 	private Address getAddressFromForm() {
@@ -2111,6 +2155,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 		setAdresaLivrare(MapUtils.getAddress(address));
 
 	}
+
 
 	@Override
 	public void obiectivSelected(ObiectivConsilier obiectiv) {

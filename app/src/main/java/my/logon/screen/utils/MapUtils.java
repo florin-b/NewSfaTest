@@ -1,17 +1,18 @@
 package my.logon.screen.utils;
 
+import android.content.Context;
+import android.location.Geocoder;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import android.content.Context;
-import android.location.Geocoder;
-import android.widget.Toast;
 import my.logon.screen.beans.Address;
 import my.logon.screen.beans.GeocodeAddress;
-
-import com.google.android.gms.maps.model.LatLng;
 
 public class MapUtils {
 
@@ -58,6 +59,8 @@ public class MapUtils {
 
 		} catch (IOException e) {
 			geoAddress.setErrorMessage(e.toString());
+			Toast.makeText(context, "GeocodeAddress: " + e.toString(), Toast.LENGTH_LONG).show();
+
 		}
 
 		if (addresses.size() > 0) {
