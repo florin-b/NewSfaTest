@@ -1291,10 +1291,16 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 	protected void performGetArticole() {
 		if (DateLivrare.getInstance().getFurnizorComanda() != null && DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa() != null) {
 			performGetArticoleFurnizor();
-		} else {
+		} else if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.ARTICOLE_COMANDA)
+			getArticoleACZC();
+		else {
 			performGetArticoleDistributie();
 		}
 
+	}
+
+	private void getArticoleACZC(){
+		performGetArticoleFurnizor();
 	}
 
 	protected void performGetArticoleDistributie() {
@@ -1326,7 +1332,6 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 
 	private void performGetArticoleFurnizor() {
 		HashMap<String, String> params = new HashMap<String, String>();
-
 		String tipArticol1 = "", tipArticol2 = "";
 
 		if (tglButton.isChecked()) {

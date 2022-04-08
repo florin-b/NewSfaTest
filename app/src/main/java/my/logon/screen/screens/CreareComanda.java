@@ -325,7 +325,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
 			mnu0.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-			if (tipComandaDistributie == TipCmdDistrib.DISPOZITIE_LIVRARE) {
+			if (tipComandaDistributie == TipCmdDistrib.DISPOZITIE_LIVRARE || tipComandaDistributie == TipCmdDistrib.ARTICOLE_COMANDA) {
 				MenuItem mnu1 = menu.add(0, 1, 1, "Furnizor");
 
 				mnu1.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -396,7 +396,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 		case 3:
 			if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.COMANDA_VANZARE
 					|| DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.LIVRARE_CUSTODIE
-					|| DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.COMANDA_LIVRARE) {
+					|| DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.COMANDA_LIVRARE
+					|| DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.ARTICOLE_COMANDA) {
 
 				if (codClientVar.length() > 0) {
 
@@ -410,7 +411,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 				} else {
 					Toast.makeText(getApplicationContext(), "Selectati mai intai clientul!", Toast.LENGTH_SHORT).show();
 				}
-			} else if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.DISPOZITIE_LIVRARE) {
+			} else if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.DISPOZITIE_LIVRARE || DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.ARTICOLE_COMANDA) {
 				if (codClientVar.length() == 0) {
 					Toast.makeText(getApplicationContext(), "Selectati clientul.", Toast.LENGTH_SHORT).show();
 					return false;
@@ -549,7 +550,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 		super.onResume();
 		checkStaticVars();
 
-		if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.DISPOZITIE_LIVRARE) {
+		if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.DISPOZITIE_LIVRARE || DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.ARTICOLE_COMANDA) {
 			if (DateLivrare.getInstance().getFurnizorComanda() != null) {
 
 				String strFurnizor = "Furnizor: " + DateLivrare.getInstance().getFurnizorComanda().getNumeFurnizorMarfa();
@@ -1194,7 +1195,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
 			String codFurnizor = " ";
 
-			if (tipComandaDistributie == TipCmdDistrib.DISPOZITIE_LIVRARE)
+			if (tipComandaDistributie == TipCmdDistrib.DISPOZITIE_LIVRARE || tipComandaDistributie == TipCmdDistrib.ARTICOLE_COMANDA)
 				codFurnizor = DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa();
 			else if (tipComandaDistributie == TipCmdDistrib.COMANDA_LIVRARE)
 				codFurnizor = DateLivrare.getInstance().getCodFilialaCLP();
@@ -2345,6 +2346,10 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
 		else if (tipSelected == TipCmdDistrib.COMANDA_LIVRARE) {
 			actionBar.setTitle("Comanda livrare" + " " + codFilialaDest);
+		}
+
+		else if (tipSelected == TipCmdDistrib.ARTICOLE_COMANDA) {
+			actionBar.setTitle("Articole la comanda");
 		}
 
 		invalidateOptionsMenu();

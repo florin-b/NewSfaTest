@@ -460,7 +460,7 @@ public class SelectClientCmd extends ListActivity implements OperatiiClientListe
 		numeClientVar = numeClient;
 
 		dateLivrareInstance.setDateLivrare(InfoStrings.numeJudet(dateLivrareInstance.getCodJudet()) + " " + dateLivrareInstance.getOras() + " "
-				+ dateLivrareInstance.getStrada() + "#" + dateLivrareInstance.getPersContact() + "#" + dateLivrareInstance.getNrTel() + "#NU#E#TRAP#NU");
+				+ dateLivrareInstance.getStrada() + "#" + dateLivrareInstance.getPersContact() + "#" + dateLivrareInstance.getNrTel() + "#NU#O#TRAP#NU");
 
 		tipClient.setText(detaliiClient.getTipClient());
 		saveClntBtn.setVisibility(View.VISIBLE);

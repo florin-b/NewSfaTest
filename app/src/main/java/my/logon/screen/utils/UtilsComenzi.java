@@ -1,15 +1,16 @@
 package my.logon.screen.utils;
 
+import android.widget.Spinner;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import my.logon.screen.enums.TipCmdDistrib;
 import my.logon.screen.model.ArticolComanda;
 import my.logon.screen.model.DateLivrare;
 import my.logon.screen.model.InfoStrings;
-import android.widget.Spinner;
-import my.logon.screen.enums.TipCmdDistrib;
 
 public class UtilsComenzi {
 

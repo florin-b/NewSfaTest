@@ -418,11 +418,15 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 					nextScreenLivr.putExtra("codClient", selectedClientCode);
 					nextScreenLivr.putExtra("parrentClass", "ModificareComanda");
 					nextScreenLivr.putExtra("tipPlataContract", DateLivrare.getInstance().getTipPlata());
+					nextScreenLivr.putExtra("limitaCredit", DateLivrare.getInstance().getLimitaCredit());
+					nextScreenLivr.putExtra("termenPlata", DateLivrare.getInstance().getTermenPlata());
 
 				} else {
 					nextScreenLivr = new Intent(getApplicationContext(), SelectAdrLivrCmd.class);
 					nextScreenLivr.putExtra("parrentClass", "ModificareComanda");
 					nextScreenLivr.putExtra("tipPlataContract", DateLivrare.getInstance().getTipPlata());
+					nextScreenLivr.putExtra("limitaCredit", DateLivrare.getInstance().getLimitaCredit());
+					nextScreenLivr.putExtra("termenPlata", DateLivrare.getInstance().getTermenPlata());
 				}
 
 				selectedCmdAdrLivr = selectedCmd;
@@ -1486,7 +1490,6 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
 		DateLivrare.getInstance().setDateLivrareAfisare(dateLivrare);
 		DateLivrare.getInstance().setClientBlocat(articoleComanda.getDateLivrare().isClientBlocat());
-		
 
 		listArticoleComanda = articoleComanda.getListArticole();
 

@@ -396,6 +396,8 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 				if (jsonLivrare.has("isClientBlocat"))
 					dateLivrare.setClientBlocat(Boolean.valueOf(jsonLivrare.getString("isClientBlocat")));
 
+				dateLivrare.setLimitaCredit(Double.valueOf(jsonLivrare.getString("limitaCredit")));
+
 				JSONArray jsonArticole = jsonObject.getJSONArray("articoleComanda");
 				String tipAlert, subCmp;
 				for (int i = 0; i < jsonArticole.length(); i++) {

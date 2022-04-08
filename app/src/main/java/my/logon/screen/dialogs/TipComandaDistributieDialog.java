@@ -74,13 +74,14 @@ public class TipComandaDistributieDialog extends Dialog {
 					tipComanda = TipCmdDistrib.DISPOZITIE_LIVRARE;
 				else if (radioCC.isChecked())
 					tipComanda = TipCmdDistrib.LIVRARE_CUSTODIE;
+				else if (radioACZC.isChecked())
+					tipComanda = TipCmdDistrib.ARTICOLE_COMANDA;
 				else if (radioCLP.isChecked()) {
 					if (spinnerFilialeClp.getSelectedItemPosition() == 0) {
 						Toast.makeText(context, "Selectati filiala", Toast.LENGTH_LONG).show();
 						return;
 					}
 
-					@SuppressWarnings("unchecked")
 					HashMap<String, String> artMap = (HashMap<String, String>) adapterFiliale.getItem(spinnerFilialeClp.getSelectedItemPosition());
 					codFilialaDest = artMap.get("codJudet");
 					tipComanda = TipCmdDistrib.COMANDA_LIVRARE;
