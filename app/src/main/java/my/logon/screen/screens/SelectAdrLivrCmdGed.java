@@ -109,7 +109,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
     String[] docInsot = {"Factura", "Aviz de expeditie"};
 
     private String[] tipPlataContract = {"LC - Limita credit", "N - Numerar in filiala", "OPA - OP avans", "R - ramburs"};
-    private String[] tipPlataClBlocatIP = {"N - Numerar in filiala"};
+    private String[] tipPlataClBlocatIP = {"N - Numerar in filiala",  "OPA - OP avans", "R - ramburs"};
     private String[] tipPlataClBlocatNonIP = {"C - Card bancar", "N - Numerar in filiala", "OPA - OP avans", "R - Ramburs"};
     private String[] tipPlataRestIP = {"N - Numerar in filiala", "OPA - OP avans"};
     private String[] tipPlataRestNonIP = {"C - Card bancar", "N - Numerar in filiala", "OPA - OP avans", "R - Ramburs"};
@@ -1160,6 +1160,11 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
                 }
 
                 if (spinnerPlata.getSelectedItem().toString().substring(0, 1).equals("O")) {
+                    spinnerTermenPlata.setSelection(0);
+                    spinnerTermenPlata.setEnabled(false);
+                }
+
+                if (spinnerPlata.getSelectedItem().toString().substring(0, 1).equals("C")) {
                     spinnerTermenPlata.setSelection(0);
                     spinnerTermenPlata.setEnabled(false);
                 }

@@ -436,6 +436,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 				Toast.makeText(getApplicationContext(), "Selectati o comanda!", Toast.LENGTH_SHORT).show();
 			}
 
+
 			return true;
 
 		case android.R.id.home:
