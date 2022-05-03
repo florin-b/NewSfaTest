@@ -1,36 +1,11 @@
 /**
  * @author florinb
- * 
  */
 package my.logon.screen.screens;
 
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-
-import my.logon.screen.listeners.ComenziDAOListener;
-import my.logon.screen.model.ArticolComanda;
-import my.logon.screen.model.ComenziDAO;
-
-import my.logon.screen.model.UserInfo;
-import my.logon.screen.R;
-import my.logon.screen.utils.UtilsDates;
-
-import my.logon.screen.adapters.ArticolCustodieAdapter;
-import my.logon.screen.adapters.ArticolModificareAdapter;
-import my.logon.screen.adapters.ComandaModificareAdapter;
-import my.logon.screen.adapters.CustodiiAdapter;
-
 import android.app.ActionBar;
 import android.app.Activity;
-
 import android.app.DatePickerDialog;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -39,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
@@ -46,296 +22,407 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+import my.logon.screen.R;
+import my.logon.screen.adapters.ArticolModifDataLivrAdapter;
+import my.logon.screen.adapters.ComandaModificareAdapter;
 import my.logon.screen.beans.BeanArticoleAfisare;
 import my.logon.screen.beans.BeanComandaCreata;
-
 import my.logon.screen.beans.DateLivrareAfisare;
 import my.logon.screen.beans.StatusIntervalLivrare;
 import my.logon.screen.dialogs.SelectDateDialog;
 import my.logon.screen.enums.EnumComenziDAO;
+import my.logon.screen.listeners.ComenziDAOListener;
+import my.logon.screen.model.ArticolComanda;
+import my.logon.screen.model.ComenziDAO;
+import my.logon.screen.model.UserInfo;
+import my.logon.screen.utils.UtilsDates;
 
 public class ModificareDataLivrare extends Activity implements ComenziDAOListener {
 
-	Spinner spinnerCmdClp;
+    Spinner spinnerCmdClp;
 
-	private static String selectedCmd = "";
+    private static String selectedCmd = "";
 
-	private TextView textDataLivrare;
+    private TextView textDataLivrare;
 
-	private LinearLayout layoutDataLivrare;
+    private LinearLayout layoutDataLivrare;
 
-	private ComenziDAO operatiiComenzi;
-	private Button btnDataLivrare;
-	private Button btnSalveaza;
+    private ComenziDAO operatiiComenzi;
+    private Button btnDataLivrare;
+    private Button btnSalveaza;
 
-	private ListView listViewArticole;
-	private Spinner spinnerComenzi;
-	public static String codClient = "";
-	public static String codAdresa = "";
-	public static String idComanda = "";
-	public static DateLivrareAfisare dateLivrare;
+    private ListView listViewArticole;
+    private Spinner spinnerComenzi;
+    public static String codClient = "";
+    public static String codAdresa = "";
+    public static String idComanda = "";
+    public static DateLivrareAfisare dateLivrare;
 
-	private List<BeanComandaCreata> listComenzi;
-	private BeanComandaCreata comandaSelectata;
+    private List<BeanComandaCreata> listComenzi;
+    private BeanComandaCreata comandaSelectata;
+    private LinearLayout livrPartLayout, livrPartLayout1;
+    private String[] livrPartOpt = {"Selectati una din optiunile:", "Livrare partiala",
+            "Livrare finala"};
+    private Spinner spinnerLivrPart;
+    private StatusIntervalLivrare statusInterval;
+    private boolean isLivrPartACZC;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
-		setTheme(R.style.LRTheme);
-		setContentView(R.layout.modificare_data_livrare);
+        setTheme(R.style.LRTheme);
+        setContentView(R.layout.modificare_data_livrare);
 
-		operatiiComenzi = ComenziDAO.getInstance(this);
-		operatiiComenzi.setComenziDAOListener(this);
+        operatiiComenzi = ComenziDAO.getInstance(this);
+        operatiiComenzi.setComenziDAOListener(this);
 
-		ActionBar actionBar = getActionBar();
-		actionBar.setTitle("Modificare data livrare");
-		actionBar.setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getActionBar();
+        actionBar.setTitle("Modificare data livrare");
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
-		spinnerComenzi = (Spinner) findViewById(R.id.spinnerComenzi);
+        spinnerComenzi = (Spinner) findViewById(R.id.spinnerComenzi);
 
-		spinnerComenzi.setVisibility(View.INVISIBLE);
-		addSpinnerListener();
 
-		listViewArticole = (ListView) findViewById(R.id.listArtComenzi);
+        livrPartLayout = (LinearLayout) findViewById(R.id.livrPartLayout);
+        livrPartLayout1 = (LinearLayout) findViewById(R.id.livrPartLayout1);
+        spinnerLivrPart = (Spinner) findViewById(R.id.spinnerLivrPart);
+        ArrayAdapter livrPartAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, livrPartOpt);
+        spinnerLivrPart.setAdapter(livrPartAdapter);
+        setSpinnerLivrPartListener();
 
-		listViewArticole.setVisibility(View.INVISIBLE);
+        spinnerComenzi.setVisibility(View.INVISIBLE);
+        addSpinnerListener();
 
-		textDataLivrare = (TextView) findViewById(R.id.textDataLivrare);
+        listViewArticole = (ListView) findViewById(R.id.listArtComenzi);
 
-		layoutDataLivrare = (LinearLayout) findViewById(R.id.layoutDataLivrare);
-		layoutDataLivrare.setVisibility(View.INVISIBLE);
+        listViewArticole.setVisibility(View.INVISIBLE);
 
-		btnDataLivrare = (Button) findViewById(R.id.btnDataLivrare);
-		setListenerDataLivrare();
+        textDataLivrare = (TextView) findViewById(R.id.textDataLivrare);
 
-		btnSalveaza = (Button) findViewById(R.id.btnSalveaza);
-		setListenerBtnSalveaza();
+        layoutDataLivrare = (LinearLayout) findViewById(R.id.layoutDataLivrare);
+        layoutDataLivrare.setVisibility(View.INVISIBLE);
 
-		getListComenzi();
+        btnDataLivrare = (Button) findViewById(R.id.btnDataLivrare);
+        setListenerDataLivrare();
 
-	}
+        btnSalveaza = (Button) findViewById(R.id.btnSalveaza);
+        setListenerBtnSalveaza();
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		return true;
-	}
+        getListComenzi();
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+    }
 
-		switch (item.getItemId()) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        return true;
+    }
 
-		case android.R.id.home:
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-			clearAllData();
-			UserInfo.getInstance().setParentScreen("");
-			Intent nextScreen = new Intent(getApplicationContext(), MainMenu.class);
+        switch (item.getItemId()) {
 
-			startActivity(nextScreen);
+            case android.R.id.home:
 
-			finish();
+                clearAllData();
+                UserInfo.getInstance().setParentScreen("");
+                Intent nextScreen = new Intent(getApplicationContext(), MainMenu.class);
 
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
+                startActivity(nextScreen);
 
-	}
+                finish();
 
-	private void getListComenzi() {
-		HashMap<String, String> params = new HashMap<String, String>();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
 
-		params.put("filiala", UserInfo.getInstance().getUnitLog());
-		params.put("codUser", UserInfo.getInstance().getCod());
-		params.put("tipCmd", "1");
-		params.put("depart", UserInfo.getInstance().getCodDepart());
-		params.put("tipUser", UserInfo.getInstance().getTipUser());
-		params.put("tipUserSap", UserInfo.getInstance().getTipUserSap());
+    }
 
-		operatiiComenzi.getListComenzi(params);
+    private void getListComenzi() {
+        HashMap<String, String> params = new HashMap<String, String>();
 
-	}
+        params.put("filiala", UserInfo.getInstance().getUnitLog());
+        params.put("codUser", UserInfo.getInstance().getCod());
+        params.put("tipCmd", "1");
+        params.put("depart", UserInfo.getInstance().getCodDepart());
+        params.put("tipUser", UserInfo.getInstance().getTipUser());
+        params.put("tipUserSap", UserInfo.getInstance().getTipUserSap());
 
-	void noComenziLayout() {
+        operatiiComenzi.getListComenzi(params);
 
-		spinnerComenzi.setVisibility(View.INVISIBLE);
-		selectedCmd = "-1";
+    }
 
-		spinnerComenzi.setAdapter(null);
-		listViewArticole.setAdapter(null);
+    void noComenziLayout() {
 
-		((LinearLayout) findViewById(R.id.layoutCustodii)).setVisibility(View.INVISIBLE);
+        spinnerComenzi.setVisibility(View.INVISIBLE);
+        selectedCmd = "-1";
 
-	}
+        spinnerComenzi.setAdapter(null);
+        listViewArticole.setAdapter(null);
 
-	private void setListenerDataLivrare() {
-		btnDataLivrare.setOnClickListener(new OnClickListener() {
+        ((LinearLayout) findViewById(R.id.layoutCustodii)).setVisibility(View.INVISIBLE);
 
-			@Override
-			public void onClick(View v) {
-				Locale.setDefault(new Locale("ro"));
+    }
 
-				int year = Calendar.getInstance().get(Calendar.YEAR);
-				int month = Calendar.getInstance().get(Calendar.MONTH);
-				int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-				SelectDateDialog datePickerDialog = new SelectDateDialog(ModificareDataLivrare.this, datePickerListener, year, month, day);
-				datePickerDialog.setTitle("Data livrare");
+    private void setListenerDataLivrare() {
+        btnDataLivrare.setOnClickListener(new OnClickListener() {
 
-				datePickerDialog.show();
+            @Override
+            public void onClick(View v) {
+                Locale.setDefault(new Locale("ro"));
 
-			}
-		});
-	}
+                int year = Calendar.getInstance().get(Calendar.YEAR);
+                int month = Calendar.getInstance().get(Calendar.MONTH);
+                int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+                SelectDateDialog datePickerDialog = new SelectDateDialog(ModificareDataLivrare.this, datePickerListener, year, month, day);
+                datePickerDialog.setTitle("Data livrare");
 
-	private void setListenerBtnSalveaza() {
+                datePickerDialog.show();
 
-		btnSalveaza.setOnClickListener(new OnClickListener() {
+            }
+        });
+    }
 
-			@Override
-			public void onClick(View v) {
+    private void setListenerBtnSalveaza() {
 
-				setCmdDataLivrare();
+        btnSalveaza.setOnClickListener(new OnClickListener() {
 
-			}
-		});
+            @Override
+            public void onClick(View v) {
 
-	}
+                if (isLivrPartACZC && spinnerLivrPart.getSelectedItemPosition() == 0)
+                    Toast.makeText(getApplicationContext(), "Selectati tipul de livrare.", Toast.LENGTH_LONG).show();
+                else
+                    setCmdDataLivrare();
 
-	private void setCmdDataLivrare() {
+            }
+        });
 
-		String[] dataLivrare = textDataLivrare.getText().toString().split("\\-");
+    }
 
-		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("idComanda", selectedCmd);
-		params.put("dataLivrare", dataLivrare[2] + "-" + dataLivrare[1] + "-" + dataLivrare[0]);
+    private void setCmdDataLivrare() {
 
-		operatiiComenzi.setCmdVanzDataLivrare(params);
-	}
+        String[] dataLivrare = textDataLivrare.getText().toString().split("\\-");
 
-	private void operatieLivrareStatus(String result) {
-		Toast.makeText(getApplicationContext(), result.split("#")[1], Toast.LENGTH_LONG).show();
+        String strLivrFinala = " ";
 
-	}
+        if (isLivrPartACZC) {
+            if (spinnerLivrPart.getSelectedItem().toString().contains("finala"))
+                strLivrFinala = "X";
+        }
 
-	private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
 
-		public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("idComanda", selectedCmd);
+        params.put("dataLivrare", dataLivrare[2] + "-" + dataLivrare[1] + "-" + dataLivrare[0]);
+        params.put("livrareFinala", strLivrFinala);
 
-			if (view.isShown()) {
+        operatiiComenzi.setCmdVanzDataLivrare(params);
 
-				SimpleDateFormat displayFormat = new SimpleDateFormat("dd-MM-yyyy");
-				Calendar calendar = new GregorianCalendar(selectedYear, selectedMonth, selectedDay);
 
-				StatusIntervalLivrare statusInterval = UtilsDates.getStatusIntervalLivrare(calendar.getTime());
+    }
 
-				if (statusInterval.isValid()) {
-					textDataLivrare.setText(displayFormat.format(calendar.getTime()));
-					btnSalveaza.setVisibility(View.VISIBLE);
-				} else
-					Toast.makeText(getApplicationContext(), statusInterval.getMessage(), Toast.LENGTH_LONG).show();
-			}
+    private void operatieLivrareStatus(String result) {
+        Toast.makeText(getApplicationContext(), result.split("#")[1], Toast.LENGTH_LONG).show();
 
-		}
-	};
+    }
 
-	private void clearAllData() {
+    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
 
-		selectedCmd = "";
+        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
 
-	}
+            if (view.isShown()) {
 
-	@Override
-	public void onBackPressed() {
+                SimpleDateFormat displayFormat = new SimpleDateFormat("dd-MM-yyyy");
+                Calendar calendar = new GregorianCalendar(selectedYear, selectedMonth, selectedDay);
 
-		clearAllData();
-		UserInfo.getInstance().setParentScreen("");
-		Intent nextScreen = new Intent(getApplicationContext(), MainMenu.class);
-		startActivity(nextScreen);
+                statusInterval = UtilsDates.getStatusIntervalLivrare(calendar.getTime());
 
-		finish();
-		return;
-	}
+                if (statusInterval.isValid()) {
+                    textDataLivrare.setText(displayFormat.format(calendar.getTime()));
+                    btnSalveaza.setVisibility(View.VISIBLE);
+                } else
+                    Toast.makeText(getApplicationContext(), statusInterval.getMessage(), Toast.LENGTH_LONG).show();
+            }
 
-	void addSpinnerListener() {
-		spinnerComenzi.setOnItemSelectedListener(new OnItemSelectedListener() {
+        }
+    };
 
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				comandaSelectata = listComenzi.get(position);
-				getArticoleComanda(listComenzi.get(position).getId());
-				selectedCmd = listComenzi.get(position).getCmdSap();
+    private void setSpinnerLivrPartListener() {
+        spinnerLivrPart.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-			}
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-			public void onNothingSelected(AdapterView<?> arg0) {
+                if (statusInterval != null && statusInterval.isValid() && position > 0)
+                    btnSalveaza.setVisibility(View.VISIBLE);
+                else
+                    btnSalveaza.setVisibility(View.INVISIBLE);
 
-			}
-		});
-	}
+            }
 
-	private void getArticoleComanda(String idComanda) {
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
 
-		HashMap<String, String> params = new HashMap<String, String>();
+            }
+        });
+    }
 
-		params.put("nrCmd", idComanda);
-		params.put("afisCond", "1");
-		params.put("tipUser", UserInfo.getInstance().getTipUser());
 
-		operatiiComenzi.getArticoleComandaJSON(params);
+    private boolean isCmdACZCToSave() {
+        if (!comandaSelectata.isComandaACZC())
+            return true;
+        else if (isLivrPartACZC && spinnerLivrPart.getSelectedItemPosition() == 0)
+            return false;
 
-	}
+        return true;
 
-	private void afiseazaListaComenzi(List<BeanComandaCreata> listComenzi) {
+    }
 
-		if (!listComenzi.isEmpty()) {
-			ComandaModificareAdapter adapter = new ComandaModificareAdapter(listComenzi, this);
-			spinnerComenzi.setAdapter(adapter);
-			spinnerComenzi.setVisibility(View.VISIBLE);
-			layoutDataLivrare.setVisibility(View.VISIBLE);
+    private void verificaLivrareACZC(List<ArticolComanda> listArticole) {
 
-			selectedCmd = adapter.getItem(0).getCmdSap();
+        isLivrPartACZC = false;
 
-		} else {
-			spinnerComenzi.setVisibility(View.INVISIBLE);
-			layoutDataLivrare.setVisibility(View.INVISIBLE);
-			Toast.makeText(getApplicationContext(), "Nu exista comenzi.", Toast.LENGTH_SHORT).show();
-		}
+        for (ArticolComanda articol : listArticole) {
 
-	}
+            if (articol.getCantitate() != articol.getAczcDeLivrat()) {
+                isLivrPartACZC = true;
+                break;
+            }
 
-	private void afiseazaArticoleComanda(BeanArticoleAfisare articoleComanda) {
+        }
 
-		ArticolModificareAdapter adapterArticole = new ArticolModificareAdapter(this, articoleComanda.getListArticole(), articoleComanda.getConditii()
-				.getArticole(), comandaSelectata);
 
-		textDataLivrare.setText(articoleComanda.getDateLivrare().getDataLivrare().replace(".", "-"));
+    }
 
-		listViewArticole.setAdapter(adapterArticole);
-		listViewArticole.setVisibility(View.VISIBLE);
-	}
+    private void clearAllData() {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void operationComenziComplete(EnumComenziDAO methodName, Object result) {
-		switch (methodName) {
+        selectedCmd = "";
 
-		case SET_CMD_VANZ_DATA_LIVRARE:
-			operatieLivrareStatus((String) result);
-			break;
-		case GET_LIST_COMENZI:
-			this.listComenzi = (List<BeanComandaCreata>) result;
-			afiseazaListaComenzi(this.listComenzi);
-			break;
-		case GET_ARTICOLE_COMANDA_JSON:
-			afiseazaArticoleComanda(operatiiComenzi.deserializeArticoleComanda((String) result));
-			break;
+    }
 
-		default:
-			break;
-		}
+    @Override
+    public void onBackPressed() {
 
-	}
+        clearAllData();
+        UserInfo.getInstance().setParentScreen("");
+        Intent nextScreen = new Intent(getApplicationContext(), MainMenu.class);
+        startActivity(nextScreen);
+
+        finish();
+        return;
+    }
+
+    void addSpinnerListener() {
+        spinnerComenzi.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                comandaSelectata = listComenzi.get(position);
+                getArticoleComanda(listComenzi.get(position).getId());
+                selectedCmd = listComenzi.get(position).getCmdSap();
+                statusInterval = null;
+                btnSalveaza.setVisibility(View.INVISIBLE);
+                isLivrPartACZC = false;
+
+            }
+
+            public void onNothingSelected(AdapterView<?> arg0) {
+
+            }
+        });
+    }
+
+
+    private void setLivrPartVisibility(boolean isVisible) {
+
+        if (isVisible) {
+            livrPartLayout.setVisibility(View.VISIBLE);
+            livrPartLayout1.setVisibility(View.VISIBLE);
+            spinnerLivrPart.setSelection(0);
+        } else {
+            livrPartLayout.setVisibility(View.GONE);
+            livrPartLayout1.setVisibility(View.GONE);
+        }
+    }
+
+    private void getArticoleComanda(String idComanda) {
+
+        HashMap<String, String> params = new HashMap<String, String>();
+
+        params.put("nrCmd", idComanda);
+        params.put("afisCond", "1");
+        params.put("tipUser", UserInfo.getInstance().getTipUser());
+
+        operatiiComenzi.getArticoleComandaJSON(params);
+
+    }
+
+    private void afiseazaListaComenzi(List<BeanComandaCreata> listComenzi) {
+
+        if (!listComenzi.isEmpty()) {
+            ComandaModificareAdapter adapter = new ComandaModificareAdapter(listComenzi, this);
+            spinnerComenzi.setAdapter(adapter);
+            spinnerComenzi.setVisibility(View.VISIBLE);
+            layoutDataLivrare.setVisibility(View.VISIBLE);
+
+            selectedCmd = adapter.getItem(0).getCmdSap();
+
+        } else {
+            spinnerComenzi.setVisibility(View.INVISIBLE);
+            layoutDataLivrare.setVisibility(View.INVISIBLE);
+            Toast.makeText(getApplicationContext(), "Nu exista comenzi.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void afiseazaArticoleComanda(BeanArticoleAfisare articoleComanda) {
+
+        ArticolModifDataLivrAdapter adapterArticole = new ArticolModifDataLivrAdapter(this, articoleComanda.getListArticole(), articoleComanda.getConditii()
+                .getArticole(), comandaSelectata);
+
+        textDataLivrare.setText(articoleComanda.getDateLivrare().getDataLivrare().replace(".", "-"));
+
+        listViewArticole.setAdapter(adapterArticole);
+        listViewArticole.setVisibility(View.VISIBLE);
+
+        if (comandaSelectata.isComandaACZC())
+            verificaLivrareACZC(articoleComanda.getListArticole());
+
+        setLivrPartVisibility(isLivrPartACZC);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void operationComenziComplete(EnumComenziDAO methodName, Object result) {
+        switch (methodName) {
+
+            case SET_CMD_VANZ_DATA_LIVRARE:
+                operatieLivrareStatus((String) result);
+                break;
+            case GET_LIST_COMENZI:
+                this.listComenzi = (List<BeanComandaCreata>) result;
+                afiseazaListaComenzi(this.listComenzi);
+                break;
+            case GET_ARTICOLE_COMANDA_JSON:
+                afiseazaArticoleComanda(operatiiComenzi.deserializeArticoleComanda((String) result));
+                break;
+
+            default:
+                break;
+        }
+
+    }
 }

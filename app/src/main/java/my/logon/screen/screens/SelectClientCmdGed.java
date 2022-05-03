@@ -747,7 +747,9 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 
 		FurnizorComanda furnizorComanda = null;
 
-		if (DateLivrare.getInstance().getTipComandaGed() == TipCmdGed.DISPOZITIE_LIVRARE) {
+		boolean localIsCmdACZC = DateLivrare.getInstance().getTipComandaGed() == TipCmdGed.ARTICOLE_COMANDA;
+
+		if (DateLivrare.getInstance().getTipComandaGed() == TipCmdGed.DISPOZITIE_LIVRARE || DateLivrare.getInstance().getTipComandaGed() == TipCmdGed.ARTICOLE_COMANDA) {
 			furnizorComanda = DateLivrare.getInstance().getFurnizorComanda();
 		}
 
@@ -762,6 +764,9 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 		if (furnizorComanda != null) {
 			DateLivrare.getInstance().setFurnizorComanda(furnizorComanda);
 			DateLivrare.getInstance().setTipComandaGed(TipCmdGed.DISPOZITIE_LIVRARE);
+
+			if (localIsCmdACZC)
+                DateLivrare.getInstance().setTipComandaGed(TipCmdGed.ARTICOLE_COMANDA);
 		}
 
 	}

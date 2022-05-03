@@ -95,6 +95,9 @@ public class ArticolComanda implements Comparable<ArticolComanda> {
 
 	private double pretFaraTva;
 
+	private double aczcDeLivrat;
+	private double aczcLivrat;
+
 	public int getNrCrt() {
 		return nrCrt;
 	}
@@ -636,6 +639,22 @@ public class ArticolComanda implements Comparable<ArticolComanda> {
 
 	public void setDataExpPret(String dataExpPret) {
 		this.dataExpPret = dataExpPret;
+	}
+
+	public double getAczcDeLivrat() {
+		return aczcDeLivrat;
+	}
+
+	public void setAczcDeLivrat(double aczcDeLivrat) {
+		this.aczcDeLivrat = aczcDeLivrat;
+	}
+
+	public double getAczcLivrat() {
+		return aczcLivrat;
+	}
+
+	public void setAczcLivrat(double aczcLivrat) {
+		this.aczcLivrat = aczcLivrat;
 	}
 
 	public ArticolMathaus getArticolMathaus() {

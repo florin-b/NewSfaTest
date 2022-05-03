@@ -93,4 +93,6 @@ public interface OperatiiArticol {
 	
 	public String serializeCostTransportMathaus(List<CostTransportMathaus> costTransport);
 
+	public void getArticoleACZC(HashMap<String, String> params);
+
 }

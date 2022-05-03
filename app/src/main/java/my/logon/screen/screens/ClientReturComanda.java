@@ -160,6 +160,7 @@ public class ClientReturComanda extends Fragment implements OperatiiClientListen
 			params.put("departAg", UserInfo.getInstance().getCodDepart());
 			params.put("unitLog", UserInfo.getInstance().getUnitLog());
 			params.put("tipCmd","CMD");
+			params.put("tipUserSap", UserInfo.getInstance().getTipUserSap());
 
 			if (UtilsUser.isUserGed() || tipComanda == EnumTipComanda.GED)
 				opClient.getListClientiCV(params);

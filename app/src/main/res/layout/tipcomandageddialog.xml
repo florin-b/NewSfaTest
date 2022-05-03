@@ -2,23 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="5dip"
         android:layout_marginLeft="5dip"
-        android:layout_marginRight="5dip"
         android:layout_marginTop="15dip"
-        android:orientation="horizontal" >
+        android:layout_marginRight="5dip"
+        android:layout_marginBottom="5dip"
+        android:orientation="horizontal">
 
         <RadioGroup
             android:id="@+id/radioTipCmd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dip"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <RadioButton
                 android:id="@+id/radioNoua"
@@ -29,8 +29,7 @@
                 android:text="Comanda de vanzare"
                 android:textColor="@color/detColor1"
                 android:textSize="17sp"
-                android:typeface="sans" >
-            </RadioButton>
+                android:typeface="sans"></RadioButton>
 
             <RadioButton
                 android:id="@+id/radioDL"
@@ -40,8 +39,19 @@
                 android:text="Dispozitie de livrare DL"
                 android:textColor="@color/detColor1"
                 android:textSize="17sp"
-                android:typeface="sans" >
-            </RadioButton>
+                android:typeface="sans"></RadioButton>
+
+            <RadioButton
+                android:id="@+id/radioACZC"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dip"
+                android:checked="false"
+                android:text="Articole la comanda"
+                android:textColor="@color/detColor1"
+                android:textSize="17sp"
+                android:typeface="sans"></RadioButton>
+
 
             <RadioButton
                 android:id="@+id/radioCLP"
@@ -52,8 +62,7 @@
                 android:text="Comanda de livrare CLP"
                 android:textColor="@color/detColor1"
                 android:textSize="17sp"
-                android:typeface="sans" >
-            </RadioButton>
+                android:typeface="sans"></RadioButton>
 
             <RadioButton
                 android:id="@+id/radioAmob"
@@ -65,8 +74,7 @@
                 android:textColor="@color/detColor1"
                 android:textSize="17sp"
                 android:typeface="sans"
-                android:visibility="gone" >
-            </RadioButton>
+                android:visibility="gone"></RadioButton>
         </RadioGroup>
 
         <Spinner
@@ -74,8 +82,8 @@
             android:layout_width="0dp"
             android:layout_height="45dip"
             android:layout_gravity="bottom|left"
-            android:layout_marginBottom="20dip"
             android:layout_marginLeft="30dip"
+            android:layout_marginBottom="20dip"
             android:layout_weight="0.2"
             android:gravity="left"
             android:visibility="invisible" />
@@ -85,8 +93,8 @@
             android:layout_width="0dp"
             android:layout_height="45dip"
             android:layout_gravity="bottom|left"
-            android:layout_marginBottom="20dip"
             android:layout_marginLeft="30dip"
+            android:layout_marginBottom="20dip"
             android:layout_weight="0.1"
             android:gravity="left"
             android:visibility="invisible" />
@@ -106,11 +114,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="5dip"
         android:layout_marginLeft="5dip"
-        android:layout_marginRight="5dip"
         android:layout_marginTop="15dip"
-        android:orientation="horizontal" >
+        android:layout_marginRight="5dip"
+        android:layout_marginBottom="5dip"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btnOkTipCmd"

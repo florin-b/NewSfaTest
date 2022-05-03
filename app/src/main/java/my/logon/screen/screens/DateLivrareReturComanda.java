@@ -55,7 +55,7 @@ public class DateLivrareReturComanda extends Fragment implements OnItemClickList
 	private ListPopupWindow lpw;
 
 	private EditText textOras, textStrada, textPersoana, textTelefon, textObservatii;
-	public static String dataRetur, tipTransport, motivRetur, adresaCodJudet = "", adresaOras = "", adresaStrada = "", numePersContact = "",
+	public static String dataRetur, tipTransport, adresaCodJudet = "", adresaOras = "", adresaStrada = "", numePersContact = "",
 			telPersContact = "", adresaCodAdresa = "", observatii = "";
 	public static boolean transBack = true;
 	private String[] arrayPersoane, arrayTelefoane;

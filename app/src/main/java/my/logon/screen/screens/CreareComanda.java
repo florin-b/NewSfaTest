@@ -908,6 +908,10 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 		return DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.LIVRARE_CUSTODIE;
 	}
 
+	private boolean isComandaACZC() {
+		return DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.ARTICOLE_COMANDA;
+	}
+
 	private boolean isRestrictieCLP() {
 
 		boolean isCLP = DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.COMANDA_LIVRARE;
@@ -1595,6 +1599,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 			obj.put("autoDelegat", DateLivrare.getInstance().getDelegat().getNrAuto());
 			obj.put("refClient", DateLivrare.getInstance().getRefClient());
 			obj.put("costTransportMathaus", opArticol.serializeCostTransportMathaus(DateLivrare.getInstance().getCostTransportMathaus()));
+			obj.put("isComandaACZC", isComandaACZC());
 
 		} catch (JSONException ex) {
 			Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();

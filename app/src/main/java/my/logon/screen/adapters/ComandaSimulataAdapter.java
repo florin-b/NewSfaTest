@@ -1,20 +1,21 @@
 package my.logon.screen.adapters;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.List;
-
-import my.logon.screen.R;
-import my.logon.screen.model.Constants;
-import my.logon.screen.utils.UtilsFormatting;
-import my.logon.screen.utils.UtilsUser;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.List;
+
+import my.logon.screen.R;
 import my.logon.screen.beans.BeanComandaSimulata;
+import my.logon.screen.model.Constants;
+import my.logon.screen.utils.UtilsFormatting;
+import my.logon.screen.utils.UtilsUser;
 
 public class ComandaSimulataAdapter extends BaseAdapter {
 
@@ -77,6 +78,9 @@ public class ComandaSimulataAdapter extends BaseAdapter {
 				viewHolder.textAprobata.setText("In curs de aprobare");
 		}
 
+		viewHolder.textValAvans.setText("Avans: " + String.valueOf(comanda.getAvans()));
+
+/*
 		if (comanda.getCodStare().equals("21")) {
 			viewHolder.textValAvans.setText("Avans: " + String.valueOf(comanda.getAvans()));
 			viewHolder.textValAvans.setVisibility(View.VISIBLE);
@@ -85,6 +89,8 @@ public class ComandaSimulataAdapter extends BaseAdapter {
 			viewHolder.textValAvans.setVisibility(View.INVISIBLE);
 			viewHolder.textMonedaAvans.setVisibility(View.INVISIBLE);
 		}
+
+ */
 
 		return convertView;
 	}

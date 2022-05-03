@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class TipComandaDistributieDialog extends Dialog {
 	private Context context;
 	private TipCmdDistrib tipComanda = TipCmdDistrib.COMANDA_VANZARE;
 	private String codFilialaDest = "";
+
 
 	private String[] numeFiliala = { "Bacau", "Baia Mare", "Brasov", "Buzau", "Brasov-central", "Buc. Andronache", "Buc. Militari", "Buc. Otopeni",
 			"Buc. Glina", "Constanta", "Cluj", "Craiova", "Focsani", "Galati", "Hunedoara", "Iasi", "Oradea", "Piatra Neamt", "Pitesti", "Ploiesti", "Sibiu",
@@ -55,6 +57,8 @@ public class TipComandaDistributieDialog extends Dialog {
 		final RadioButton radioACZC = (RadioButton) findViewById(R.id.radioACZC);
 
 		final Spinner spinnerFilialeClp = (Spinner) findViewById(R.id.spinFilialaCLP);
+
+		final TextView textInfo = (TextView) findViewById(R.id.textInfo);
 
 		ArrayList<HashMap<String, String>> listFiliale = new ArrayList<HashMap<String, String>>();
 		final SimpleAdapter adapterFiliale = new SimpleAdapter(context, listFiliale, R.layout.rowlayoutjudete, new String[] { "numeJudet", "codJudet" },
@@ -99,6 +103,7 @@ public class TipComandaDistributieDialog extends Dialog {
 			@Override
 			public void onClick(View v) {
 				spinnerFilialeClp.setVisibility(View.INVISIBLE);
+				textInfo.setVisibility(View.INVISIBLE);
 
 			}
 
@@ -109,6 +114,7 @@ public class TipComandaDistributieDialog extends Dialog {
 			@Override
 			public void onClick(View v) {
 				spinnerFilialeClp.setVisibility(View.INVISIBLE);
+				textInfo.setVisibility(View.INVISIBLE);
 
 			}
 
@@ -119,6 +125,7 @@ public class TipComandaDistributieDialog extends Dialog {
 			@Override
 			public void onClick(View v) {
 				spinnerFilialeClp.setVisibility(View.INVISIBLE);
+				textInfo.setVisibility(View.INVISIBLE);
 
 			}
 
@@ -129,6 +136,19 @@ public class TipComandaDistributieDialog extends Dialog {
 			@Override
 			public void onClick(View v) {
 				spinnerFilialeClp.setVisibility(View.VISIBLE);
+				textInfo.setVisibility(View.INVISIBLE);
+
+			}
+
+		});
+
+		radioACZC.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				spinnerFilialeClp.setVisibility(View.INVISIBLE);
+				textInfo.setVisibility(View.VISIBLE);
+				textInfo.setText("Trebuie sa existe un proces verbal de angajament semnat de client.");
 
 			}
 
