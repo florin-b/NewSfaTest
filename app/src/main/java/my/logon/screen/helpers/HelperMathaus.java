@@ -46,7 +46,7 @@ public class HelperMathaus {
 
 				ArticolComanda articol = iterator.next();
 
-				if (cost.getFiliala().equals(articol.getFilialaSite()) && cost.getCodArtTransp().replaceAll("^0+", "").equals(articol.getCodArticol().replaceAll("^0+", ""))) {
+				if (cost.getCodArtTransp().replaceAll("^0+", "").equals(articol.getCodArticol().replaceAll("^0+", ""))) {
 					iterator.remove();
 				}
 
@@ -86,6 +86,7 @@ public class HelperMathaus {
 		articolComanda.setDepart(articol.getDepart());
 		articolComanda.setDepartSintetic(articol.getDepart());
 		articolComanda.setFilialaSite(costTransport.getFiliala());
+		articolComanda.setTipTransport(costTransport.getTipTransp());
 
 		return articolComanda;
 	}

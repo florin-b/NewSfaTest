@@ -623,16 +623,7 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 
         new DownloadImageTask(imageArt).execute(articol.getAdresaImgMare());
 
-        if (articol.getTip2().toUpperCase().equals("S")) {
-
-
-            btnStocMathaus.performClick();
-        } else {
-
-
-            globalCodDepartSelectetItem = articol.getDepart();
-            performListArtStoc();
-        }
+        btnStocMathaus.performClick();
 
     }
 

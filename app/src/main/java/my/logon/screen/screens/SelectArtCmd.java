@@ -498,12 +498,8 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 
         new DownloadImageTask(imageArt).execute(articol.getAdresaImgMare());
 
-        if (articol.getTip2().toUpperCase().equals("S")) {
-            btnStocMathaus.performClick();
-        } else {
-            globalCodDepartSelectetItem = articol.getDepart();
-            performListArtStoc();
-        }
+        btnStocMathaus.performClick();
+
 
     }
 
@@ -565,7 +561,15 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
         DateArticolMathaus dateArticol = comandaMathaus.getDeliveryEntryDataList().get(0);
         String strStoc = dateArticol.getQuantity() + "#" + dateArticol.getUnit() + "#1#";
         strStoc = dateArticol.getQuantity() + "#" + dateArticol.getUnit() + "#1#";
-        listArtStoc(strStoc);
+
+        if (dateArticol.getQuantity() > 0)
+            listArtStoc(strStoc);
+        else {
+            globalCodDepartSelectetItem = articolMathaus.getDepart();
+            articolMathaus.setTip2("");
+            performListArtStoc();
+        }
+
 
     }
 
@@ -1367,1191 +1371,1191 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
             params.put("aczc", "false");
 
         opArticol.getArticoleFurnizor(params);
-        }
+    }
 
-        @SuppressWarnings("unchecked")
-        public void addListenerBtnSaveArt () {
-            saveArtBtn.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
+    @SuppressWarnings("unchecked")
+    public void addListenerBtnSaveArt() {
+        saveArtBtn.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
 
-                    try {
+                try {
 
-                        if (isLivrareCustodie()) {
-                            saveArticolCustodie();
+                    if (isLivrareCustodie()) {
+                        saveArticolCustodie();
+                        return;
+                    }
+
+                    if (isConditieCabluri05BV90() && listCabluri == null) {
+                        getCabluri05(codArticol);
+                        return;
+                    }
+
+                    String localUnitMas = "";
+                    String alteValori = "", subCmp = "0";
+                    boolean altDepozit = false;
+
+                    if (textCant.getVisibility() != View.VISIBLE) {
+                        return;
+                    }
+
+                    if (textProcRed.getText().toString().trim().length() == 0) {
+                        if (tglProc.getText().equals(("%")))
+                            textProcRed.setText("0");
+
+                    }
+
+                    if (CreareComanda.articoleComanda.equals("")) {
+                        depozUnic = globalDepozSel.substring(2, 3);
+                        unitLogUnic = CreareComanda.filialaAlternativa;
+                    }
+
+                    if (!depozUnic.equals(globalDepozSel.substring(2, 3))) {
+                        altDepozit = true;
+                    }
+
+                    if (!CreareComanda.depozitUnic.equals("") && !CreareComanda.depozitUnic.equals(globalDepozSel.substring(2, 3))) {
+                        altDepozit = true;
+                    }
+
+                    if (!unitLogUnic.equals(CreareComanda.filialaAlternativa) && !isUserExceptieFiliale()) {
+                        Toast.makeText(getApplicationContext(), "Selectati articole dintr-o singura filiala!", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (listUmVanz.size() > 1) {
+
+                        artMap = (HashMap<String, String>) spinnerUnitMas.getSelectedItem();
+                        String currentUnitMas = artMap.get("rowText");
+
+                        if (!currentUnitMas.equals(selectedUnitMasPret)) {
+                            Toast.makeText(getApplicationContext(), "Unitatea de masura nu corespunde celei pentru care a fost solicitat pretul.",
+                                    Toast.LENGTH_LONG).show();
+                            return;
+
+                        }
+
+                    }
+
+                    String cantArticol = textCant.getText().toString().trim();
+
+                    if (selectedCant != Double.parseDouble(cantArticol)) {
+
+                        Toast.makeText(getApplicationContext(), "Pretul nu corespunde cantitatii solicitate!", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (!isComandaDL()
+                            && !CreareComanda.tipComanda.equals("S")
+                            && Double.parseDouble(textCant.getText().toString().trim()) * (valoareUmrez / valoareUmren) > Double.parseDouble(textStoc.getText()
+                            .toString().replaceAll(",", ""))) {
+                        Toast.makeText(getApplicationContext(), "Stoc insuficient!", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    // verificare umvanz.
+
+                    localUnitMas = textUM.getText().toString().trim();
+
+                    if (listUmVanz.size() > 1) {
+
+                        artMap = (HashMap<String, String>) spinnerUnitMas.getSelectedItem();
+                        localUnitMas = artMap.get("rowText");
+
+                        if (!selectedUnitMas.equals(localUnitMas)) {
+                            Toast.makeText(getApplicationContext(), "U.m. vanzare eronata!", Toast.LENGTH_LONG).show();
+
                             return;
                         }
 
-                        if (isConditieCabluri05BV90() && listCabluri == null) {
-                            getCabluri05(codArticol);
-                            return;
-                        }
+                    }
 
-                        String localUnitMas = "";
-                        String alteValori = "", subCmp = "0";
-                        boolean altDepozit = false;
+                    // verificare procent discount
+                    double procRedFin = 0, valArticol = 0;
+                    procentAprob = 0;
 
-                        if (textCant.getVisibility() != View.VISIBLE) {
-                            return;
-                        }
+                    // exceptie material transport
+                    if (InfoStrings.isMatTransport(codArticol)) {
+                        initPrice = pretVanzare = finalPrice;
+                    }
 
-                        if (textProcRed.getText().toString().trim().length() == 0) {
-                            if (tglProc.getText().equals(("%")))
-                                textProcRed.setText("0");
+                    if (finalPrice == initPrice) // pretul din sap e pe
+                        // cantitate, daca se
+                        // modifica devine pe
+                        // unitate
+                        finalPrice = (finalPrice / globalCantArt) * valMultiplu;
 
-                        }
+                    valArticol = (finalPrice / valMultiplu) * globalCantArt;
 
-                        if (CreareComanda.articoleComanda.equals("")) {
-                            depozUnic = globalDepozSel.substring(2, 3);
-                            unitLogUnic = CreareComanda.filialaAlternativa;
-                        }
+                    if (initPrice != 0) {
+                        if (!tglProc.isChecked()) {
+                            if (textProcRed.getText().length() > 0)
+                                procRedFin = Double.parseDouble(textProcRed.getText().toString());
+                            else
+                                procRedFin = 0;
+                        } else
+                            procRedFin = (1 - finalPrice / (initPrice / globalCantArt * valMultiplu)) * 100;
+                    }
 
-                        if (!depozUnic.equals(globalDepozSel.substring(2, 3))) {
-                            altDepozit = true;
-                        }
+                    if (procRedFin > 0)// procent_aprob se calculeaza doar daca
+                    // exista proc. de reducere dat de ag.
+                    {
+                        procentAprob = (1 - finalPrice / (pretVanzare / globalCantArt * valMultiplu)) * 100;
+                    }
 
-                        if (!CreareComanda.depozitUnic.equals("") && !CreareComanda.depozitUnic.equals(globalDepozSel.substring(2, 3))) {
-                            altDepozit = true;
-                        }
+                    // sf. verificare
 
-                        if (!unitLogUnic.equals(CreareComanda.filialaAlternativa) && !isUserExceptieFiliale()) {
-                            Toast.makeText(getApplicationContext(), "Selectati articole dintr-o singura filiala!", Toast.LENGTH_LONG).show();
-                            return;
-                        }
+                    if (finalPrice != 0) {
 
-                        if (listUmVanz.size() > 1) {
+                        tipAlert = " ";
 
-                            artMap = (HashMap<String, String>) spinnerUnitMas.getSelectedItem();
-                            String currentUnitMas = artMap.get("rowText");
-
-                            if (!currentUnitMas.equals(selectedUnitMasPret)) {
-                                Toast.makeText(getApplicationContext(), "Unitatea de masura nu corespunde celei pentru care a fost solicitat pretul.",
-                                        Toast.LENGTH_LONG).show();
-                                return;
-
+                        if (!UserInfo.getInstance().getTipAcces().equals("27")) {
+                            if (procentAprob > discMaxAV) {
+                                tipAlert = "SD";
                             }
-
                         }
 
-                        String cantArticol = textCant.getText().toString().trim();
+                        // pentru KA este nevoie de aprobarea SD-ului in cazul
+                        // in care
+                        // cantitatea comandata este mai mare decat jumatate din
+                        // stocul disponibil
+                        if (UserInfo.getInstance().getTipAcces().equals("27")) {
+                            if (Double.parseDouble(cantArticol) > Double.parseDouble(textStoc.getText().toString().replaceAll(",", "")) / 2) {
 
-                        if (selectedCant != Double.parseDouble(cantArticol)) {
-
-                            Toast.makeText(getApplicationContext(), "Pretul nu corespunde cantitatii solicitate!", Toast.LENGTH_LONG).show();
-                            return;
-                        }
-
-                        if (!isComandaDL()
-                                && !CreareComanda.tipComanda.equals("S")
-                                && Double.parseDouble(textCant.getText().toString().trim()) * (valoareUmrez / valoareUmren) > Double.parseDouble(textStoc.getText()
-                                .toString().replaceAll(",", ""))) {
-                            Toast.makeText(getApplicationContext(), "Stoc insuficient!", Toast.LENGTH_LONG).show();
-                            return;
-                        }
-
-                        // verificare umvanz.
-
-                        localUnitMas = textUM.getText().toString().trim();
-
-                        if (listUmVanz.size() > 1) {
-
-                            artMap = (HashMap<String, String>) spinnerUnitMas.getSelectedItem();
-                            localUnitMas = artMap.get("rowText");
-
-                            if (!selectedUnitMas.equals(localUnitMas)) {
-                                Toast.makeText(getApplicationContext(), "U.m. vanzare eronata!", Toast.LENGTH_LONG).show();
-
-                                return;
-                            }
-
-                        }
-
-                        // verificare procent discount
-                        double procRedFin = 0, valArticol = 0;
-                        procentAprob = 0;
-
-                        // exceptie material transport
-                        if (InfoStrings.isMatTransport(codArticol)) {
-                            initPrice = pretVanzare = finalPrice;
-                        }
-
-                        if (finalPrice == initPrice) // pretul din sap e pe
-                            // cantitate, daca se
-                            // modifica devine pe
-                            // unitate
-                            finalPrice = (finalPrice / globalCantArt) * valMultiplu;
-
-                        valArticol = (finalPrice / valMultiplu) * globalCantArt;
-
-                        if (initPrice != 0) {
-                            if (!tglProc.isChecked()) {
-                                if (textProcRed.getText().length() > 0)
-                                    procRedFin = Double.parseDouble(textProcRed.getText().toString());
-                                else
-                                    procRedFin = 0;
-                            } else
-                                procRedFin = (1 - finalPrice / (initPrice / globalCantArt * valMultiplu)) * 100;
-                        }
-
-                        if (procRedFin > 0)// procent_aprob se calculeaza doar daca
-                        // exista proc. de reducere dat de ag.
-                        {
-                            procentAprob = (1 - finalPrice / (pretVanzare / globalCantArt * valMultiplu)) * 100;
-                        }
-
-                        // sf. verificare
-
-                        if (finalPrice != 0) {
-
-                            tipAlert = " ";
-
-                            if (!UserInfo.getInstance().getTipAcces().equals("27")) {
-                                if (procentAprob > discMaxAV) {
+                                if (!globalCodDepartSelectetItem.equals("11"))
                                     tipAlert = "SD";
-                                }
                             }
+                        }
 
-                            // pentru KA este nevoie de aprobarea SD-ului in cazul
-                            // in care
-                            // cantitatea comandata este mai mare decat jumatate din
-                            // stocul disponibil
-                            if (UserInfo.getInstance().getTipAcces().equals("27")) {
-                                if (Double.parseDouble(cantArticol) > Double.parseDouble(textStoc.getText().toString().replaceAll(",", "")) / 2) {
+                        if (UserInfo.getInstance().getTipAcces().equals("27")) {// KA
+                            if (procentAprob > 0 && finalPrice < minimKAPrice) {
 
-                                    if (!globalCodDepartSelectetItem.equals("11"))
-                                        tipAlert = "SD";
-                                }
-                            }
-
-                            if (UserInfo.getInstance().getTipAcces().equals("27")) {// KA
-                                if (procentAprob > 0 && finalPrice < minimKAPrice) {
-
-                                    if (!tipAlert.equals(""))
-                                        tipAlert += ";" + "DV";
-                                    else
-                                        tipAlert = "DV";
-                                }
-
-                            } else {// agenti
-                                if (procentAprob > discMaxSD) {
+                                if (!tipAlert.equals(""))
+                                    tipAlert += ";" + "DV";
+                                else
                                     tipAlert = "DV";
-                                }
                             }
 
-                            if ((finalPrice / valMultiplu) < cmpArt) {
-
-                                Toast.makeText(getApplicationContext(), "Procentul de reducere este mai mare decat cel acceptat.", Toast.LENGTH_LONG).show();
-
-                                subCmp = "1";
-                                return;
-
+                        } else {// agenti
+                            if (procentAprob > discMaxSD) {
+                                tipAlert = "DV";
                             }
+                        }
 
-                            if ((UtilsUser.isASDL() || UtilsUser.isOIVPD())
-                                    && Math.round(procentAprob * 1000.0) / 1000.0 <= Math.round(discountASDL * 1000.0) / 1000.0) {
-                                tipAlert = " ";
-                            }
+                        if ((finalPrice / valMultiplu) < cmpArt) {
 
-                            double procRedFact = 0; // factura de reducere
-                            if (listPrice != 0)
-                                procRedFact = (initPrice / globalCantArt * valMultiplu - finalPrice) / (listPrice / globalCantArt * valMultiplu) * 100;
+                            Toast.makeText(getApplicationContext(), "Procentul de reducere este mai mare decat cel acceptat.", Toast.LENGTH_LONG).show();
 
-                            alteValori = String.valueOf(valArticol) + "!" + String.valueOf(listPrice) + "!" + String.valueOf(initPrice) + "!"
-                                    + String.valueOf(discMaxAV) + "!" + String.valueOf(discMaxSD) + "!" + codPromo + "!" + subCmp;
+                            subCmp = "1";
+                            return;
 
-                            NumberFormat nf = NumberFormat.getInstance();
-                            nf.setMinimumFractionDigits(2);
-                            nf.setMaximumFractionDigits(2);
+                        }
 
-                            if (codArticol.length() == 18)
-                                codArticol = codArticol.substring(10, 18);
+                        if ((UtilsUser.isASDL() || UtilsUser.isOIVPD())
+                                && Math.round(procentAprob * 1000.0) / 1000.0 <= Math.round(discountASDL * 1000.0) / 1000.0) {
+                            tipAlert = " ";
+                        }
 
-                            ArticolComanda unArticol = new ArticolComanda();
-                            unArticol.setNumeArticol(numeArticol);
-                            unArticol.setCodArticol(codArticol);
-                            unArticol.setCantitate(Double.valueOf(cantArticol));
-                            unArticol.setDepozit(globalDepozSel);
-                            unArticol.setPretUnit(finalPrice);
-                            unArticol.setProcent(Double.valueOf(procRedFin));
-                            unArticol.setUm(localUnitMas);
-                            unArticol.setProcentFact(Double.valueOf(procRedFact));
-                            unArticol.setConditie(false);
-                            unArticol.setDiscClient(procDiscClient);
-                            unArticol.setProcAprob(procentAprob);
-                            unArticol.setMultiplu(valMultiplu);
-                            unArticol.setPret(valArticol);
-                            unArticol.setMoneda("RON");
-                            unArticol.setInfoArticol(infoArticol);
-                            unArticol.setCantUmb(Double.valueOf(cantUmb));
-                            unArticol.setUmb(Umb);
-                            unArticol.setAlteValori(alteValori);
-                            unArticol.setDepart(globalCodDepartSelectetItem);
-                            unArticol.setTipArt(tipArticol);
-                            unArticol.setPromotie(Integer.parseInt(codPromo));
-                            unArticol.setObservatii(tipAlert);
-                            unArticol.setDepartAprob(articolDBSelected.getDepartAprob());
-                            unArticol.setUmPalet(articolDBSelected.isUmPalet());
-                            unArticol.setCategorie(articolDBSelected.getCategorie());
-                            unArticol.setLungime(articolDBSelected.getLungime());
-                            unArticol.setCmp(cmpArt);
-                            unArticol.setFilialaSite(CreareComanda.filialaAlternativa);
-                            unArticol.setDataExpPret(dataExpPret);
-                            unArticol.setArticolMathaus(articolMathaus);
-                            unArticol.setListCabluri(listCabluri);
+                        double procRedFact = 0; // factura de reducere
+                        if (listPrice != 0)
+                            procRedFact = (initPrice / globalCantArt * valMultiplu - finalPrice) / (listPrice / globalCantArt * valMultiplu) * 100;
+
+                        alteValori = String.valueOf(valArticol) + "!" + String.valueOf(listPrice) + "!" + String.valueOf(initPrice) + "!"
+                                + String.valueOf(discMaxAV) + "!" + String.valueOf(discMaxSD) + "!" + codPromo + "!" + subCmp;
+
+                        NumberFormat nf = NumberFormat.getInstance();
+                        nf.setMinimumFractionDigits(2);
+                        nf.setMaximumFractionDigits(2);
+
+                        if (codArticol.length() == 18)
+                            codArticol = codArticol.substring(10, 18);
+
+                        ArticolComanda unArticol = new ArticolComanda();
+                        unArticol.setNumeArticol(numeArticol);
+                        unArticol.setCodArticol(codArticol);
+                        unArticol.setCantitate(Double.valueOf(cantArticol));
+                        unArticol.setDepozit(globalDepozSel);
+                        unArticol.setPretUnit(finalPrice);
+                        unArticol.setProcent(Double.valueOf(procRedFin));
+                        unArticol.setUm(localUnitMas);
+                        unArticol.setProcentFact(Double.valueOf(procRedFact));
+                        unArticol.setConditie(false);
+                        unArticol.setDiscClient(procDiscClient);
+                        unArticol.setProcAprob(procentAprob);
+                        unArticol.setMultiplu(valMultiplu);
+                        unArticol.setPret(valArticol);
+                        unArticol.setMoneda("RON");
+                        unArticol.setInfoArticol(infoArticol);
+                        unArticol.setCantUmb(Double.valueOf(cantUmb));
+                        unArticol.setUmb(Umb);
+                        unArticol.setAlteValori(alteValori);
+                        unArticol.setDepart(globalCodDepartSelectetItem);
+                        unArticol.setTipArt(tipArticol);
+                        unArticol.setPromotie(Integer.parseInt(codPromo));
+                        unArticol.setObservatii(tipAlert);
+                        unArticol.setDepartAprob(articolDBSelected.getDepartAprob());
+                        unArticol.setUmPalet(articolDBSelected.isUmPalet());
+                        unArticol.setCategorie(articolDBSelected.getCategorie());
+                        unArticol.setLungime(articolDBSelected.getLungime());
+                        unArticol.setCmp(cmpArt);
+                        unArticol.setFilialaSite(CreareComanda.filialaAlternativa);
+                        unArticol.setDataExpPret(dataExpPret);
+                        unArticol.setArticolMathaus(articolMathaus);
+                        unArticol.setListCabluri(listCabluri);
 
 
-                            if (procRedFin > 0)
-                                unArticol.setIstoricPret(istoricPret);
+                        if (procRedFin > 0)
+                            unArticol.setIstoricPret(istoricPret);
 
-                            ListaArticoleComanda listaComanda = ListaArticoleComanda.getInstance();
-                            listaComanda.addArticolComanda(unArticol);
+                        ListaArticoleComanda listaComanda = ListaArticoleComanda.getInstance();
+                        listaComanda.addArticolComanda(unArticol);
 
-                            if (!altDepozit) {
-                                if (CreareComanda.articoleComanda.indexOf(codArticol) == -1) // articolul
-                                    // nu
-                                    // e
-                                    // adaugat
-                                    // deja
-                                    CreareComanda.articoleComanda += numeArticol + "#" + codArticol + "#" + cantArticol + "#" + String.valueOf(finalPrice) + "#"
-                                            + localUnitMas + "#" + globalDepozSel + "#" + nf.format(procRedFin) + "#" + tipAlert + "#" + codPromo + "#"
-                                            + nf.format(procRedFact) + "#" + nf.format(procDiscClient) + "#" + nf.format(procentAprob) + "#" + valMultiplu + "#"
-                                            + String.valueOf(valArticol) + "#" + infoArticol + "#" + Umb + "#" + cantUmb + "#" + alteValori + "#"
-                                            + globalCodDepartSelectetItem + "#" + tipArticol + "@@";
-
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Comanda contine depozite diferite, articolul nu a fost adaugat! ", Toast.LENGTH_LONG)
-                                        .show();
-
-                            }
-
-                            showArticoleCantDialog();
-
-                            if (UtilsArticole.isArticolPal(articolDBSelected.getSintetic()))
-                                afiseazaArticoleCant(codArticol, CreareComanda.filialaAlternativa);
-
-                            textNumeArticol.setText("");
-                            textCodArticol.setText("");
-                            textUM.setText("");
-                            textStoc.setText("");
-                            textCant.setText("");
-                            textPromo.setText("");
-                            txtNumeArticol.setText("");
-
-                            numeArticol = "";
-                            codArticol = "";
-                            tipArticol = "";
-                            umStoc = "";
-                            globalCodDepartSelectetItem = "";
-
-                            localUnitMas = "";
-                            procDiscClient = 0;
-                            initPrice = 0;
-                            finalPrice = 0;
-                            valArticol = 0;
-                            globalCantArt = 0;
-                            minimKAPrice = 0;
-                            cmpArt = 0;
-                            subCmp = "0";
-
-                            valoareUmrez = 1;
-                            valoareUmren = 1;
-
-                            listCabluri = null;
-
-                            redBtnTable.setVisibility(View.GONE);
-                            labelStoc.setVisibility(View.GONE);
-                            labelCant.setVisibility(View.GONE);
-                            textCant.setVisibility(View.GONE);
-                            pretBtn.setVisibility(View.GONE);
-                            spinnerUnitMas.setVisibility(View.GONE);
-                            layoutStocKA.setVisibility(View.GONE);
-                            resultLayout.setVisibility(View.INVISIBLE);
-
-                            if (!tglProc.isChecked())
-                                tglProc.performClick();
-
-                            InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            mgr.hideSoftInputFromWindow(textCant.getWindowToken(), 0);
+                        if (!altDepozit) {
+                            if (CreareComanda.articoleComanda.indexOf(codArticol) == -1) // articolul
+                                // nu
+                                // e
+                                // adaugat
+                                // deja
+                                CreareComanda.articoleComanda += numeArticol + "#" + codArticol + "#" + cantArticol + "#" + String.valueOf(finalPrice) + "#"
+                                        + localUnitMas + "#" + globalDepozSel + "#" + nf.format(procRedFin) + "#" + tipAlert + "#" + codPromo + "#"
+                                        + nf.format(procRedFact) + "#" + nf.format(procDiscClient) + "#" + nf.format(procentAprob) + "#" + valMultiplu + "#"
+                                        + String.valueOf(valArticol) + "#" + infoArticol + "#" + Umb + "#" + cantUmb + "#" + alteValori + "#"
+                                        + globalCodDepartSelectetItem + "#" + tipArticol + "@@";
 
                         } else {
+                            Toast.makeText(getApplicationContext(), "Comanda contine depozite diferite, articolul nu a fost adaugat! ", Toast.LENGTH_LONG)
+                                    .show();
 
-                            Toast toast = Toast.makeText(getApplicationContext(), "Articolul nu are pret definit!", Toast.LENGTH_SHORT);
-                            toast.show();
                         }
 
-                        textProcRed.setText("");
+                        showArticoleCantDialog();
 
-                    } catch (Exception e) {
+                        if (UtilsArticole.isArticolPal(articolDBSelected.getSintetic()))
+                            afiseazaArticoleCant(codArticol, CreareComanda.filialaAlternativa);
 
-                        Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
+                        textNumeArticol.setText("");
+                        textCodArticol.setText("");
+                        textUM.setText("");
+                        textStoc.setText("");
+                        textCant.setText("");
+                        textPromo.setText("");
+                        txtNumeArticol.setText("");
+
+                        numeArticol = "";
+                        codArticol = "";
+                        tipArticol = "";
+                        umStoc = "";
+                        globalCodDepartSelectetItem = "";
+
+                        localUnitMas = "";
+                        procDiscClient = 0;
+                        initPrice = 0;
+                        finalPrice = 0;
+                        valArticol = 0;
+                        globalCantArt = 0;
+                        minimKAPrice = 0;
+                        cmpArt = 0;
+                        subCmp = "0";
+
+                        valoareUmrez = 1;
+                        valoareUmren = 1;
+
+                        listCabluri = null;
+
+                        redBtnTable.setVisibility(View.GONE);
+                        labelStoc.setVisibility(View.GONE);
+                        labelCant.setVisibility(View.GONE);
+                        textCant.setVisibility(View.GONE);
+                        pretBtn.setVisibility(View.GONE);
+                        spinnerUnitMas.setVisibility(View.GONE);
+                        layoutStocKA.setVisibility(View.GONE);
+                        resultLayout.setVisibility(View.INVISIBLE);
+
+                        if (!tglProc.isChecked())
+                            tglProc.performClick();
+
+                        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        mgr.hideSoftInputFromWindow(textCant.getWindowToken(), 0);
+
+                    } else {
+
+                        Toast toast = Toast.makeText(getApplicationContext(), "Articolul nu are pret definit!", Toast.LENGTH_SHORT);
                         toast.show();
                     }
 
-                }
-            });
-
-        }
-
-        private boolean isConditieCabluri05BV90 () {
-            return articolDBSelected.getDepart().equals("05") && CreareComanda.filialaAlternativa.equals("BV90");
-        }
-
-        private void getCabluri05 (String codArticol){
-
-            HashMap<String, String> params = new HashMap<String, String>();
-            params.put("codArticol", codArticol);
-            params.put("sinteticArticol", articolDBSelected.getSintetic());
-            opArticol.getCabluri05(params);
-
-        }
-
-        private void afisCabluri05 (List < BeanCablu05 > listCabluri) {
-
-            if (listCabluri.isEmpty()) {
-                this.listCabluri = listCabluri;
-                saveArtBtn.performClick();
-                return;
-            }
-
-            int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.5);
-            int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.55);
-
-            Cabluri05Dialog cabluriDialog = new Cabluri05Dialog(SelectArtCmd.this, listCabluri, textCant.getText().toString().trim());
-            cabluriDialog.getWindow().setLayout(width, height);
-            cabluriDialog.setCabluSelectedListener(this);
-            cabluriDialog.show();
-
-        }
-
-        private void afiseazaArticoleCant (String codArticol, String filiala){
-
-            HashMap<String, String> params = new HashMap<String, String>();
-            params.put("unitLog", filiala);
-            params.put("codArtPal", codArticol);
-
-            opArticol.getArticoleCant(params);
-
-        }
-
-        private boolean isUserExceptieFiliale () {
-            return globalCodDepartSelectetItem.equals("01") || globalCodDepartSelectetItem.equals("02");
-        }
-
-        private void saveArticolCustodie () {
-
-            if (textCant.getText().toString().isEmpty()) {
-                Toast.makeText(getApplicationContext(), "Cantitate invalida", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            if (Double.parseDouble(textCant.getText().toString()) <= 0) {
-                Toast.makeText(getApplicationContext(), "Cantitate invalida", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            if (Double.parseDouble(textCant.getText().toString().trim()) > Double.parseDouble(textStoc.getText().toString().replaceAll(",", ""))) {
-                Toast.makeText(getApplicationContext(), "Stoc insuficient.", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            String cantArticol = textCant.getText().toString().trim();
-            String localUnitMas = textUM.getText().toString().trim();
-
-            if (codArticol.length() == 18)
-                codArticol = codArticol.substring(10, 18);
-
-            ArticolComanda unArticol = new ArticolComanda();
-            unArticol.setNumeArticol(numeArticol);
-            unArticol.setCodArticol(codArticol);
-            unArticol.setCantitate(Double.valueOf(cantArticol));
-            unArticol.setDepozit("");
-            unArticol.setPretUnit(0);
-            unArticol.setProcent(0);
-            unArticol.setUm(localUnitMas);
-            unArticol.setProcentFact(0);
-            unArticol.setConditie(false);
-            unArticol.setDiscClient(0);
-            unArticol.setProcAprob(0);
-            unArticol.setMultiplu(1);
-            unArticol.setPret(0);
-            unArticol.setMoneda("RON");
-            unArticol.setInfoArticol("");
-            unArticol.setCantUmb(Double.valueOf(cantArticol));
-            unArticol.setUmb(localUnitMas);
-            unArticol.setAlteValori("");
-            unArticol.setDepart(globalCodDepartSelectetItem);
-            unArticol.setTipArt("");
-            unArticol.setPromotie(0);
-            unArticol.setObservatii("");
-            unArticol.setDepartAprob(articolDBSelected.getDepartAprob());
-            unArticol.setUmPalet(false);
-            unArticol.setCategorie("");
-            unArticol.setLungime(0);
-            unArticol.setCmp(0);
-
-            ListaArticoleComanda listaComanda = ListaArticoleComanda.getInstance();
-            listaComanda.addArticolComanda(unArticol);
-
-            textNumeArticol.setText("");
-            textCodArticol.setText("");
-            textUM.setText("");
-            textStoc.setText("");
-            textCant.setText("");
-            txtNumeArticol.setText("");
-            resultLayout.setVisibility(View.INVISIBLE);
-
-        }
-
-        private boolean isLivrareCustodie () {
-            return DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.LIVRARE_CUSTODIE;
-        }
-
-        private boolean isComandaDL () {
-            return DateLivrare.getInstance().getFurnizorComanda() != null && DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa() != null;
-        }
-
-        @SuppressWarnings("unchecked")
-        private void listArtStoc (String pretResponse){
-
-            resultLayout.setVisibility(View.VISIBLE);
-
-            if (!pretResponse.equals("-1")) {
-
-                nf2.setMinimumFractionDigits(3);
-                nf2.setMaximumFractionDigits(3);
-
-                String[] tokenStoc = pretResponse.split("#");
-
-                textNumeArticol.setVisibility(View.VISIBLE);
-                textCodArticol.setVisibility(View.VISIBLE);
-                textUM.setVisibility(View.VISIBLE);
-                textStoc.setVisibility(View.VISIBLE);
-                textCant.setVisibility(View.VISIBLE);
-                labelCant.setVisibility(View.VISIBLE);
-                labelStoc.setVisibility(View.VISIBLE);
-                pretBtn.setVisibility(View.VISIBLE);
-
-                textUM.setText(tokenStoc[1]);
-
-                // verificare daca se afiseaza valoarea stocului (exceptia de la
-                // BV90 pentr ag/sd)
-                if (tokenStoc[2].equals("0")) {
-                    textStoc.setVisibility(View.INVISIBLE);
-                } else {
-                    textStoc.setVisibility(View.VISIBLE);
-                }
-
-                textStoc.setText(nf2.format(Double.valueOf(tokenStoc[0])));
-
-                // pentru KA se afiseaza stocul disponibil = stoc real / 2
-                if (UserInfo.getInstance().getTipAcces().equals("27")) {
-                    layoutStocKA.setVisibility(View.VISIBLE);
-                    textUmKA.setText(tokenStoc[1]);
-                    textStocKA.setText(nf2.format(Double.valueOf(tokenStoc[0]) / 2));
-                }
-
-                if (isDepartMathaus) {
-                    textNumeArticol.setText(articolMathaus.getNume());
-                    textCodArticol.setText(articolMathaus.getCod());
-                }
-
-                umStoc = tokenStoc[1];
-
-                artMap = (HashMap<String, String>) spinnerUnitMas.getSelectedItem();
-
-                if (artMap == null)
-                    return;
-
-                String stocUM = artMap.get("rowText");
-
-                if (!stocUM.equals(tokenStoc[1]) && !tokenStoc[1].trim().equals("")) // um
-                // vanz
-                // si
-                // um
-                // vanz
-                // difera
-                {
-                    // listUmVanz.clear();
-                    HashMap<String, String> tempUmVanz;
-                    tempUmVanz = new HashMap<String, String>();
-                    tempUmVanz.put("rowText", tokenStoc[1]);
-
-                    listUmVanz.add(tempUmVanz);
-                    spinnerUnitMas.setAdapter(adapterUmVanz);
-                    spinnerUnitMas.setVisibility(View.VISIBLE);
-                }
-
-            } else {
-
-                Toast.makeText(getApplicationContext(), "Nu exista informatii.", Toast.LENGTH_SHORT).show();
-
-                textUM.setText("");
-                textStoc.setText("");
-            }
-
-        }
-
-        private void listArtStocCustodie (String stocResponse){
-            if (!stocResponse.equals("-1")) {
-
-                nf2.setMinimumFractionDigits(3);
-                nf2.setMaximumFractionDigits(3);
-
-                resultLayout.setVisibility(View.VISIBLE);
-                String[] tokenStoc = stocResponse.split("#");
-
-                textNumeArticol.setVisibility(View.VISIBLE);
-                textCodArticol.setVisibility(View.VISIBLE);
-                textUM.setVisibility(View.VISIBLE);
-                textStoc.setVisibility(View.VISIBLE);
-                textCant.setVisibility(View.VISIBLE);
-                labelCant.setVisibility(View.VISIBLE);
-                labelStoc.setVisibility(View.VISIBLE);
-
-                textUM.setText(tokenStoc[1]);
-                textStoc.setText(nf2.format(Double.valueOf(tokenStoc[0])));
-
-                saveArtBtn.setVisibility(View.VISIBLE);
-
-            } else {
-                Toast.makeText(getApplicationContext(), "Nu exista informatii.", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        private void listArtPret (String pretResponse){
-
-            try {
-                if (!pretResponse.equals("-1") && pretResponse.contains("#")) {
-
-                    String[] tokenPret = pretResponse.split("#");
-
-                    valMultiplu = Double.parseDouble(tokenPret[13].trim());
-
-                    globalCantArt = Double.parseDouble(tokenPret[14]);
-
-                    cantUmb = tokenPret[14].toString();
-                    Umb = tokenPret[15].toString();
-
-                    cmpArt = Double.parseDouble(tokenPret[17]);
-
-                    saveArtBtn.setVisibility(View.VISIBLE);
-
-                    textPromo.setText("");
-
-                    nf2.setMinimumFractionDigits(3);
-                    nf2.setMaximumFractionDigits(3);
-
-                    codPromo = "-1";
-
-                    txtPretArt.setVisibility(View.VISIBLE);
-
-                    initPrice = Double.parseDouble(tokenPret[1]); // pret cu
-                    // discount pe
-                    // client
-                    listPrice = Double.parseDouble(tokenPret[8]); // pret de lista
-
-                    txtImpachetare.setText(tokenPret[19]);
-
-                    afisIstoricPret(tokenPret[20]);
-
-                    istoricPret = UtilsFormatting.getIstoricPret(tokenPret[20], EnumTipComanda.DISTRIBUTIE);
-
-                    procReducereCmp = Double.parseDouble(tokenPret[21]);
-                    ((TextView) findViewById(R.id.textPretGed)).setText(tokenPret[22]);
-
-                    dataExpPret = tokenPret[23];
-                    ((TextView) findViewById(R.id.textDataExp)).setText(UtilsDates.formatDataExp(tokenPret[23]));
-
-                    procDiscClient = 0;
-                    minimKAPrice = 0;
-                    if (UserInfo.getInstance().getTipAcces().equals("27")) {
-
-                        minimKAPrice = listPrice / globalCantArt * valMultiplu - (listPrice / globalCantArt * valMultiplu) * Double.valueOf(tokenPret[16]) / 100;
-
-                        if (listPrice > 0)
-                            procDiscClient = 100 - (initPrice / listPrice) * 100;
-
-                        layoutPretMaxKA.setVisibility(View.VISIBLE);
-                        textPretMinKA.setText(String.valueOf(nf2.format(minimKAPrice)));
-
-                        layoutPretMediuKA.setVisibility(View.VISIBLE);
-                        textPretMediuKA.setText(nf2.format(Double.valueOf(tokenPret[18])));
-
-                    }
-
-                    if (globalDepozSel.substring(2, 3).equals("V")) {
-                        // pentru depozitele de vanzari se verifica cmp-ul
-
-                        if (initPrice / globalCantArt * valMultiplu < cmpArt) {
-
-                            Toast.makeText(getApplicationContext(), "Pret sub cmp!", Toast.LENGTH_LONG).show();
-
-                            if (layoutPretMaxKA.getVisibility() == View.VISIBLE)
-                                layoutPretMaxKA.setVisibility(View.INVISIBLE);
-
-                            return;
-                        }
-
-                    }
-
-                    finalPrice = initPrice;
-
                     textProcRed.setText("");
 
-                    redBtnTable.setVisibility(View.VISIBLE);
-                    textProcRed.setVisibility(View.VISIBLE);
-                    procDisc.setVisibility(View.VISIBLE);
-                    textPretTVA.setVisibility(View.VISIBLE);
-                    textMultipluArt.setVisibility(View.VISIBLE);
+                } catch (Exception e) {
 
-                    if (InfoStrings.isMatTransport(codArticol)) {
-                        txtPretArt.setVisibility(View.INVISIBLE);
-                    } else {
-                        txtPretArt.setVisibility(View.VISIBLE);
-                    }
-
-                    textMultipluArt.setText("Unit.pret: " + String.valueOf(valMultiplu) + " " + umStoc);
-
-                    txtPretArt.setText(nf2.format(initPrice / globalCantArt * valMultiplu));
-                    txtPretArt.setHint(nf2.format(initPrice / globalCantArt * valMultiplu));
-
-                    if (CreareComanda.canalDistrib.equals("10"))
-                        textPretTVA.setText(String.valueOf(nf2.format(initPrice / globalCantArt * valMultiplu * Constants.TVA)));
-                    else
-                        textPretTVA.setText(String.valueOf(nf2.format(initPrice / globalCantArt * valMultiplu)));
-
-                    discMaxAV = Double.valueOf(tokenPret[10]);
-                    discMaxSD = Double.valueOf(tokenPret[11]);
-
-                    String[] condPret = tokenPret[9].toString().split(";");
-                    infoArticol = tokenPret[9].replace(',', '.');
-
-                    int ii = 0;
-                    String[] tokPret;
-                    String stringCondPret = "";
-                    Double valCondPret = 0.0;
-
-                    for (ii = 0; ii < condPret.length; ii++) {
-                        tokPret = condPret[ii].split(":");
-                        valCondPret = Double.valueOf(tokPret[1].replace(',', '.').trim());
-                        if (valCondPret != 0) {
-                            stringCondPret += tokPret[0] + addSpace(20 - tokPret[0].length()) + ":"
-                                    + addSpace(10 - String.valueOf(nf2.format(valCondPret)).length()) + nf2.format(valCondPret)
-                                    + System.getProperty("line.separator");
-
-                        }
-
-                    }
-
-                    pretVanzare = listPrice; // calcul procent aprobare
-
-                    textCondPret.setVisibility(View.VISIBLE);
-
-                    textCondPret.setText(stringCondPret);
-
-                    // calcul doar pentru AG
-                    if (!UserInfo.getInstance().getTipAcces().equals("27")) {
-                        if (listPrice > 0)
-                            procDiscClient = 100 - (initPrice / listPrice) * 100;
-                    }
-
-                    // pret in um alternativa
-                    afisPretUmAlternativa();
-
-                    procDisc.setText(nf2.format(procDiscClient));
-                    txtPretArt.setEnabled(true);
-                    textProcRed.setFocusableInTouchMode(true);
-                    tglProc.setEnabled(true);
-
-                    // pentru totaluri negociate nu se modifica preturi
-                    if (CreareComanda.isTotalNegociat) {
-                        textProcRed.setFocusable(false);
-                        tglProc.setEnabled(false);
-                    }
-
-                    // se afiseaza direct pretul si nu procentul
-                    tglProc.setChecked(false);
-                    tglProc.performClick();
-
-                    if (UtilsUser.isASDL() || UtilsUser.isOIVPD()) {
-
-                        String rawIstoricPret = getPretIstoric(tokenPret[20]);
-
-                        double istoricPretAsdl = Double.parseDouble(rawIstoricPret.split("#")[0]);
-                        double valPret = listPrice / globalCantArt * valMultiplu;
-                        String umIstoric = rawIstoricPret.split("#")[1];
-                        String umVanzASDL = umIstoric;
-
-                        if (spinnerUnitMas.getVisibility() == View.VISIBLE) {
-                            HashMap<String, String> unitMasVanz = (HashMap<String, String>) spinnerUnitMas.getSelectedItem();
-                            umVanzASDL = unitMasVanz.get("rowText");
-                        }
-
-                        if (istoricPretAsdl > 0 && umIstoric.equals(umVanzASDL)) {
-                            valPret = istoricPretAsdl;
-                        } else {
-                            valPret = valPret - valPret * (discMaxSD / 100);
-                        }
-
-                        textProcRed.setText(nf2.format(valPret));
-
-                        discountASDL = Double.parseDouble(txtPretArt.getText().toString());
-                    }
-
-                    if (noDiscount(tokenPret[3]) || UtilsUser.isInfoUser() || UtilsUser.isSMR() || UtilsUser.isCVR() || UtilsUser.isSSCM() || UtilsUser.isCGED()) {
-                        txtPretArt.setEnabled(false);
-                        textProcRed.setFocusable(false);
-                        tglProc.setEnabled(false);
-                        codPromo = "1";
-
-                        if (Double.parseDouble(tokenPret[5]) != 0) {
-
-                            artPromoText = "";
-                            textPromo.setVisibility(View.VISIBLE);
-                            textPromo.setText("Articol cu promotie!");
-
-                            double pret1 = (Double.parseDouble(tokenPret[1]) / Double.parseDouble(tokenPret[0])) * valMultiplu;
-                            double pret2 = (Double.parseDouble(tokenPret[6]) / Double.parseDouble(tokenPret[5])) * valMultiplu;
-
-                            artPromoText = "Din cantitatea comandata " + tokenPret[0] + " " + tokenPret[2] + " au pretul de " + nf2.format(pret1) + " RON/"
-                                    + tokenPret[2] + " si " + tokenPret[5] + " " + tokenPret[7] + " au pretul de " + nf2.format(pret2) + " RON/" + tokenPret[7]
-                                    + ".";
-                        }
-
-                    } else {
-
-                        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        mgr.showSoftInput(textProcRed, InputMethodManager.SHOW_IMPLICIT);
-
-                        // verificare articole promotii
-                        if (Double.parseDouble(tokenPret[5]) != 0) {
-                            artPromoText = "";
-                            textPromo.setVisibility(View.VISIBLE);
-
-                            // articolul din promotie are alt pret
-                            if (Double.parseDouble(tokenPret[6]) != 0) {
-
-                            } else // articolul din promotie este gratuit
-                            {
-                                codPromo = "2";
-
-                                // verificare cantitati articole gratuite
-                                // cant. art promotie se adauga la cant. ceruta
-                                if (Double.parseDouble(textCant.getText().toString().trim()) == Double.parseDouble(tokenPret[0])) {
-
-                                    // verificare cod articol promotie
-                                    // art. promo = art. din comanda
-                                    if (codArticol.equals(tokenPret[4])) {
-                                        artPromoText = tokenPret[5] + " " + tokenPret[7] + " x " + numeArticol + " gratuit. ";
-                                    } else// art. promo diferit de art. din cmd.
-                                    {
-                                        artPromoText = tokenPret[5] + " " + tokenPret[7] + " x " + tokenPret[4] + " gratuit. ";
-
-                                    }
-
-                                } else // cant art. promotie se scade din cant.
-                                // ceruta
-                                {
-
-                                    artPromoText = "Din cantitatea comandata " + tokenPret[5] + " " + tokenPret[7] + " sunt gratis.";
-
-                                }
-
-                                textPromo.setText("Articol cu promotie");
-
-                            }
-
-                        }
-
-                    }
-
-                    // **la preturi zero se blocheaza modificarea
-                    if (Double.parseDouble(tokenPret[1].toString()) == 0) {
-                        txtPretArt.setEnabled(false);
-                    }
-
-                    if (!codPromo.equals("1")) {
-                        textProcRed.requestFocus();
-                    }
-
-                } else {
-
-                    Toast.makeText(getApplicationContext(), "Nu exista informatii.", Toast.LENGTH_SHORT).show();
-
-                }
-
-            } catch (Exception ex) {
-                Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_SHORT).show();
-            }
-
-        }
-
-        private void afisPretUmAlternativa () {
-
-            if (valoareUmrez / valoareUmren != 1) {
-
-                double pretUmAlt;
-
-                if (pretMod) {
-
-                    if (textProcRed.getText().toString().trim().isEmpty())
-                        return;
-
-                    pretUmAlt = Double.parseDouble(textProcRed.getText().toString()) * valoareUmrez / valoareUmren;
-                } else {
-
-                    if (txtPretArt.getText().toString().trim().isEmpty())
-                        return;
-
-                    pretUmAlt = Double.parseDouble(txtPretArt.getText().toString()) * valoareUmrez / valoareUmren;
-                }
-
-                NumberFormat nf = NumberFormat.getInstance();
-                nf.setMinimumFractionDigits(2);
-                nf.setMaximumFractionDigits(2);
-                ((TextView) findViewById(R.id.txtPretUmAlt)).setText("1 " + selectedUnitMas + " = " + nf.format(pretUmAlt) + " RON");
-            } else
-                ((TextView) findViewById(R.id.txtPretUmAlt)).setText("");
-
-        }
-
-        private String getPretIstoric (String infoIstoric){
-
-            String pretIstoric = "0";
-            String umIstoric = "-1";
-
-            DecimalFormat df = new DecimalFormat("#0.00");
-
-            if (infoIstoric.contains(":")) {
-                String[] arrayIstoric = infoIstoric.split(":");
-
-                String[] arrayPret = arrayIstoric[0].split("@");
-
-                pretIstoric = df.format(Double.valueOf(arrayPret[0]));
-                umIstoric = arrayPret[2].split(" ")[1].trim();
-            }
-
-            return pretIstoric + "#" + umIstoric;
-
-        }
-
-        private void afisIstoricPret (String infoIstoric){
-            LinearLayout layoutIstoric1 = (LinearLayout) findViewById(R.id.layoutIstoricPret1);
-            LinearLayout layoutIstoric2 = (LinearLayout) findViewById(R.id.layoutIstoricPret2);
-            LinearLayout layoutIstoric3 = (LinearLayout) findViewById(R.id.layoutIstoricPret3);
-
-            layoutIstoric1.setVisibility(View.GONE);
-            layoutIstoric2.setVisibility(View.GONE);
-            layoutIstoric3.setVisibility(View.GONE);
-
-            DecimalFormat df = new DecimalFormat("#0.00");
-
-            if (infoIstoric.contains(":")) {
-                String[] arrayIstoric = infoIstoric.split(":");
-
-                if (arrayIstoric.length > 0 && arrayIstoric[0].contains("@")) {
-
-                    layoutIstoric1.setVisibility(View.VISIBLE);
-
-                    String[] arrayPret = arrayIstoric[0].split("@");
-
-                    TextView textIstoric1 = (TextView) findViewById(R.id.txtIstoricPret1);
-                    textIstoric1.setText(df.format(Double.valueOf(arrayPret[0])) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " /" + arrayPret[1] + " "
-                            + arrayPret[2] + " - " + UtilsFormatting.getMonthNameFromDate(arrayPret[3], 2));
-
-                }
-
-                if (arrayIstoric.length > 1 && arrayIstoric[1].contains("@")) {
-
-                    layoutIstoric2.setVisibility(View.VISIBLE);
-
-                    String[] arrayPret = arrayIstoric[1].split("@");
-
-                    TextView textIstoric2 = (TextView) findViewById(R.id.txtIstoricPret2);
-                    textIstoric2.setText(df.format(Double.valueOf(arrayPret[0])) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " /" + arrayPret[1] + " "
-                            + arrayPret[2] + " - " + UtilsFormatting.getMonthNameFromDate(arrayPret[3], 2));
-
-                }
-
-                if (arrayIstoric.length > 2 && arrayIstoric[2].contains("@")) {
-
-                    layoutIstoric3.setVisibility(View.VISIBLE);
-
-                    String[] arrayPret = arrayIstoric[2].split("@");
-
-                    TextView textIstoric3 = (TextView) findViewById(R.id.txtIstoricPret3);
-                    textIstoric3.setText(df.format(Double.valueOf(arrayPret[0])) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " /" + arrayPret[1] + " "
-                            + arrayPret[2] + " - " + UtilsFormatting.getMonthNameFromDate(arrayPret[3], 2));
-
+                    Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
+                    toast.show();
                 }
 
             }
+        });
 
-        }
+    }
 
-        private boolean noDiscount (String artPromo){
+    private boolean isConditieCabluri05BV90() {
+        return articolDBSelected.getDepart().equals("05") && CreareComanda.filialaAlternativa.equals("BV90");
+    }
 
-            if (artPromo.equalsIgnoreCase("X"))
-                return true;
-            else if ((CreareComanda.canalDistrib.equals("20") || globalCodDepartSelectetItem.equals("11"))
-                    && !(globalDepozSel.equals("MAV1") && articolDBSelected.getDepart().equals("11") && !articolDBSelected.getDepartAprob().equals("00")))
-                return true;
+    private void getCabluri05(String codArticol) {
 
-            return false;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("codArticol", codArticol);
+        params.put("sinteticArticol", articolDBSelected.getSintetic());
+        opArticol.getCabluri05(params);
 
-        }
+    }
 
-        public void showPromoWindow (String promoString){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    private void afisCabluri05(List<BeanCablu05> listCabluri) {
 
-            builder.setMessage(promoString).setCancelable(false).setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            }).setTitle("Promotie!").setIcon(R.drawable.promotie96);
-
-            AlertDialog alert = builder.create();
-            alert.show();
-
-        }
-
-        protected void onListItemClick (ListView l, View v,int position, long id){
-
-            ArticolDB articol = (ArticolDB) l.getAdapter().getItem(position);
-
-            articolDBSelected = articol;
-
-            numeArticol = articol.getNume();
-            codArticol = articol.getCod();
-            tipArticol = articol.getTipAB();
-
-            if (!tipArticol.trim().equals(""))
-                numeArticol += " (" + tipArticol + ")";
-            else
-                tipArticol = " ";
-
-            globalCodDepartSelectetItem = articol.getDepart();
-
-            textNumeArticol.setText(numeArticol);
-            textCodArticol.setText(codArticol);
-
-            textUM.setText("");
-            textStoc.setText("");
-            textCant.setText("");
-
-            valoareUmrez = 1;
-            valoareUmren = 1;
-
-            String umVanz = articol.getUmVanz();
-            listUmVanz.clear();
-            spinnerUnitMas.setVisibility(View.GONE);
-            HashMap<String, String> tempUmVanz;
-            tempUmVanz = new HashMap<String, String>();
-            tempUmVanz.put("rowText", umVanz);
-
-            listUmVanz.add(tempUmVanz);
-            spinnerUnitMas.setAdapter(adapterUmVanz);
-
-            textNumeArticol.setVisibility(View.INVISIBLE);
-            textCodArticol.setVisibility(View.INVISIBLE);
-            saveArtBtn.setVisibility(View.GONE);
-
-            redBtnTable.setVisibility(View.GONE);
-
-            try {
-                String[] tokenDep = spinnerDepoz.getSelectedItem().toString().split("-");
-
-                if (tokenDep[0].trim().length() == 2)
-                    globalDepozSel = globalCodDepartSelectetItem.substring(0, 2) + tokenDep[0].trim();
-                else
-                    globalDepozSel = tokenDep[0].trim();
-
-                if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.LIVRARE_CUSTODIE) {
-                    performListArtStocCustodie();
-                } else {
-                    performListArtStoc();
-                }
-
-            } catch (Exception ex) {
-                Log.e("Error", ex.toString());
-
-            }
-
-        }
-
-        private void performListArtStocCustodie () {
-
-            if (codArticol.length() == 8)
-                codArticol = "0000000000" + codArticol;
-
-            HashMap<String, String> params = new HashMap<String, String>();
-            params.put("codArticol", codArticol);
-            params.put("codClient", CreareComanda.codClientVar);
-            params.put("filiala", EnumFiliale.getCodFiliala(spinnerFilialeCustodie.getSelectedItem().toString()));
-
-            opArticol.getStocCustodie(params);
-        }
-
-        private void performListArtStoc () {
-            try {
-
-                if (this.getListView().getAdapter().getCount() == 0 && !isDepartMathaus)
-                    return;
-
-                HashMap<String, String> params = new HashMap<String, String>();
-
-                if (codArticol.length() == 8)
-                    codArticol = "0000000000" + codArticol;
-
-                String varLocalUnitLog;
-
-                if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.COMANDA_LIVRARE) {
-                    if (globalDepozSel.equals("MAV1"))
-                        varLocalUnitLog = DateLivrare.getInstance().getCodFilialaCLP().substring(0, 2) + "2"
-                                + DateLivrare.getInstance().getCodFilialaCLP().substring(3, 4);
-                    else
-                        varLocalUnitLog = DateLivrare.getInstance().getCodFilialaCLP();
-                } else {
-                    if (globalDepozSel.equals("MAV1") || globalDepozSel.equals("DSCM")) {
-                        if (CreareComanda.filialaAlternativa.equals("BV90"))
-                            varLocalUnitLog = "BV92";
-                        else
-                            varLocalUnitLog = CreareComanda.filialaAlternativa.substring(0, 2) + "2" + CreareComanda.filialaAlternativa.substring(3, 4);
-                    } else {
-                        varLocalUnitLog = CreareComanda.filialaAlternativa;
-                    }
-                }
-
-                params.put("codArt", codArticol);
-                params.put("filiala", varLocalUnitLog);
-                params.put("depozit", globalDepozSel);
-                params.put("depart", UserInfo.getInstance().getCodDepart());
-
-                opArticol.getStocDepozit(params);
-
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        private String addSpace ( int nrCars){
-            String retVal = "";
-
-            for (int i = 0; i < nrCars; i++)
-                retVal += " ";
-
-            return retVal;
-        }
-
-        private void loadFactorConversie (String result){
-            String[] convResult = result.split("#");
-
-            valoareUmrez = Integer.parseInt(convResult[0]);
-            valoareUmren = Integer.parseInt(convResult[1]);
-
-        }
-
-        @Override
-        public void onBackPressed () {
-            finish();
+        if (listCabluri.isEmpty()) {
+            this.listCabluri = listCabluri;
+            saveArtBtn.performClick();
             return;
         }
 
-        public void operationComplete (EnumArticoleDAO methodName, Object result){
+        int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.5);
+        int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.55);
 
-            switch (methodName) {
+        Cabluri05Dialog cabluriDialog = new Cabluri05Dialog(SelectArtCmd.this, listCabluri, textCant.getText().toString().trim());
+        cabluriDialog.getWindow().setLayout(width, height);
+        cabluriDialog.setCabluSelectedListener(this);
+        cabluriDialog.show();
 
-                case GET_STOC_DEPOZIT:
-                    listArtStoc((String) result);
-                    break;
+    }
 
-                case GET_PRET:
-                    listArtPret((String) result);
-                    break;
+    private void afiseazaArticoleCant(String codArticol, String filiala) {
 
-                case GET_ARTICOLE_STATISTIC:
-                    ((TextView) findViewById(R.id.textAfisStatistic)).setVisibility(View.VISIBLE);
-                    listArticoleStatistic = opArticol.deserializeArticoleVanzare((String) result);
-                    populateListViewArticol(listArticoleStatistic);
-                    break;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("unitLog", filiala);
+        params.put("codArtPal", codArticol);
 
-                case GET_ARTICOLE_CUSTODIE:
-                    ((TextView) findViewById(R.id.textAfisStatistic)).setVisibility(View.VISIBLE);
+        opArticol.getArticoleCant(params);
 
-                    TextView labelCustodie = ((TextView) findViewById(R.id.textAfisStatistic));
-                    labelCustodie.setText("Articole custodie");
-                    labelCustodie.setVisibility(View.VISIBLE);
+    }
 
-                    listArticoleCustodie = opArticol.deserializeArticoleVanzare((String) result);
-                    populateListViewArticol(listArticoleCustodie);
-                    break;
+    private boolean isUserExceptieFiliale() {
+        return globalCodDepartSelectetItem.equals("01") || globalCodDepartSelectetItem.equals("02");
+    }
 
-                case GET_ARTICOLE_DISTRIBUTIE:
-                case GET_ARTICOLE_FURNIZOR:
-                case GET_ARTICOLE_ACZC:
-                    populateListViewArticol(opArticol.deserializeArticoleVanzare((String) result));
-                    break;
-                case GET_STOC_CUSTODIE:
-                    listArtStocCustodie((String) result);
-                    break;
-                case GET_FACTOR_CONVERSIE:
-                    loadFactorConversie((String) result);
-                    break;
-                case GET_ARTICOLE_CANT:
-                    showArticoleCantDialog((String) result);
-                    break;
-                case GET_STOC_MATHAUS:
-                    listStocMathaus(result);
-                    break;
-                case GET_CABLURI_05:
-                    afisCabluri05(opArticol.deserializeCabluri05((String) result));
-                    break;
-                default:
-                    break;
+    private void saveArticolCustodie() {
+
+        if (textCant.getText().toString().isEmpty()) {
+            Toast.makeText(getApplicationContext(), "Cantitate invalida", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (Double.parseDouble(textCant.getText().toString()) <= 0) {
+            Toast.makeText(getApplicationContext(), "Cantitate invalida", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (Double.parseDouble(textCant.getText().toString().trim()) > Double.parseDouble(textStoc.getText().toString().replaceAll(",", ""))) {
+            Toast.makeText(getApplicationContext(), "Stoc insuficient.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String cantArticol = textCant.getText().toString().trim();
+        String localUnitMas = textUM.getText().toString().trim();
+
+        if (codArticol.length() == 18)
+            codArticol = codArticol.substring(10, 18);
+
+        ArticolComanda unArticol = new ArticolComanda();
+        unArticol.setNumeArticol(numeArticol);
+        unArticol.setCodArticol(codArticol);
+        unArticol.setCantitate(Double.valueOf(cantArticol));
+        unArticol.setDepozit("");
+        unArticol.setPretUnit(0);
+        unArticol.setProcent(0);
+        unArticol.setUm(localUnitMas);
+        unArticol.setProcentFact(0);
+        unArticol.setConditie(false);
+        unArticol.setDiscClient(0);
+        unArticol.setProcAprob(0);
+        unArticol.setMultiplu(1);
+        unArticol.setPret(0);
+        unArticol.setMoneda("RON");
+        unArticol.setInfoArticol("");
+        unArticol.setCantUmb(Double.valueOf(cantArticol));
+        unArticol.setUmb(localUnitMas);
+        unArticol.setAlteValori("");
+        unArticol.setDepart(globalCodDepartSelectetItem);
+        unArticol.setTipArt("");
+        unArticol.setPromotie(0);
+        unArticol.setObservatii("");
+        unArticol.setDepartAprob(articolDBSelected.getDepartAprob());
+        unArticol.setUmPalet(false);
+        unArticol.setCategorie("");
+        unArticol.setLungime(0);
+        unArticol.setCmp(0);
+
+        ListaArticoleComanda listaComanda = ListaArticoleComanda.getInstance();
+        listaComanda.addArticolComanda(unArticol);
+
+        textNumeArticol.setText("");
+        textCodArticol.setText("");
+        textUM.setText("");
+        textStoc.setText("");
+        textCant.setText("");
+        txtNumeArticol.setText("");
+        resultLayout.setVisibility(View.INVISIBLE);
+
+    }
+
+    private boolean isLivrareCustodie() {
+        return DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.LIVRARE_CUSTODIE;
+    }
+
+    private boolean isComandaDL() {
+        return DateLivrare.getInstance().getFurnizorComanda() != null && DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa() != null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void listArtStoc(String pretResponse) {
+
+        resultLayout.setVisibility(View.VISIBLE);
+
+        if (!pretResponse.equals("-1")) {
+
+            nf2.setMinimumFractionDigits(3);
+            nf2.setMaximumFractionDigits(3);
+
+            String[] tokenStoc = pretResponse.split("#");
+
+            textNumeArticol.setVisibility(View.VISIBLE);
+            textCodArticol.setVisibility(View.VISIBLE);
+            textUM.setVisibility(View.VISIBLE);
+            textStoc.setVisibility(View.VISIBLE);
+            textCant.setVisibility(View.VISIBLE);
+            labelCant.setVisibility(View.VISIBLE);
+            labelStoc.setVisibility(View.VISIBLE);
+            pretBtn.setVisibility(View.VISIBLE);
+
+            textUM.setText(tokenStoc[1]);
+
+            // verificare daca se afiseaza valoarea stocului (exceptia de la
+            // BV90 pentr ag/sd)
+            if (tokenStoc[2].equals("0")) {
+                textStoc.setVisibility(View.INVISIBLE);
+            } else {
+                textStoc.setVisibility(View.VISIBLE);
+            }
+
+            textStoc.setText(nf2.format(Double.valueOf(tokenStoc[0])));
+
+            // pentru KA se afiseaza stocul disponibil = stoc real / 2
+            if (UserInfo.getInstance().getTipAcces().equals("27")) {
+                layoutStocKA.setVisibility(View.VISIBLE);
+                textUmKA.setText(tokenStoc[1]);
+                textStocKA.setText(nf2.format(Double.valueOf(tokenStoc[0]) / 2));
+            }
+
+            if (isDepartMathaus) {
+                textNumeArticol.setText(articolMathaus.getNume());
+                textCodArticol.setText(articolMathaus.getCod());
+            }
+
+            umStoc = tokenStoc[1];
+
+            artMap = (HashMap<String, String>) spinnerUnitMas.getSelectedItem();
+
+            if (artMap == null)
+                return;
+
+            String stocUM = artMap.get("rowText");
+
+            if (!stocUM.equals(tokenStoc[1]) && !tokenStoc[1].trim().equals("")) // um
+            // vanz
+            // si
+            // um
+            // vanz
+            // difera
+            {
+                // listUmVanz.clear();
+                HashMap<String, String> tempUmVanz;
+                tempUmVanz = new HashMap<String, String>();
+                tempUmVanz.put("rowText", tokenStoc[1]);
+
+                listUmVanz.add(tempUmVanz);
+                spinnerUnitMas.setAdapter(adapterUmVanz);
+                spinnerUnitMas.setVisibility(View.VISIBLE);
+            }
+
+        } else {
+
+            Toast.makeText(getApplicationContext(), "Nu exista informatii.", Toast.LENGTH_SHORT).show();
+
+            textUM.setText("");
+            textStoc.setText("");
+        }
+
+    }
+
+    private void listArtStocCustodie(String stocResponse) {
+        if (!stocResponse.equals("-1")) {
+
+            nf2.setMinimumFractionDigits(3);
+            nf2.setMaximumFractionDigits(3);
+
+            resultLayout.setVisibility(View.VISIBLE);
+            String[] tokenStoc = stocResponse.split("#");
+
+            textNumeArticol.setVisibility(View.VISIBLE);
+            textCodArticol.setVisibility(View.VISIBLE);
+            textUM.setVisibility(View.VISIBLE);
+            textStoc.setVisibility(View.VISIBLE);
+            textCant.setVisibility(View.VISIBLE);
+            labelCant.setVisibility(View.VISIBLE);
+            labelStoc.setVisibility(View.VISIBLE);
+
+            textUM.setText(tokenStoc[1]);
+            textStoc.setText(nf2.format(Double.valueOf(tokenStoc[0])));
+
+            saveArtBtn.setVisibility(View.VISIBLE);
+
+        } else {
+            Toast.makeText(getApplicationContext(), "Nu exista informatii.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void listArtPret(String pretResponse) {
+
+        try {
+            if (!pretResponse.equals("-1") && pretResponse.contains("#")) {
+
+                String[] tokenPret = pretResponse.split("#");
+
+                valMultiplu = Double.parseDouble(tokenPret[13].trim());
+
+                globalCantArt = Double.parseDouble(tokenPret[14]);
+
+                cantUmb = tokenPret[14].toString();
+                Umb = tokenPret[15].toString();
+
+                cmpArt = Double.parseDouble(tokenPret[17]);
+
+                saveArtBtn.setVisibility(View.VISIBLE);
+
+                textPromo.setText("");
+
+                nf2.setMinimumFractionDigits(3);
+                nf2.setMaximumFractionDigits(3);
+
+                codPromo = "-1";
+
+                txtPretArt.setVisibility(View.VISIBLE);
+
+                initPrice = Double.parseDouble(tokenPret[1]); // pret cu
+                // discount pe
+                // client
+                listPrice = Double.parseDouble(tokenPret[8]); // pret de lista
+
+                txtImpachetare.setText(tokenPret[19]);
+
+                afisIstoricPret(tokenPret[20]);
+
+                istoricPret = UtilsFormatting.getIstoricPret(tokenPret[20], EnumTipComanda.DISTRIBUTIE);
+
+                procReducereCmp = Double.parseDouble(tokenPret[21]);
+                ((TextView) findViewById(R.id.textPretGed)).setText(tokenPret[22]);
+
+                dataExpPret = tokenPret[23];
+                ((TextView) findViewById(R.id.textDataExp)).setText(UtilsDates.formatDataExp(tokenPret[23]));
+
+                procDiscClient = 0;
+                minimKAPrice = 0;
+                if (UserInfo.getInstance().getTipAcces().equals("27")) {
+
+                    minimKAPrice = listPrice / globalCantArt * valMultiplu - (listPrice / globalCantArt * valMultiplu) * Double.valueOf(tokenPret[16]) / 100;
+
+                    if (listPrice > 0)
+                        procDiscClient = 100 - (initPrice / listPrice) * 100;
+
+                    layoutPretMaxKA.setVisibility(View.VISIBLE);
+                    textPretMinKA.setText(String.valueOf(nf2.format(minimKAPrice)));
+
+                    layoutPretMediuKA.setVisibility(View.VISIBLE);
+                    textPretMediuKA.setText(nf2.format(Double.valueOf(tokenPret[18])));
+
+                }
+
+                if (globalDepozSel.substring(2, 3).equals("V")) {
+                    // pentru depozitele de vanzari se verifica cmp-ul
+
+                    if (initPrice / globalCantArt * valMultiplu < cmpArt) {
+
+                        Toast.makeText(getApplicationContext(), "Pret sub cmp!", Toast.LENGTH_LONG).show();
+
+                        if (layoutPretMaxKA.getVisibility() == View.VISIBLE)
+                            layoutPretMaxKA.setVisibility(View.INVISIBLE);
+
+                        return;
+                    }
+
+                }
+
+                finalPrice = initPrice;
+
+                textProcRed.setText("");
+
+                redBtnTable.setVisibility(View.VISIBLE);
+                textProcRed.setVisibility(View.VISIBLE);
+                procDisc.setVisibility(View.VISIBLE);
+                textPretTVA.setVisibility(View.VISIBLE);
+                textMultipluArt.setVisibility(View.VISIBLE);
+
+                if (InfoStrings.isMatTransport(codArticol)) {
+                    txtPretArt.setVisibility(View.INVISIBLE);
+                } else {
+                    txtPretArt.setVisibility(View.VISIBLE);
+                }
+
+                textMultipluArt.setText("Unit.pret: " + String.valueOf(valMultiplu) + " " + umStoc);
+
+                txtPretArt.setText(nf2.format(initPrice / globalCantArt * valMultiplu));
+                txtPretArt.setHint(nf2.format(initPrice / globalCantArt * valMultiplu));
+
+                if (CreareComanda.canalDistrib.equals("10"))
+                    textPretTVA.setText(String.valueOf(nf2.format(initPrice / globalCantArt * valMultiplu * Constants.TVA)));
+                else
+                    textPretTVA.setText(String.valueOf(nf2.format(initPrice / globalCantArt * valMultiplu)));
+
+                discMaxAV = Double.valueOf(tokenPret[10]);
+                discMaxSD = Double.valueOf(tokenPret[11]);
+
+                String[] condPret = tokenPret[9].toString().split(";");
+                infoArticol = tokenPret[9].replace(',', '.');
+
+                int ii = 0;
+                String[] tokPret;
+                String stringCondPret = "";
+                Double valCondPret = 0.0;
+
+                for (ii = 0; ii < condPret.length; ii++) {
+                    tokPret = condPret[ii].split(":");
+                    valCondPret = Double.valueOf(tokPret[1].replace(',', '.').trim());
+                    if (valCondPret != 0) {
+                        stringCondPret += tokPret[0] + addSpace(20 - tokPret[0].length()) + ":"
+                                + addSpace(10 - String.valueOf(nf2.format(valCondPret)).length()) + nf2.format(valCondPret)
+                                + System.getProperty("line.separator");
+
+                    }
+
+                }
+
+                pretVanzare = listPrice; // calcul procent aprobare
+
+                textCondPret.setVisibility(View.VISIBLE);
+
+                textCondPret.setText(stringCondPret);
+
+                // calcul doar pentru AG
+                if (!UserInfo.getInstance().getTipAcces().equals("27")) {
+                    if (listPrice > 0)
+                        procDiscClient = 100 - (initPrice / listPrice) * 100;
+                }
+
+                // pret in um alternativa
+                afisPretUmAlternativa();
+
+                procDisc.setText(nf2.format(procDiscClient));
+                txtPretArt.setEnabled(true);
+                textProcRed.setFocusableInTouchMode(true);
+                tglProc.setEnabled(true);
+
+                // pentru totaluri negociate nu se modifica preturi
+                if (CreareComanda.isTotalNegociat) {
+                    textProcRed.setFocusable(false);
+                    tglProc.setEnabled(false);
+                }
+
+                // se afiseaza direct pretul si nu procentul
+                tglProc.setChecked(false);
+                tglProc.performClick();
+
+                if (UtilsUser.isASDL() || UtilsUser.isOIVPD()) {
+
+                    String rawIstoricPret = getPretIstoric(tokenPret[20]);
+
+                    double istoricPretAsdl = Double.parseDouble(rawIstoricPret.split("#")[0]);
+                    double valPret = listPrice / globalCantArt * valMultiplu;
+                    String umIstoric = rawIstoricPret.split("#")[1];
+                    String umVanzASDL = umIstoric;
+
+                    if (spinnerUnitMas.getVisibility() == View.VISIBLE) {
+                        HashMap<String, String> unitMasVanz = (HashMap<String, String>) spinnerUnitMas.getSelectedItem();
+                        umVanzASDL = unitMasVanz.get("rowText");
+                    }
+
+                    if (istoricPretAsdl > 0 && umIstoric.equals(umVanzASDL)) {
+                        valPret = istoricPretAsdl;
+                    } else {
+                        valPret = valPret - valPret * (discMaxSD / 100);
+                    }
+
+                    textProcRed.setText(nf2.format(valPret));
+
+                    discountASDL = Double.parseDouble(txtPretArt.getText().toString());
+                }
+
+                if (noDiscount(tokenPret[3]) || UtilsUser.isInfoUser() || UtilsUser.isSMR() || UtilsUser.isCVR() || UtilsUser.isSSCM() || UtilsUser.isCGED()) {
+                    txtPretArt.setEnabled(false);
+                    textProcRed.setFocusable(false);
+                    tglProc.setEnabled(false);
+                    codPromo = "1";
+
+                    if (Double.parseDouble(tokenPret[5]) != 0) {
+
+                        artPromoText = "";
+                        textPromo.setVisibility(View.VISIBLE);
+                        textPromo.setText("Articol cu promotie!");
+
+                        double pret1 = (Double.parseDouble(tokenPret[1]) / Double.parseDouble(tokenPret[0])) * valMultiplu;
+                        double pret2 = (Double.parseDouble(tokenPret[6]) / Double.parseDouble(tokenPret[5])) * valMultiplu;
+
+                        artPromoText = "Din cantitatea comandata " + tokenPret[0] + " " + tokenPret[2] + " au pretul de " + nf2.format(pret1) + " RON/"
+                                + tokenPret[2] + " si " + tokenPret[5] + " " + tokenPret[7] + " au pretul de " + nf2.format(pret2) + " RON/" + tokenPret[7]
+                                + ".";
+                    }
+
+                } else {
+
+                    InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    mgr.showSoftInput(textProcRed, InputMethodManager.SHOW_IMPLICIT);
+
+                    // verificare articole promotii
+                    if (Double.parseDouble(tokenPret[5]) != 0) {
+                        artPromoText = "";
+                        textPromo.setVisibility(View.VISIBLE);
+
+                        // articolul din promotie are alt pret
+                        if (Double.parseDouble(tokenPret[6]) != 0) {
+
+                        } else // articolul din promotie este gratuit
+                        {
+                            codPromo = "2";
+
+                            // verificare cantitati articole gratuite
+                            // cant. art promotie se adauga la cant. ceruta
+                            if (Double.parseDouble(textCant.getText().toString().trim()) == Double.parseDouble(tokenPret[0])) {
+
+                                // verificare cod articol promotie
+                                // art. promo = art. din comanda
+                                if (codArticol.equals(tokenPret[4])) {
+                                    artPromoText = tokenPret[5] + " " + tokenPret[7] + " x " + numeArticol + " gratuit. ";
+                                } else// art. promo diferit de art. din cmd.
+                                {
+                                    artPromoText = tokenPret[5] + " " + tokenPret[7] + " x " + tokenPret[4] + " gratuit. ";
+
+                                }
+
+                            } else // cant art. promotie se scade din cant.
+                            // ceruta
+                            {
+
+                                artPromoText = "Din cantitatea comandata " + tokenPret[5] + " " + tokenPret[7] + " sunt gratis.";
+
+                            }
+
+                            textPromo.setText("Articol cu promotie");
+
+                        }
+
+                    }
+
+                }
+
+                // **la preturi zero se blocheaza modificarea
+                if (Double.parseDouble(tokenPret[1].toString()) == 0) {
+                    txtPretArt.setEnabled(false);
+                }
+
+                if (!codPromo.equals("1")) {
+                    textProcRed.requestFocus();
+                }
+
+            } else {
+
+                Toast.makeText(getApplicationContext(), "Nu exista informatii.", Toast.LENGTH_SHORT).show();
 
             }
 
+        } catch (Exception ex) {
+            Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_SHORT).show();
         }
 
-        @Override
-        public void articolCantSelected (ArticolCant articolCant){
+    }
 
-            List<ArticolDB> listArticole = new ArrayList<ArticolDB>();
-            articolCant.setCod(articolCant.getCod().replaceFirst("^0*", ""));
-            listArticole.add(articolCant);
+    private void afisPretUmAlternativa() {
 
-            CreareComanda.filialaAlternativa = articolCant.getUlStoc();
+        if (valoareUmrez / valoareUmren != 1) {
 
-            if (articolCant.getDepozit().equals("92V1"))
-                spinnerDepoz.setSelection(adapterSpinnerDepozite.getPosition("92V1"));
-            else
-                spinnerDepoz.setSelection(0);
+            double pretUmAlt;
 
-            txtNumeArticol.setText("");
-            resultLayout.setVisibility(View.INVISIBLE);
-            CautareArticoleAdapter adapterArticole = new CautareArticoleAdapter(this, listArticole);
-            setListAdapter(adapterArticole);
+            if (pretMod) {
 
-            this.getListView().performItemClick(this.getListView().getAdapter().getView(0, null, null), 0, this.getListView().getItemIdAtPosition(0));
+                if (textProcRed.getText().toString().trim().isEmpty())
+                    return;
 
+                pretUmAlt = Double.parseDouble(textProcRed.getText().toString()) * valoareUmrez / valoareUmren;
+            } else {
+
+                if (txtPretArt.getText().toString().trim().isEmpty())
+                    return;
+
+                pretUmAlt = Double.parseDouble(txtPretArt.getText().toString()) * valoareUmrez / valoareUmren;
+            }
+
+            NumberFormat nf = NumberFormat.getInstance();
+            nf.setMinimumFractionDigits(2);
+            nf.setMaximumFractionDigits(2);
+            ((TextView) findViewById(R.id.txtPretUmAlt)).setText("1 " + selectedUnitMas + " = " + nf.format(pretUmAlt) + " RON");
+        } else
+            ((TextView) findViewById(R.id.txtPretUmAlt)).setText("");
+
+    }
+
+    private String getPretIstoric(String infoIstoric) {
+
+        String pretIstoric = "0";
+        String umIstoric = "-1";
+
+        DecimalFormat df = new DecimalFormat("#0.00");
+
+        if (infoIstoric.contains(":")) {
+            String[] arrayIstoric = infoIstoric.split(":");
+
+            String[] arrayPret = arrayIstoric[0].split("@");
+
+            pretIstoric = df.format(Double.valueOf(arrayPret[0]));
+            umIstoric = arrayPret[2].split(" ")[1].trim();
         }
 
-        @Override
-        public void articolCantClosed () {
-            listArticoleCant.clear();
+        return pretIstoric + "#" + umIstoric;
 
-        }
+    }
 
-        @Override
-        public void articolMathausSelected (ArticolMathaus articol){
-            afisArticolMathaus(articol);
+    private void afisIstoricPret(String infoIstoric) {
+        LinearLayout layoutIstoric1 = (LinearLayout) findViewById(R.id.layoutIstoricPret1);
+        LinearLayout layoutIstoric2 = (LinearLayout) findViewById(R.id.layoutIstoricPret2);
+        LinearLayout layoutIstoric3 = (LinearLayout) findViewById(R.id.layoutIstoricPret3);
 
-        }
+        layoutIstoric1.setVisibility(View.GONE);
+        layoutIstoric2.setVisibility(View.GONE);
+        layoutIstoric3.setVisibility(View.GONE);
 
-        @Override
-        public void cabluriSelected (List < BeanCablu05 > listCabluri) {
-            this.listCabluri = listCabluri;
-            saveArtBtn.performClick();
+        DecimalFormat df = new DecimalFormat("#0.00");
+
+        if (infoIstoric.contains(":")) {
+            String[] arrayIstoric = infoIstoric.split(":");
+
+            if (arrayIstoric.length > 0 && arrayIstoric[0].contains("@")) {
+
+                layoutIstoric1.setVisibility(View.VISIBLE);
+
+                String[] arrayPret = arrayIstoric[0].split("@");
+
+                TextView textIstoric1 = (TextView) findViewById(R.id.txtIstoricPret1);
+                textIstoric1.setText(df.format(Double.valueOf(arrayPret[0])) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " /" + arrayPret[1] + " "
+                        + arrayPret[2] + " - " + UtilsFormatting.getMonthNameFromDate(arrayPret[3], 2));
+
+            }
+
+            if (arrayIstoric.length > 1 && arrayIstoric[1].contains("@")) {
+
+                layoutIstoric2.setVisibility(View.VISIBLE);
+
+                String[] arrayPret = arrayIstoric[1].split("@");
+
+                TextView textIstoric2 = (TextView) findViewById(R.id.txtIstoricPret2);
+                textIstoric2.setText(df.format(Double.valueOf(arrayPret[0])) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " /" + arrayPret[1] + " "
+                        + arrayPret[2] + " - " + UtilsFormatting.getMonthNameFromDate(arrayPret[3], 2));
+
+            }
+
+            if (arrayIstoric.length > 2 && arrayIstoric[2].contains("@")) {
+
+                layoutIstoric3.setVisibility(View.VISIBLE);
+
+                String[] arrayPret = arrayIstoric[2].split("@");
+
+                TextView textIstoric3 = (TextView) findViewById(R.id.txtIstoricPret3);
+                textIstoric3.setText(df.format(Double.valueOf(arrayPret[0])) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " /" + arrayPret[1] + " "
+                        + arrayPret[2] + " - " + UtilsFormatting.getMonthNameFromDate(arrayPret[3], 2));
+
+            }
 
         }
 
     }
+
+    private boolean noDiscount(String artPromo) {
+
+        if (artPromo.equalsIgnoreCase("X"))
+            return true;
+        else if ((CreareComanda.canalDistrib.equals("20") || globalCodDepartSelectetItem.equals("11"))
+                && !(globalDepozSel.equals("MAV1") && articolDBSelected.getDepart().equals("11") && !articolDBSelected.getDepartAprob().equals("00")))
+            return true;
+
+        return false;
+
+    }
+
+    public void showPromoWindow(String promoString) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage(promoString).setCancelable(false).setNegativeButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        }).setTitle("Promotie!").setIcon(R.drawable.promotie96);
+
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+
+        ArticolDB articol = (ArticolDB) l.getAdapter().getItem(position);
+
+        articolDBSelected = articol;
+
+        numeArticol = articol.getNume();
+        codArticol = articol.getCod();
+        tipArticol = articol.getTipAB();
+
+        if (!tipArticol.trim().equals(""))
+            numeArticol += " (" + tipArticol + ")";
+        else
+            tipArticol = " ";
+
+        globalCodDepartSelectetItem = articol.getDepart();
+
+        textNumeArticol.setText(numeArticol);
+        textCodArticol.setText(codArticol);
+
+        textUM.setText("");
+        textStoc.setText("");
+        textCant.setText("");
+
+        valoareUmrez = 1;
+        valoareUmren = 1;
+
+        String umVanz = articol.getUmVanz();
+        listUmVanz.clear();
+        spinnerUnitMas.setVisibility(View.GONE);
+        HashMap<String, String> tempUmVanz;
+        tempUmVanz = new HashMap<String, String>();
+        tempUmVanz.put("rowText", umVanz);
+
+        listUmVanz.add(tempUmVanz);
+        spinnerUnitMas.setAdapter(adapterUmVanz);
+
+        textNumeArticol.setVisibility(View.INVISIBLE);
+        textCodArticol.setVisibility(View.INVISIBLE);
+        saveArtBtn.setVisibility(View.GONE);
+
+        redBtnTable.setVisibility(View.GONE);
+
+        try {
+            String[] tokenDep = spinnerDepoz.getSelectedItem().toString().split("-");
+
+            if (tokenDep[0].trim().length() == 2)
+                globalDepozSel = globalCodDepartSelectetItem.substring(0, 2) + tokenDep[0].trim();
+            else
+                globalDepozSel = tokenDep[0].trim();
+
+            if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.LIVRARE_CUSTODIE) {
+                performListArtStocCustodie();
+            } else {
+                performListArtStoc();
+            }
+
+        } catch (Exception ex) {
+            Log.e("Error", ex.toString());
+
+        }
+
+    }
+
+    private void performListArtStocCustodie() {
+
+        if (codArticol.length() == 8)
+            codArticol = "0000000000" + codArticol;
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("codArticol", codArticol);
+        params.put("codClient", CreareComanda.codClientVar);
+        params.put("filiala", EnumFiliale.getCodFiliala(spinnerFilialeCustodie.getSelectedItem().toString()));
+
+        opArticol.getStocCustodie(params);
+    }
+
+    private void performListArtStoc() {
+        try {
+
+            if (this.getListView().getAdapter().getCount() == 0 && !isDepartMathaus)
+                return;
+
+            HashMap<String, String> params = new HashMap<String, String>();
+
+            if (codArticol.length() == 8)
+                codArticol = "0000000000" + codArticol;
+
+            String varLocalUnitLog;
+
+            if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.COMANDA_LIVRARE) {
+                if (globalDepozSel.equals("MAV1"))
+                    varLocalUnitLog = DateLivrare.getInstance().getCodFilialaCLP().substring(0, 2) + "2"
+                            + DateLivrare.getInstance().getCodFilialaCLP().substring(3, 4);
+                else
+                    varLocalUnitLog = DateLivrare.getInstance().getCodFilialaCLP();
+            } else {
+                if (globalDepozSel.equals("MAV1") || globalDepozSel.equals("DSCM")) {
+                    if (CreareComanda.filialaAlternativa.equals("BV90"))
+                        varLocalUnitLog = "BV92";
+                    else
+                        varLocalUnitLog = CreareComanda.filialaAlternativa.substring(0, 2) + "2" + CreareComanda.filialaAlternativa.substring(3, 4);
+                } else {
+                    varLocalUnitLog = CreareComanda.filialaAlternativa;
+                }
+            }
+
+            params.put("codArt", codArticol);
+            params.put("filiala", varLocalUnitLog);
+            params.put("depozit", globalDepozSel);
+            params.put("depart", UserInfo.getInstance().getCodDepart());
+
+            opArticol.getStocDepozit(params);
+
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String addSpace(int nrCars) {
+        String retVal = "";
+
+        for (int i = 0; i < nrCars; i++)
+            retVal += " ";
+
+        return retVal;
+    }
+
+    private void loadFactorConversie(String result) {
+        String[] convResult = result.split("#");
+
+        valoareUmrez = Integer.parseInt(convResult[0]);
+        valoareUmren = Integer.parseInt(convResult[1]);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        return;
+    }
+
+    public void operationComplete(EnumArticoleDAO methodName, Object result) {
+
+        switch (methodName) {
+
+            case GET_STOC_DEPOZIT:
+                listArtStoc((String) result);
+                break;
+
+            case GET_PRET:
+                listArtPret((String) result);
+                break;
+
+            case GET_ARTICOLE_STATISTIC:
+                ((TextView) findViewById(R.id.textAfisStatistic)).setVisibility(View.VISIBLE);
+                listArticoleStatistic = opArticol.deserializeArticoleVanzare((String) result);
+                populateListViewArticol(listArticoleStatistic);
+                break;
+
+            case GET_ARTICOLE_CUSTODIE:
+                ((TextView) findViewById(R.id.textAfisStatistic)).setVisibility(View.VISIBLE);
+
+                TextView labelCustodie = ((TextView) findViewById(R.id.textAfisStatistic));
+                labelCustodie.setText("Articole custodie");
+                labelCustodie.setVisibility(View.VISIBLE);
+
+                listArticoleCustodie = opArticol.deserializeArticoleVanzare((String) result);
+                populateListViewArticol(listArticoleCustodie);
+                break;
+
+            case GET_ARTICOLE_DISTRIBUTIE:
+            case GET_ARTICOLE_FURNIZOR:
+            case GET_ARTICOLE_ACZC:
+                populateListViewArticol(opArticol.deserializeArticoleVanzare((String) result));
+                break;
+            case GET_STOC_CUSTODIE:
+                listArtStocCustodie((String) result);
+                break;
+            case GET_FACTOR_CONVERSIE:
+                loadFactorConversie((String) result);
+                break;
+            case GET_ARTICOLE_CANT:
+                showArticoleCantDialog((String) result);
+                break;
+            case GET_STOC_MATHAUS:
+                listStocMathaus(result);
+                break;
+            case GET_CABLURI_05:
+                afisCabluri05(opArticol.deserializeCabluri05((String) result));
+                break;
+            default:
+                break;
+
+        }
+
+    }
+
+    @Override
+    public void articolCantSelected(ArticolCant articolCant) {
+
+        List<ArticolDB> listArticole = new ArrayList<ArticolDB>();
+        articolCant.setCod(articolCant.getCod().replaceFirst("^0*", ""));
+        listArticole.add(articolCant);
+
+        CreareComanda.filialaAlternativa = articolCant.getUlStoc();
+
+        if (articolCant.getDepozit().equals("92V1"))
+            spinnerDepoz.setSelection(adapterSpinnerDepozite.getPosition("92V1"));
+        else
+            spinnerDepoz.setSelection(0);
+
+        txtNumeArticol.setText("");
+        resultLayout.setVisibility(View.INVISIBLE);
+        CautareArticoleAdapter adapterArticole = new CautareArticoleAdapter(this, listArticole);
+        setListAdapter(adapterArticole);
+
+        this.getListView().performItemClick(this.getListView().getAdapter().getView(0, null, null), 0, this.getListView().getItemIdAtPosition(0));
+
+    }
+
+    @Override
+    public void articolCantClosed() {
+        listArticoleCant.clear();
+
+    }
+
+    @Override
+    public void articolMathausSelected(ArticolMathaus articol) {
+        afisArticolMathaus(articol);
+
+    }
+
+    @Override
+    public void cabluriSelected(List<BeanCablu05> listCabluri) {
+        this.listCabluri = listCabluri;
+        saveArtBtn.performClick();
+
+    }
+
+}

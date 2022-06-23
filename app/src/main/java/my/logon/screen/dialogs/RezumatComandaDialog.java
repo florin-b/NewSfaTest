@@ -1,25 +1,26 @@
 package my.logon.screen.dialogs;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import my.logon.screen.R;
+import my.logon.screen.adapters.AdapterRezumatComanda;
+import my.logon.screen.beans.CostTransportMathaus;
+import my.logon.screen.beans.RezumatComanda;
 import my.logon.screen.listeners.ComandaMathausListener;
 import my.logon.screen.listeners.RezumatListener;
-import my.logon.screen.R;
 import my.logon.screen.model.ArticolComanda;
 import my.logon.screen.model.ListaArticoleComanda;
 import my.logon.screen.model.ListaArticoleComandaGed;
-import my.logon.screen.adapters.AdapterRezumatComanda;
-import android.app.Dialog;
-import android.content.Context;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
-import my.logon.screen.beans.CostTransportMathaus;
-import my.logon.screen.beans.RezumatComanda;
 
 public class RezumatComandaDialog extends Dialog implements RezumatListener {
 
@@ -31,13 +32,17 @@ public class RezumatComandaDialog extends Dialog implements RezumatListener {
 	private Button btnOkComanda;
 	private ComandaMathausListener listener;
 	private List<CostTransportMathaus> costTransport;
+	private String tipTransport;
+	private String filialeArondate;
 
-	public RezumatComandaDialog(Context context, List<ArticolComanda> listArticole, String canal, List<CostTransportMathaus> costTransport) {
+	public RezumatComandaDialog(Context context, List<ArticolComanda> listArticole, String canal, List<CostTransportMathaus> costTransport, String tipTransport, String filialeArondate) {
 		super(context);
 		this.context = context;
 		this.listArticole = listArticole;
 		this.canalDistrib = canal;
 		this.costTransport = costTransport;
+		this.tipTransport = tipTransport;
+		this.filialeArondate = filialeArondate;
 
 		setContentView(R.layout.rezumat_comanda_dialog);
 		setTitle("Rezumat comanda");
@@ -51,7 +56,9 @@ public class RezumatComandaDialog extends Dialog implements RezumatListener {
 
 		listViewComenzi = (ListView) findViewById(R.id.listComenzi);
 
-		AdapterRezumatComanda adapterRezumat = new AdapterRezumatComanda(context, getRezumatComanda(), costTransport);
+
+
+		AdapterRezumatComanda adapterRezumat = new AdapterRezumatComanda(context, getRezumatComanda(), costTransport, tipTransport, filialeArondate);
 		adapterRezumat.setRezumatListener(this);
 		listViewComenzi.setAdapter(adapterRezumat);
 
@@ -134,7 +141,7 @@ public class RezumatComandaDialog extends Dialog implements RezumatListener {
 	}
 
 	@Override
-	public void comandaEliminata(List<String> listArticoleEliminate) {
+	public void comandaEliminata(List<String> listArticoleEliminate, String filialaLivrare) {
 
 		List<ArticolComanda> listArticoleComanda;
 		if (canalDistrib.equals("10"))
@@ -149,7 +156,7 @@ public class RezumatComandaDialog extends Dialog implements RezumatListener {
 
 			for (String articolEliminat : listArticoleEliminate) {
 
-				if (articol.getCodArticol().equals(articolEliminat)) {
+				if (articol.getCodArticol().equals(articolEliminat) && articol.getFilialaSite().equals(filialaLivrare)) {
 					listIterator.remove();
 					break;
 				}

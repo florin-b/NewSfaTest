@@ -39,525 +39,561 @@ import my.logon.screen.screens.CreareComanda;
 
 public class CategoriiMathausDialogNew extends Dialog implements OperatiiMathausListener, AdapterMathausListener {
 
-	private Context context;
-	private Button okButton;
-	private OperatiiMathaus opMathaus;
+    private Context context;
+    private Button okButton;
+    private OperatiiMathaus opMathaus;
 
-	private Spinner spinnerCategorii;
-	private List<CategorieMathaus> listCategorii;
+    private Spinner spinnerCategorii;
+    private List<CategorieMathaus> listCategorii;
 
-	private GridView gridView;
-	private CategorieMathaus selectedCat;
-	private ArticolMathausListener listener;
-	private LinearLayout layoutSubcategorii;
-	private TreeSet<String> setParinti;
-	private Button cautaArticoleBtn;
-	private RadioButton radioCod, radioNume;
-	private EditText textCodArticol;
-	private LinearLayout layoutPagination;
-	private TextView textNrPagini;
-	private int nrPagini;
-	private int paginaCurenta;
-	private ImageButton btnFirst, btnPrev, btnNext, btnLast;
-	private String categorieCurenta;
-	private RadioGroup radioTipArt;
+    private GridView gridView;
+    private CategorieMathaus selectedCat;
+    private ArticolMathausListener listener;
+    private LinearLayout layoutSubcategorii;
+    private TreeSet<String> setParinti;
+    private Button cautaArticoleBtn;
+    private RadioButton radioCod, radioNume;
+    private EditText textCodArticol;
+    private LinearLayout layoutPagination;
+    private TextView textNrPagini;
+    private int nrPagini;
+    private int paginaCurenta;
+    private ImageButton btnFirst, btnPrev, btnNext, btnLast;
+    private String categorieCurenta;
+    private RadioGroup radioTipArt;
+    private boolean expandMainList = true;
 
-	private enum AfisArtMathaus {
-		CATEGORIE, CAUTARE
-	};
+    private enum AfisArtMathaus {
+        CATEGORIE, CAUTARE
+    }
 
-	private AfisArtMathaus tipAfisArticole;
+    ;
 
-	private enum TipArticolAfis {
-		SITE, ND
-	};
+    private AfisArtMathaus tipAfisArticole;
 
-	private TipArticolAfis tipArticolAfis;
+    private enum TipArticolAfis {
+        SITE, ND
+    }
 
-	public CategoriiMathausDialogNew(Context context) {
-		super(context);
-		this.context = context;
+    ;
 
-		setContentView(R.layout.dialog_categorii_mathaus_new);
-		setTitle("Categorii produse");
-		setCancelable(true);
-		opMathaus = new OperatiiMathaus(context);
-		opMathaus.setOperatiiMathausListener(this);
+    private TipArticolAfis tipArticolAfis;
 
-		paginaCurenta = 1;
+    public CategoriiMathausDialogNew(Context context) {
+        super(context);
+        this.context = context;
 
-		setUpLayout();
+        setContentView(R.layout.dialog_categorii_mathaus_new);
+        setTitle("Categorii produse");
+        setCancelable(true);
+        opMathaus = new OperatiiMathaus(context);
+        opMathaus.setOperatiiMathausListener(this);
 
-	}
+        paginaCurenta = 1;
 
-	private void setUpLayout() {
+        setUpLayout();
 
-		opMathaus.getCategorii(new HashMap<String, String>());
-		setParinti = new TreeSet<String>();
+    }
 
-		radioTipArt = (RadioGroup) findViewById(R.id.radio_tip_art);
-		setRadioTipArtListener();
-		tipArticolAfis = TipArticolAfis.SITE;
+    private void setUpLayout() {
 
-		layoutSubcategorii = (LinearLayout) findViewById(R.id.layoutSubcategorii);
+        opMathaus.getCategorii(new HashMap<String, String>());
+        setParinti = new TreeSet<String>();
 
-		layoutPagination = (LinearLayout) findViewById(R.id.layoutPagination);
-		textNrPagini = (TextView) findViewById(R.id.textNrPagini);
+        radioTipArt = (RadioGroup) findViewById(R.id.radio_tip_art);
+        setRadioTipArtListener();
+        tipArticolAfis = TipArticolAfis.SITE;
 
-		btnFirst = (ImageButton) findViewById(R.id.btnFirst);
-		btnPrev = (ImageButton) findViewById(R.id.btnPrev);
-		btnNext = (ImageButton) findViewById(R.id.btnNext);
-		btnLast = (ImageButton) findViewById(R.id.btnLast);
+        layoutSubcategorii = (LinearLayout) findViewById(R.id.layoutSubcategorii);
 
-		setListenerBtnFirst();
-		setListenerBtnPrev();
-		setListenerBtnNext();
-		setListenerBtnLast();
+        layoutPagination = (LinearLayout) findViewById(R.id.layoutPagination);
+        textNrPagini = (TextView) findViewById(R.id.textNrPagini);
 
-		spinnerCategorii = (Spinner) findViewById(R.id.spinnerCategorii);
-		gridView = (GridView) findViewById(R.id.gridItems);
-		int parentHeight = (int) (context.getResources().getDisplayMetrics().heightPixels * 0.77);
+        btnFirst = (ImageButton) findViewById(R.id.btnFirst);
+        btnPrev = (ImageButton) findViewById(R.id.btnPrev);
+        btnNext = (ImageButton) findViewById(R.id.btnNext);
+        btnLast = (ImageButton) findViewById(R.id.btnLast);
 
-		gridView.getLayoutParams().height = parentHeight;
-		gridView.requestLayout();
+        setListenerBtnFirst();
+        setListenerBtnPrev();
+        setListenerBtnNext();
+        setListenerBtnLast();
 
-		okButton = (Button) findViewById(R.id.btnOk);
-		addOkButtonListener();
+        spinnerCategorii = (Spinner) findViewById(R.id.spinnerCategorii);
+        gridView = (GridView) findViewById(R.id.gridItems);
+        int parentHeight = (int) (context.getResources().getDisplayMetrics().heightPixels * 0.77);
 
-		cautaArticoleBtn = (Button) findViewById(R.id.btnCauta);
-		addCautaBtnListener();
+        gridView.getLayoutParams().height = parentHeight;
+        gridView.requestLayout();
 
-		radioCod = (RadioButton) findViewById(R.id.radio_cod);
-		radioNume = (RadioButton) findViewById(R.id.radio_nume);
+        okButton = (Button) findViewById(R.id.btnOk);
+        addOkButtonListener();
 
-		setListenerRadio(radioCod);
-		setListenerRadio(radioNume);
-		textCodArticol = (EditText) findViewById(R.id.textCodArticol);
-		textCodArticol.setHint("Introduceti cod articol");
-	}
+        cautaArticoleBtn = (Button) findViewById(R.id.btnCauta);
+        addCautaBtnListener();
 
-	private void setRadioTipArtListener() {
+        radioCod = (RadioButton) findViewById(R.id.radio_cod);
+        radioNume = (RadioButton) findViewById(R.id.radio_nume);
 
-		radioTipArt.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        setListenerRadio(radioCod);
+        setListenerRadio(radioNume);
+        textCodArticol = (EditText) findViewById(R.id.textCodArticol);
+        textCodArticol.setHint("Introduceti cod articol");
+    }
 
-			@Override
-			public void onCheckedChanged(RadioGroup group, int checkedId) {
+    private void setRadioTipArtListener() {
 
-				paginaCurenta = 1;
-				clearCautaView();
+        radioTipArt.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
-				switch (checkedId) {
-				case R.id.radio_site:
-					tipArticolAfis = TipArticolAfis.SITE;
-					getArticoleSite();
-					break;
-				case R.id.radio_nd:
-					tipArticolAfis = TipArticolAfis.ND;
-					getArticoleND();
-					break;
-				}
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
 
-			}
+                paginaCurenta = 1;
+                clearCautaView();
 
-		});
+                switch (checkedId) {
+                    case R.id.radio_site:
+                        tipArticolAfis = TipArticolAfis.SITE;
+                        getArticoleSite();
+                        break;
+                    case R.id.radio_nd:
+                        tipArticolAfis = TipArticolAfis.ND;
+                        getArticoleND();
+                        break;
+                }
 
-	}
+            }
 
-	private void setListenerBtnFirst() {
-		btnFirst.setOnClickListener(new View.OnClickListener() {
+        });
 
-			@Override
-			public void onClick(View v) {
-				if (paginaCurenta > 1) {
-					paginaCurenta = 1;
+    }
 
-					if (tipAfisArticole == AfisArtMathaus.CATEGORIE)
-						getArticole(categorieCurenta, paginaCurenta);
-					else
-						cautaArticoleMathaus();
-				}
+    private void setListenerBtnFirst() {
+        btnFirst.setOnClickListener(new View.OnClickListener() {
 
-			}
-		});
-	}
+            @Override
+            public void onClick(View v) {
+                if (paginaCurenta > 1) {
+                    paginaCurenta = 1;
 
-	private void setListenerBtnPrev() {
-		btnPrev.setOnClickListener(new View.OnClickListener() {
+                    if (tipAfisArticole == AfisArtMathaus.CATEGORIE)
+                        getArticole(categorieCurenta, paginaCurenta);
+                    else
+                        cautaArticoleMathaus();
+                }
 
-			@Override
-			public void onClick(View v) {
+            }
+        });
+    }
 
-				if (paginaCurenta > 1) {
-					paginaCurenta--;
+    private void setListenerBtnPrev() {
+        btnPrev.setOnClickListener(new View.OnClickListener() {
 
-					if (tipAfisArticole == AfisArtMathaus.CATEGORIE)
-						getArticole(categorieCurenta, paginaCurenta);
-					else
-						cautaArticoleMathaus();
-				}
+            @Override
+            public void onClick(View v) {
 
-			}
-		});
-	}
+                if (paginaCurenta > 1) {
+                    paginaCurenta--;
 
-	private void setListenerBtnNext() {
-		btnNext.setOnClickListener(new View.OnClickListener() {
+                    if (tipAfisArticole == AfisArtMathaus.CATEGORIE)
+                        getArticole(categorieCurenta, paginaCurenta);
+                    else
+                        cautaArticoleMathaus();
+                }
 
-			@Override
-			public void onClick(View v) {
-				if (paginaCurenta < nrPagini) {
-					paginaCurenta++;
+            }
+        });
+    }
 
-					if (tipAfisArticole == AfisArtMathaus.CATEGORIE)
-						getArticole(categorieCurenta, paginaCurenta);
-					else
-						cautaArticoleMathaus();
-				}
+    private void setListenerBtnNext() {
+        btnNext.setOnClickListener(new View.OnClickListener() {
 
-			}
-		});
-	}
+            @Override
+            public void onClick(View v) {
+                if (paginaCurenta < nrPagini) {
+                    paginaCurenta++;
 
-	private void setListenerBtnLast() {
-		btnLast.setOnClickListener(new View.OnClickListener() {
+                    if (tipAfisArticole == AfisArtMathaus.CATEGORIE)
+                        getArticole(categorieCurenta, paginaCurenta);
+                    else
+                        cautaArticoleMathaus();
+                }
 
-			@Override
-			public void onClick(View v) {
+            }
+        });
+    }
 
-				if (paginaCurenta < nrPagini) {
-					paginaCurenta = nrPagini;
+    private void setListenerBtnLast() {
+        btnLast.setOnClickListener(new View.OnClickListener() {
 
-					if (tipAfisArticole == AfisArtMathaus.CATEGORIE)
-						getArticole(categorieCurenta, paginaCurenta);
-					else
-						cautaArticoleMathaus();
-				}
+            @Override
+            public void onClick(View v) {
 
-			}
-		});
-	}
+                if (paginaCurenta < nrPagini) {
+                    paginaCurenta = nrPagini;
 
-	private void addOkButtonListener() {
-		okButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				dismiss();
+                    if (tipAfisArticole == AfisArtMathaus.CATEGORIE)
+                        getArticole(categorieCurenta, paginaCurenta);
+                    else
+                        cautaArticoleMathaus();
+                }
 
-			}
-		});
+            }
+        });
+    }
 
-	}
+    private void addOkButtonListener() {
+        okButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                dismiss();
 
-	private void setListenerRadio(final RadioButton radioButton) {
-		radioButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            }
+        });
 
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if (isChecked) {
+    }
 
-					if (radioButton.getText().toString().equals("Cod"))
-						textCodArticol.setHint("Introduceti cod articol");
-					else
-						textCodArticol.setHint("Introduceti nume articol");
+    private void setListenerRadio(final RadioButton radioButton) {
+        radioButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-					textCodArticol.setText("");
-					gridView.setAdapter(null);
-				}
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
 
-			}
-		});
-	}
+                    if (radioButton.getText().toString().equals("Cod"))
+                        textCodArticol.setHint("Introduceti cod articol");
+                    else
+                        textCodArticol.setHint("Introduceti nume articol");
 
-	private void addCautaBtnListener() {
-		cautaArticoleBtn.setOnClickListener(new View.OnClickListener() {
+                    textCodArticol.setText("");
+                    gridView.setAdapter(null);
+                }
 
-			@Override
-			public void onClick(View v) {
-				tipAfisArticole = AfisArtMathaus.CAUTARE;
-				paginaCurenta = 1;
-				cautaArticoleMathaus();
+            }
+        });
+    }
 
-			}
+    private void addCautaBtnListener() {
+        cautaArticoleBtn.setOnClickListener(new View.OnClickListener() {
 
-		});
-	}
+            @Override
+            public void onClick(View v) {
+                tipAfisArticole = AfisArtMathaus.CAUTARE;
+                paginaCurenta = 1;
+                cautaArticoleMathaus();
 
-	private void cautaArticoleMathaus() {
+            }
 
-		spinnerCategorii.setSelection(0);
-		layoutSubcategorii.removeAllViews();
+        });
+    }
 
-		gridView.setAdapter(null);
-		String tipCautare;
 
-		if (radioCod.isChecked())
-			tipCautare = "c";
-		else
-			tipCautare = "n";
 
-		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("codArticol", textCodArticol.getText().toString().trim().toLowerCase());
-		params.put("tipCautare", tipCautare);
-		params.put("filiala", CreareComanda.filialaLivrareMathaus);
-		params.put("depart", UserInfo.getInstance().getCodDepart());
-		params.put("pagina", String.valueOf(this.paginaCurenta));
+    private void cautaArticoleMathaus() {
 
-		if (this.categorieCurenta != null && this.categorieCurenta.equals("0")) // ND-uri neclasificate
-			opMathaus.cautaArticoleLocal(params);
-		else
-			opMathaus.cautaArticole(params);
+        spinnerCategorii.setSelection(0);
 
-	}
+        if (layoutSubcategorii.getChildCount() > 1)
+            layoutSubcategorii.removeAllViews();
 
-	private void afisCategorii(String result) {
+        expandMainList = false;
 
-		listCategorii = opMathaus.deserializeCategorii(result);
+        gridView.setAdapter(null);
+        String tipCautare;
 
-		List<CategorieMathaus> categNodes = new ArrayList<CategorieMathaus>();
+        if (radioCod.isChecked())
+            tipCautare = "c";
+        else
+            tipCautare = "n";
 
-		for (CategorieMathaus cat : listCategorii) {
-			if (cat.getCodParinte().trim().isEmpty()) {
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("codArticol", textCodArticol.getText().toString().trim().toLowerCase());
+        params.put("tipCautare", tipCautare);
+        params.put("filiala", CreareComanda.filialaLivrareMathaus);
+        params.put("depart", UserInfo.getInstance().getCodDepart());
+        params.put("pagina", String.valueOf(this.paginaCurenta));
 
-				CategorieMathaus categ = new CategorieMathaus();
-				categ.setNume(cat.getNume());
-				categ.setCod(cat.getCod());
-				categ.setCodParinte(cat.getCodParinte());
-				categ.setCodHybris(cat.getCodHybris());
-				categNodes.add(categ);
+        if (this.categorieCurenta != null && this.categorieCurenta.equals("0")) // ND-uri neclasificate
+            opMathaus.cautaArticoleLocal(params);
+        else
+            opMathaus.cautaArticole(params);
 
-			}
-		}
 
-		Collections.sort(categNodes);
+    }
 
-		CategorieMathaus categ = new CategorieMathaus();
-		categ.setNume("Selectati o categorie");
-		categ.setCod("-1");
-		categ.setCodParinte("-1");
-		categNodes.add(0, categ);
+    private void afisCategorii(String result) {
 
-		AdapterCategoriiMathaus adapter = new AdapterCategoriiMathaus(context, categNodes);
-		spinnerCategorii.setAdapter(adapter);
-		setCategoriiListener(spinnerCategorii);
+        listCategorii = opMathaus.deserializeCategorii(result);
 
-	}
+        List<CategorieMathaus> categNodes = new ArrayList<CategorieMathaus>();
 
-	private List<CategorieMathaus> getListCategorii(String codParinte) {
-		List<CategorieMathaus> listSubcategorii = new ArrayList<CategorieMathaus>();
+        for (CategorieMathaus cat : listCategorii) {
+            if (cat.getCodParinte().trim().isEmpty()) {
 
-		for (CategorieMathaus cat : listCategorii) {
+                CategorieMathaus categ = new CategorieMathaus();
+                categ.setNume(cat.getNume());
+                categ.setCod(cat.getCod());
+                categ.setCodParinte(cat.getCodParinte());
+                categ.setCodHybris(cat.getCodHybris());
+                categNodes.add(categ);
+                break;
 
-			if (cat.getCodParinte().equals(codParinte))
-				listSubcategorii.add(cat);
+            }
+        }
 
-		}
+        Collections.sort(categNodes);
 
-		CategorieMathaus categ = new CategorieMathaus();
-		categ.setNume("Selectati o categorie");
-		categ.setCod("-1");
-		categ.setCodParinte("-1");
-		listSubcategorii.add(0, categ);
+        CategorieMathaus categ = new CategorieMathaus();
+        categ.setNume("Selectati o categorie");
+        categ.setCod("-1");
+        categ.setCodParinte("-1");
+        categNodes.add(0, categ);
 
-		return listSubcategorii;
-	}
+        AdapterCategoriiMathaus adapter = new AdapterCategoriiMathaus(context, categNodes);
+        spinnerCategorii.setAdapter(adapter);
+        setCategoriiListener(spinnerCategorii);
 
-	private void setCategoriiListener(final Spinner spinnerCategorii) {
-		spinnerCategorii.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerCategorii.setSelection(1);
 
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-				if (position > 0) {
-					selectedCat = (CategorieMathaus) spinnerCategorii.getSelectedItem();
-					setTitle(selectedCat.getNume());
-					addSpinner(selectedCat);
+    }
 
-				} else {
-					selectedCat = new CategorieMathaus();
+    private List<CategorieMathaus> getListCategorii(String codParinte) {
+        List<CategorieMathaus> listSubcategorii = new ArrayList<CategorieMathaus>();
 
-				}
+        for (CategorieMathaus cat : listCategorii) {
 
-			}
+            if (cat.getCodParinte().equals(codParinte))
+                listSubcategorii.add(cat);
 
-			public void onNothingSelected(AdapterView<?> arg0) {
+        }
 
-			}
-		});
-	}
+        CategorieMathaus categ = new CategorieMathaus();
+        categ.setNume("Selectati o categorie");
+        categ.setCod("-1");
+        categ.setCodParinte("-1");
+        listSubcategorii.add(0, categ);
 
-	private void clearCautaView() {
+        return listSubcategorii;
+    }
 
-		textCodArticol.setText("");
-		radioCod.setChecked(true);
-	}
+    private void setCategoriiListener(final Spinner spinnerCategorii) {
+        spinnerCategorii.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
-	private void addSpinner(CategorieMathaus categorie) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-		setParinti.clear();
+                if (position > 0) {
+                    selectedCat = (CategorieMathaus) spinnerCategorii.getSelectedItem();
+                    setTitle(selectedCat.getNume());
+                    addSpinner(selectedCat);
 
-		List<CategorieMathaus> listCategorii = getListCategorii(categorie.getCod());
+                } else {
+                    selectedCat = new CategorieMathaus();
 
-		Spinner spinner = new Spinner(context);
-		spinner.setContentDescription(categorie.getCod());
+                }
 
-		AdapterCategoriiMathaus adapter = new AdapterCategoriiMathaus(context, listCategorii);
-		spinner.setAdapter(adapter);
+            }
 
-		if (categorie.getCodParinte().trim().isEmpty())
-			layoutSubcategorii.removeAllViews();
+            public void onNothingSelected(AdapterView<?> arg0) {
 
-		setParinti.add(categorie.getCod());
-		getParinti(categorie);
+            }
+        });
+    }
 
-		int numChild = layoutSubcategorii.getChildCount();
-		List<View> listSpinners = new ArrayList<View>();
+    private void clearCautaView() {
 
-		for (int i = 0; i < numChild; i++) {
+        textCodArticol.setText("");
+        radioCod.setChecked(true);
+    }
 
-			View childView = layoutSubcategorii.getChildAt(i);
 
-			boolean isParent = false;
-			for (String parent : setParinti) {
 
-				if (parent.equals(childView.getContentDescription())) {
-					isParent = true;
-				}
+    private void addSpinner(CategorieMathaus categorie) {
 
-			}
+        setParinti.clear();
 
-			if (!isParent)
-				listSpinners.add(childView);
+        List<CategorieMathaus> listCategorii = getListCategorii(categorie.getCod());
 
-		}
+        if (!categorie.getCod().equals("1"))
+            expandMainList = true;
 
-		for (View childSpinner : listSpinners)
-			layoutSubcategorii.removeView(childSpinner);
+        Spinner spinner = new Spinner(context);
+        spinner.setContentDescription(categorie.getCod());
 
-		if (listCategorii.size() > 1) {
-			setCategoriiListener(spinner);
-			radioTipArt.setVisibility(View.INVISIBLE);
-			layoutSubcategorii.addView(spinner);
-		}
+        AdapterCategoriiMathaus adapter = new AdapterCategoriiMathaus(context, listCategorii);
+        spinner.setAdapter(adapter);
 
-		if (listCategorii.size() == 1) {
-			this.categorieCurenta = categorie.getCodHybris();
-			this.paginaCurenta = 1;
-			clearCautaView();
-			tipAfisArticole = AfisArtMathaus.CATEGORIE;
 
-			/*
-			 * if (!this.categorieCurenta.equals("0")) // diverse
-			 * radioTipArt.setVisibility(View.VISIBLE); else
-			 * radioTipArt.setVisibility(View.INVISIBLE);
-			 */
+        if (categorie.getCodParinte().trim().isEmpty())
+            layoutSubcategorii.removeAllViews();
 
-			getArticole(categorie.getCodHybris(), paginaCurenta);
+        setParinti.add(categorie.getCod());
+        getParinti(categorie);
 
-		}
+        int numChild = layoutSubcategorii.getChildCount();
+        List<View> listSpinners = new ArrayList<View>();
 
-	}
+        for (int i = 0; i < numChild; i++) {
 
-	private void getArticoleSite() {
-		getArticole(categorieCurenta, paginaCurenta);
-	}
+            View childView = layoutSubcategorii.getChildAt(i);
 
-	private void getArticoleND() {
-		getArticole(categorieCurenta, paginaCurenta);
-	}
+            boolean isParent = false;
+            for (String parent : setParinti) {
 
-	private void getParinti(CategorieMathaus categorie) {
+                if (parent.equals(childView.getContentDescription())) {
+                    isParent = true;
+                }
 
-		if (categorie.getCodParinte().trim().isEmpty()) {
-			setParinti.add(categorie.getCod());
-		} else
+            }
 
-			for (CategorieMathaus cat : listCategorii) {
-				if (cat.getCod().equals(categorie.getCodParinte())) {
-					setParinti.add(cat.getCod());
-					getParinti(cat);
-				}
+            if (!isParent)
+                listSpinners.add(childView);
 
-			}
+        }
 
-	}
+        for (View childSpinner : listSpinners)
+            layoutSubcategorii.removeView(childSpinner);
 
-	private void getArticole(String codCategorie, int nrPagina) {
+        if (listCategorii.size() > 1) {
+            setCategoriiListener(spinner);
+            radioTipArt.setVisibility(View.INVISIBLE);
+            layoutSubcategorii.addView(spinner);
 
-		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("codCategorie", codCategorie);
-		params.put("filiala", UserInfo.getInstance().getUnitLog());
-		params.put("depart", UserInfo.getInstance().getCodDepart());
-		params.put("pagina", String.valueOf(nrPagina));
-		params.put("tipArticol", tipArticolAfis.toString());
-		opMathaus.getArticole(params);
+            if (expandMainList)
+                spinner.performClick();
+        }
 
-	}
+        if (listCategorii.size() == 1) {
+            this.categorieCurenta = categorie.getCodHybris();
+            this.paginaCurenta = 1;
+            clearCautaView();
+            tipAfisArticole = AfisArtMathaus.CATEGORIE;
 
-	private void afisArticole(String result) {
+            /*
+             * if (!this.categorieCurenta.equals("0")) // diverse
+             * radioTipArt.setVisibility(View.VISIBLE); else
+             * radioTipArt.setVisibility(View.INVISIBLE);
+             */
 
-		RezultatArtMathaus rezultat = opMathaus.deserializeArticole(result);
+            getArticole(categorie.getCodHybris(), paginaCurenta);
 
-		if (Integer.parseInt(rezultat.getNrTotalArticole()) <= Constants.NR_ARTICOLE_MATHAUS_PAGINA)
-			setPaginationVisibility(false);
-		else {
-			setPaginationVisibility(true);
+        }
 
-			nrPagini = Integer.parseInt(rezultat.getNrTotalArticole()) / Constants.NR_ARTICOLE_MATHAUS_PAGINA;
 
-			if (Integer.parseInt(rezultat.getNrTotalArticole()) % Constants.NR_ARTICOLE_MATHAUS_PAGINA != 0)
-				nrPagini++;
 
-			textNrPagini.setText("Pagina " + paginaCurenta + "/" + nrPagini);
-		}
+    }
 
-		ArticolMathausAdapter adapter = new ArticolMathausAdapter(context, rezultat.getListArticole());
-		adapter.setArticolMathausListener(CategoriiMathausDialogNew.this);
-		gridView.setAdapter(adapter);
+    private void getArticoleSite() {
+        getArticole(categorieCurenta, paginaCurenta);
+    }
 
-	}
+    private void getArticoleND() {
+        getArticole(categorieCurenta, paginaCurenta);
+    }
 
-	private void setPaginationVisibility(boolean isVisible) {
+    private void getParinti(CategorieMathaus categorie) {
 
-		if (isVisible) {
-			btnFirst.setVisibility(View.VISIBLE);
-			btnPrev.setVisibility(View.VISIBLE);
-			textNrPagini.setVisibility(View.VISIBLE);
-			btnNext.setVisibility(View.VISIBLE);
-			btnLast.setVisibility(View.VISIBLE);
-		} else {
-			btnFirst.setVisibility(View.INVISIBLE);
-			btnPrev.setVisibility(View.INVISIBLE);
-			textNrPagini.setVisibility(View.INVISIBLE);
-			btnNext.setVisibility(View.INVISIBLE);
-			btnLast.setVisibility(View.INVISIBLE);
-		}
-	}
+        if (categorie.getCodParinte().trim().isEmpty()) {
+            setParinti.add(categorie.getCod());
+        } else
 
-	public void setArticolMathausListener(ArticolMathausListener listener) {
-		this.listener = listener;
-	}
+            for (CategorieMathaus cat : listCategorii) {
+                if (cat.getCod().equals(categorie.getCodParinte())) {
+                    setParinti.add(cat.getCod());
+                    getParinti(cat);
+                }
 
-	@Override
-	public void operationComplete(EnumOperatiiMathaus methodName, Object result) {
-		switch (methodName) {
-		case GET_CATEGORII:
-			afisCategorii((String) result);
-			break;
-		case GET_ARTICOLE:
-		case CAUTA_ARTICOLE:
-		case CAUTA_ARTICOLE_LOCAL:
-			afisArticole((String) result);
-			break;
-		default:
-			break;
-		}
+            }
 
-	}
+    }
 
-	@Override
-	public void articolMathausSelected(ArticolMathaus articol) {
-		if (listener != null)
-			listener.articolMathausSelected(articol);
+    private void getArticole(String codCategorie, int nrPagina) {
 
-		hide();
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("codCategorie", codCategorie);
+        params.put("filiala", UserInfo.getInstance().getUnitLog());
+        params.put("depart", UserInfo.getInstance().getCodDepart());
+        params.put("pagina", String.valueOf(nrPagina));
+        params.put("tipArticol", tipArticolAfis.toString());
+        opMathaus.getArticole(params);
 
-	}
+    }
+
+    private void afisArticole(String result) {
+
+        RezultatArtMathaus rezultat = opMathaus.deserializeArticole(result);
+
+        if (Integer.parseInt(rezultat.getNrTotalArticole()) <= Constants.NR_ARTICOLE_MATHAUS_PAGINA) {
+            setPaginationVisibility(false);
+            nrPagini = 1;
+        }
+        else {
+            setPaginationVisibility(true);
+
+            nrPagini = Integer.parseInt(rezultat.getNrTotalArticole()) / Constants.NR_ARTICOLE_MATHAUS_PAGINA;
+
+            if (Integer.parseInt(rezultat.getNrTotalArticole()) % Constants.NR_ARTICOLE_MATHAUS_PAGINA != 0)
+                nrPagini++;
+
+            textNrPagini.setText("Pagina " + paginaCurenta + "/" + nrPagini);
+        }
+
+        ArticolMathausAdapter adapter = new ArticolMathausAdapter(context, rezultat.getListArticole());
+        adapter.setArticolMathausListener(CategoriiMathausDialogNew.this);
+        gridView.setAdapter(adapter);
+
+        if (spinnerCategorii.getSelectedItemPosition() != 1)
+            spinnerCategorii.setSelection(1);
+
+    }
+
+    private void setPaginationVisibility(boolean isVisible) {
+
+        if (isVisible) {
+            btnFirst.setVisibility(View.VISIBLE);
+            btnPrev.setVisibility(View.VISIBLE);
+            textNrPagini.setVisibility(View.VISIBLE);
+            btnNext.setVisibility(View.VISIBLE);
+            btnLast.setVisibility(View.VISIBLE);
+        } else {
+            btnFirst.setVisibility(View.INVISIBLE);
+            btnPrev.setVisibility(View.INVISIBLE);
+            textNrPagini.setVisibility(View.INVISIBLE);
+            btnNext.setVisibility(View.INVISIBLE);
+            btnLast.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void setArticolMathausListener(ArticolMathausListener listener) {
+        this.listener = listener;
+    }
+
+    @Override
+    public void operationComplete(EnumOperatiiMathaus methodName, Object result) {
+        switch (methodName) {
+            case GET_CATEGORII:
+                afisCategorii((String) result);
+                break;
+            case GET_ARTICOLE:
+            case CAUTA_ARTICOLE:
+            case CAUTA_ARTICOLE_LOCAL:
+                afisArticole((String) result);
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    @Override
+    public void articolMathausSelected(ArticolMathaus articol) {
+        if (listener != null) {
+            listener.articolMathausSelected(articol);
+
+            if (nrPagini == 1)
+                textCodArticol.setText("");
+        }
+
+        hide();
+
+    }
 
 }

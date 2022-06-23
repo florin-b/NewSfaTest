@@ -1,10 +1,5 @@
 package my.logon.screen.adapters;
 
-import java.util.List;
-
-import my.logon.screen.listeners.AdapterMathausListener;
-import my.logon.screen.R;
-import my.logon.screen.model.DownloadImageTask;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -16,7 +11,13 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.List;
+
+import my.logon.screen.R;
 import my.logon.screen.beans.ArticolMathaus;
+import my.logon.screen.listeners.AdapterMathausListener;
+import my.logon.screen.model.DownloadImageTask;
 
 public class ArticolMathausAdapter extends BaseAdapter {
 
@@ -64,12 +65,15 @@ public class ArticolMathausAdapter extends BaseAdapter {
 		nameTextView.setText(articol.getNume());
 		pretTextView.setText(articol.getCod().replaceFirst("^0*", ""));
 
+		/*
 		if (articol.getStoc() == null || articol.getStoc().equals("null"))
 			stocTextView.setText(" ");
 		else if (Double.valueOf(articol.getStoc()) < 0)
 			stocTextView.setText("0 " + articol.getUmVanz());
 		else
 			stocTextView.setText(articol.getStoc() + " " + articol.getUmVanz());
+
+		 */
 
 		// if (imageView.getDrawable() == null)
 		// if (!hasImage(imageView))

@@ -98,6 +98,8 @@ public class ArticolComanda implements Comparable<ArticolComanda> {
 	private double aczcDeLivrat;
 	private double aczcLivrat;
 
+	private String tipTransport;
+
 	public int getNrCrt() {
 		return nrCrt;
 	}
@@ -663,6 +665,14 @@ public class ArticolComanda implements Comparable<ArticolComanda> {
 
 	public void setArticolMathaus(ArticolMathaus articolMathaus) {
 		this.articolMathaus = articolMathaus;
+	}
+
+	public String getTipTransport() {
+		return tipTransport;
+	}
+
+	public void setTipTransport(String tipTransport) {
+		this.tipTransport = tipTransport;
 	}
 
 	public List<BeanCablu05> getListCabluri() {
