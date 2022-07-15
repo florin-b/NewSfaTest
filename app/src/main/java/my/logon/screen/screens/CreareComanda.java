@@ -773,7 +773,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
                 if (totalTaxaVerde > 0) {
                     layoutTaxaVerde.setVisibility(View.VISIBLE);
-                    textTaxaVerde.setText(String.format("%.02f",totalTaxaVerde) + ")");
+                    textTaxaVerde.setText(String.format("%.02f", totalTaxaVerde) + ")");
                 } else layoutTaxaVerde.setVisibility(View.INVISIBLE);
 
             }
@@ -1419,7 +1419,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
                     List<ArticolTaxaVerde> articoleVerde = HelperCreareComanda.getArticoleTVerde(listArticoleTVerde);
 
-                    for (ArticolTaxaVerde artVerde : articoleVerde){
+                    for (ArticolTaxaVerde artVerde : articoleVerde) {
                         ArticolComanda articolCmd = new ArticolComanda();
                         articolCmd.setCodArticol("000000000000000000");
                         articolCmd.setCantitate(1.0);
@@ -1738,8 +1738,11 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         comandaMathaus.setSellingPlant(CreareComanda.filialaLivrareMathaus);
         List<DateArticolMathaus> listArticoleMat = new ArrayList<DateArticolMathaus>();
 
-        for (ArticolComanda artCmd : articoleComanda) {
+        String codDepartLivr = UserInfo.getInstance().getCodDepart();
+        if (UserInfo.getInstance().getTipUserSap().contains("KA"))
+            codDepartLivr = "10";
 
+        for (ArticolComanda artCmd : articoleComanda) {
 
             DateArticolMathaus dateArticol = new DateArticolMathaus();
             dateArticol.setProductCode(artCmd.getCodArticol());
@@ -1766,7 +1769,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         antetComanda.setCodJudet(DateLivrare.getInstance().getCodJudet());
         antetComanda.setCodClient(comandaFinala.getCodClient());
         antetComanda.setTipPers(UserInfo.getInstance().getTipUserSap());
-        antetComanda.setDepart(UserInfo.getInstance().getCodDepart());
+        antetComanda.setDepart(codDepartLivr);
 
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("antetComanda", opArticol.serializeAntetCmdMathaus(antetComanda));
@@ -2202,6 +2205,11 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             if (CreareComanda.canalDistrib.equals("10") && existaArticoleMav() && DateLivrare.getInstance().getTipPlata().equals("E")
                     && DateLivrare.getInstance().getTransport().equals("TCLI"))
                 verificaStocArticoleDistributie();
+            else if (tipComandaDistributie == TipCmdDistrib.ARTICOLE_COMANDA || tipComandaDistributie == TipCmdDistrib.DISPOZITIE_LIVRARE) {
+                prepareArtForDelivery();
+                articoleFinaleStr = serializedResult;
+                performSaveCmd();
+            }
             else
                 getLivrariMathaus();
 

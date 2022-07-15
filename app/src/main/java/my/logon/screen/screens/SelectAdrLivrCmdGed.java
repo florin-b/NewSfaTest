@@ -288,7 +288,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
                 List<String> itemsTransp = new ArrayList<>();
                 for (int ii = 0; ii < adapterSpinnerTransp.getCount(); ii++) {
                     if (!adapterSpinnerTransp.getItem(ii).startsWith("TFRN")) {
-                        itemsTransp.add( (String) adapterSpinnerTransp.getItem(ii));
+                        itemsTransp.add((String) adapterSpinnerTransp.getItem(ii));
                     }
                 }
                 adapterSpinnerTransp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, itemsTransp);
@@ -1192,7 +1192,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
                 }
 
 
-                if (rawTipPlataStr.toLowerCase().contains("numerar")) {
+                if (rawTipPlataStr.toLowerCase().contains("numerar") || rawTipPlataStr.toLowerCase().contains("ramburs")) {
                     checkAviz.setChecked(false);
                     checkAviz.setEnabled(false);
                 } else

@@ -923,6 +923,10 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
     private void performGetJudete() {
 
+        fillJudeteClient(EnumJudete.getRegionCodes());
+
+        /*
+
         if (isComandaClp() || isComandaBV() || isComandaDl() || DateLivrare.getInstance().isClientFurnizor() || isLivrareCustodie()) {
             fillJudeteClient(EnumJudete.getRegionCodes());
 
@@ -938,6 +942,9 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
             AsyncTaskWSCall call = new AsyncTaskWSCall(this, METHOD_NAME, params);
             call.getCallResultsSyncActivity();
         }
+
+
+         */
 
     }
 
@@ -1998,18 +2005,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
     }
 
     private boolean isAdresaGoogleOk() {
-
-        /*
-         * GeocodeAddress geoAddress =
-         * MapUtils.geocodeAddress(getAddressFromForm(),
-         * getApplicationContext());
-         * DateLivrare.getInstance().setCoordonateAdresa
-         * (geoAddress.getCoordinates());
-         *
-         * LatLng addressCoordinates = geoAddress.getCoordinates();
-         *
-         * boolean isAdresaOk = geoAddress.isAdresaValida();
-         */
 
         LatLng addressCoordinates = null;
         boolean isAdresaOk = true;

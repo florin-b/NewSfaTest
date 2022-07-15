@@ -106,9 +106,10 @@ public class DepartamentAgent {
 				}
 			}
 			depart.add(EnumDepartExtra.getNumeDepart("11"));
-			
-			depart.add("Mathaus");
+
 		}
+
+		depart.add("Mathaus");
 
 		return depart;
 	}
@@ -154,8 +155,7 @@ public class DepartamentAgent {
 			depart.add(EnumDepartExtra.getNumeDepart("11"));
 		}
 
-		if (UserInfo.getInstance().getTipUserSap().equals("SD"))
-			depart.add("Mathaus");
+		depart.add("Mathaus");
 		
 		
 		return depart;
