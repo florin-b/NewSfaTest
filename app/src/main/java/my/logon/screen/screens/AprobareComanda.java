@@ -1210,8 +1210,6 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
         final EditText textCommentsAprob = (EditText) commentsDialog.findViewById(R.id.editTextComments);
         textCommentsAprob.setText(commentsCondAprob);
 
-        textCommentsAprob.setSelection(textCommentsAprob.getText().length());
-
         Button btnOkComment = (Button) commentsDialog.findViewById(R.id.btnOkComment);
         btnOkComment.setOnClickListener(new View.OnClickListener() {
 
@@ -1222,8 +1220,11 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
             }
         });
 
+        int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.5);
+        int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.3);
+
         commentsDialog.show();
-        commentsDialog.getWindow().setLayout(500, 290);
+        commentsDialog.getWindow().setLayout(width, height);
 
     }
 
