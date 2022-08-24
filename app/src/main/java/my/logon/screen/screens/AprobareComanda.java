@@ -848,7 +848,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
 
         textTipReducere.setText(strTipReducere);
 
-        textMarjaCmd.setText("Marja comanda: " + String.format("%.02f", valoriComanda.getMarja() / valoriComanda.getTotal() * 100).toString() + "%");
+        textMarjaCmd.setText("Marja comanda: " + String.format("%.02f", dateLivrare.getProcMarjaBruta()).toString() + "%");
 
         if (textPondereArtB.getVisibility() == View.VISIBLE) {
             textPondereArtB.setText("Pondere art. B comanda: " + String.format("%.02f", (valoriComanda.getPondereB() / valoriComanda.getTotal()) * 100) + "%");
@@ -856,7 +856,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
         }
 
         if (textCastigBrut.getVisibility() == View.VISIBLE) {
-            textCastigBrut.setText("Marja bruta comanda" + ": " + String.format("%.02f", valoriComanda.getMarja()) + " " + valoriComanda.getMoneda());
+            textCastigBrut.setText("Marja bruta comanda" + ": " + String.format("%.02f", dateLivrare.getMarjaBruta()) + " " + valoriComanda.getMoneda());
         }
 
         String unitLogAlt = listArticoleComanda.get(0).getUnitLogAlt();

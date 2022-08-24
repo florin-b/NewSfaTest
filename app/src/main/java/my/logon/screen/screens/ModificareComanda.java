@@ -1,6 +1,5 @@
 /**
  * @author florinb
- *
  */
 package my.logon.screen.screens;
 
@@ -94,1988 +93,2047 @@ import my.logon.screen.utils.UtilsGeneral;
 import my.logon.screen.utils.UtilsUser;
 
 public class ModificareComanda extends Activity implements AsyncTaskListener, ComenziDAOListener, ArticolModificareListener, Observer, CostMacaraListener,
-		PaletiListener {
+        PaletiListener {
 
-	Button quitBtn, stocBtn, clientBtn, articoleBtn, livrareBtn, salveazaComandaBtn, stergeComandaBtn, btnCommentariiCond, aprobareBtn;
-	String filiala = "", nume = "", cod = "", globalSubCmp = "0";
-	public static String unitLogComanda = "";
-	public static String numeDepart = "";
-	public static String codDepart = "";
+    Button quitBtn, stocBtn, clientBtn, articoleBtn, livrareBtn, salveazaComandaBtn, stergeComandaBtn, btnCommentariiCond, aprobareBtn;
+    String filiala = "", nume = "", cod = "", globalSubCmp = "0";
+    public static String unitLogComanda = "";
+    public static String numeDepart = "";
+    public static String codDepart = "";
 
-	private int listViewSelPos = -1;
+    private int listViewSelPos = -1;
 
-	private Spinner spinnerComenzi;
-	public SimpleAdapter adapterComenzi;
+    private Spinner spinnerComenzi;
+    public SimpleAdapter adapterComenzi;
 
-	public static String selectedCmd = "";
-	private String selectedCmdSAP = "-1";
-	private String selectedClientCode = "-1", selectedUnitLog = "-1";
-	private BeanComandaCreata comandaSelectata;
-	private TextView textTipPlata, textAdrLivr, textTotalCmd, textOras, textJudet;
-	private TextView textPersContact, textTelefon, textCantar, textTransport, textFactRed, textPondereB, textTaxaVerde;
+    public static String selectedCmd = "";
+    private String selectedCmdSAP = "-1";
+    private String selectedClientCode = "-1", selectedUnitLog = "-1";
+    private BeanComandaCreata comandaSelectata;
+    private TextView textTipPlata, textAdrLivr, textTotalCmd, textOras, textJudet;
+    private TextView textPersContact, textTelefon, textCantar, textTransport, textFactRed, textPondereB, textTaxaVerde;
 
-	private TextView textCondProcB, textCondNrFacturi, textCondComentarii;
+    private TextView textCondProcB, textCondNrFacturi, textCondComentarii;
 
-	public static String codClientVar = "";
-	public static String numeClientVar = "";
-	public static String tipClientVar = "";
-	public static String articoleComanda = "", numeArtSelContextMenu = "", codArtSelContextMenu = "";
-	public static double totalComanda = 0, stocArtCond = 0;
+    public static String codClientVar = "";
+    public static String numeClientVar = "";
+    public static String tipClientVar = "";
+    public static String articoleComanda = "", numeArtSelContextMenu = "", codArtSelContextMenu = "";
+    public static double totalComanda = 0, stocArtCond = 0;
 
-	public static boolean isComandaDistrib = true;
+    public static boolean isComandaDistrib = true;
 
-	private static ArticolComanda[] objArticol = new ArticolComanda[70];
+    private static ArticolComanda[] objArticol = new ArticolComanda[70];
 
-	public static String filialaAlternativaM = "NN10";
+    public static String filialaAlternativaM = "NN10";
 
-	private ProgressBar mProgress;
-	private Timer myTimer;
-	private int progressVal = 0;
-	private Handler logonHandler = new Handler();
+    private ProgressBar mProgress;
+    private Timer myTimer;
+    private int progressVal = 0;
+    private Handler logonHandler = new Handler();
 
-	private String comandaBlocata = "0";
-	private String globalAlertSDKA = "", globalAlertDVKA = "";
-	private String conditieID = "";
-	private int idOperatieComanda = 3;
+    private String comandaBlocata = "0";
+    private String globalAlertSDKA = "", globalAlertDVKA = "";
+    private String conditieID = "";
+    private int idOperatieComanda = 3;
 
-	private boolean alertSD = false;
-	private boolean alertDV = false;
+    private boolean alertSD = false;
+    private boolean alertDV = false;
 
-	public static String tipAcces;
-	ListView listViewArticole, listViewArtCond;
+    public static String tipAcces;
+    ListView listViewArticole, listViewArtCond;
 
-	private LinearLayout layoutTaxaVerde, layoutConditiiHeader, layoutCondProcB, layoutCondNrFact, layoutCondObs;
+    private LinearLayout layoutTaxaVerde, layoutConditiiHeader, layoutCondProcB, layoutCondNrFact, layoutCondObs;
 
-	public static String depozitUnic = "";
-	private String selectedCmdAdrLivr = "";
-	private String mailAlertTipDest = "";
+    public static String depozitUnic = "";
+    private String selectedCmdAdrLivr = "";
+    private String mailAlertTipDest = "";
 
-	public static String divizieComanda = "";
+    public static String divizieComanda = "";
 
-	private LinearLayout layoutDetaliiCmd;
+    private LinearLayout layoutDetaliiCmd;
 
-	private Comanda comandaFinala;
+    private Comanda comandaFinala;
 
-	String serializedResult;
-	private String comandaJson;
-	private ComenziDAO operatiiComenzi;
-	private List<BeanComandaCreata> listComenzi;
-	private ArrayList<ArticolComanda> listArticoleComanda;
-	private List<BeanConditiiArticole> conditiiComandaArticole;
-	private ArticolModificareAdapter adapterArticole;
-	private String codTipReducere = "-1";
-	private LinearLayout layoutBV90;
+    String serializedResult;
+    private String comandaJson;
+    private ComenziDAO operatiiComenzi;
+    private List<BeanComandaCreata> listComenzi;
+    private ArrayList<ArticolComanda> listArticoleComanda;
+    private List<BeanConditiiArticole> conditiiComandaArticole;
+    private ArticolModificareAdapter adapterArticole;
+    private String codTipReducere = "-1";
+    private LinearLayout layoutBV90;
 
-	private CostDescarcare costDescarcare;
-	private Button valTranspBtn;
-	private TextView textAlertaMarja;
+    private CostDescarcare costDescarcare;
+    private Button valTranspBtn;
+    private TextView textAlertaMarja;
 
-	private double valTransport = 0;
-	private double valTransportSAP = 0;
-	public static boolean permitArticoleDistribIP = true;
+    private double valTransport = 0;
+    private double valTransportSAP = 0;
+    public static boolean permitArticoleDistribIP = true;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
-		setTheme(R.style.LRTheme);
-		setContentView(R.layout.modificarecomandaheader);
+        setTheme(R.style.LRTheme);
+        setContentView(R.layout.modificarecomandaheader);
 
-		operatiiComenzi = ComenziDAO.getInstance(this);
-		operatiiComenzi.setComenziDAOListener(this);
+        operatiiComenzi = ComenziDAO.getInstance(this);
+        operatiiComenzi.setComenziDAOListener(this);
 
-		ActionBar actionBar = getActionBar();
-		actionBar.setTitle("Modificare comanda");
-		actionBar.setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getActionBar();
+        actionBar.setTitle("Modificare comanda");
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
-		checkStaticVars();
+        checkStaticVars();
 
-		spinnerComenzi = (Spinner) findViewById(R.id.spinnerCmd);
-		spinnerComenzi.setVisibility(View.INVISIBLE);
-		addListenerSpinnerComenzi();
+        spinnerComenzi = (Spinner) findViewById(R.id.spinnerCmd);
+        spinnerComenzi.setVisibility(View.INVISIBLE);
+        addListenerSpinnerComenzi();
 
-		layoutDetaliiCmd = (LinearLayout) findViewById(R.id.layoutDetaliiCmd);
-		listViewArticole = (ListView) findViewById(R.id.listArtModif);
+        layoutDetaliiCmd = (LinearLayout) findViewById(R.id.layoutDetaliiCmd);
+        listViewArticole = (ListView) findViewById(R.id.listArtModif);
 
-		layoutBV90 = (LinearLayout) findViewById(R.id.layoutBV90);
-		layoutBV90.setVisibility(View.GONE);
+        layoutBV90 = (LinearLayout) findViewById(R.id.layoutBV90);
+        layoutBV90.setVisibility(View.GONE);
 
-		if (isUserCV())
-			ListaArticoleComandaGed.getInstance().addObserver(this);
-		else
-			ListaArticoleModificareComanda.getInstance().addObserver(this);
+        if (isUserCV())
+            ListaArticoleComandaGed.getInstance().addObserver(this);
+        else
+            ListaArticoleModificareComanda.getInstance().addObserver(this);
 
-		addListenerListArtModif();
-		registerForContextMenu(listViewArticole);
+        addListenerListArtModif();
+        registerForContextMenu(listViewArticole);
 
-		layoutTaxaVerde = (LinearLayout) findViewById(R.id.layoutTaxaVerde);
-		layoutTaxaVerde.setVisibility(View.INVISIBLE);
+        layoutTaxaVerde = (LinearLayout) findViewById(R.id.layoutTaxaVerde);
+        layoutTaxaVerde.setVisibility(View.INVISIBLE);
 
-		textTaxaVerde = (TextView) findViewById(R.id.textTaxaVerde);
+        textTaxaVerde = (TextView) findViewById(R.id.textTaxaVerde);
 
-		textTipPlata = (TextView) findViewById(R.id.textTipPlata);
-		textAdrLivr = (TextView) findViewById(R.id.textAdrLivr);
-		textPersContact = (TextView) findViewById(R.id.textPersContact);
-		textTelefon = (TextView) findViewById(R.id.textTelefon);
-		textCantar = (TextView) findViewById(R.id.textCantar);
-		textTransport = (TextView) findViewById(R.id.textTransport);
-		textTotalCmd = (TextView) findViewById(R.id.textTotalCmd);
-		textFactRed = (TextView) findViewById(R.id.textFactRed);
-		textPondereB = (TextView) findViewById(R.id.textPondereB);
+        textTipPlata = (TextView) findViewById(R.id.textTipPlata);
+        textAdrLivr = (TextView) findViewById(R.id.textAdrLivr);
+        textPersContact = (TextView) findViewById(R.id.textPersContact);
+        textTelefon = (TextView) findViewById(R.id.textTelefon);
+        textCantar = (TextView) findViewById(R.id.textCantar);
+        textTransport = (TextView) findViewById(R.id.textTransport);
+        textTotalCmd = (TextView) findViewById(R.id.textTotalCmd);
+        textFactRed = (TextView) findViewById(R.id.textFactRed);
+        textPondereB = (TextView) findViewById(R.id.textPondereB);
 
-		layoutConditiiHeader = (LinearLayout) findViewById(R.id.layoutConditiiHeader);
-		layoutCondProcB = (LinearLayout) findViewById(R.id.layoutCondProcB);
-		layoutCondNrFact = (LinearLayout) findViewById(R.id.layoutCondNrFact);
-		layoutCondObs = (LinearLayout) findViewById(R.id.layoutCondObs);
+        layoutConditiiHeader = (LinearLayout) findViewById(R.id.layoutConditiiHeader);
+        layoutCondProcB = (LinearLayout) findViewById(R.id.layoutCondProcB);
+        layoutCondNrFact = (LinearLayout) findViewById(R.id.layoutCondNrFact);
+        layoutCondObs = (LinearLayout) findViewById(R.id.layoutCondObs);
 
-		textCondProcB = (TextView) findViewById(R.id.textCondProcB);
-		textCondNrFacturi = (TextView) findViewById(R.id.textCondNrFacturi);
-		textCondComentarii = (TextView) findViewById(R.id.textCondComentarii);
+        textCondProcB = (TextView) findViewById(R.id.textCondProcB);
+        textCondNrFacturi = (TextView) findViewById(R.id.textCondNrFacturi);
+        textCondComentarii = (TextView) findViewById(R.id.textCondComentarii);
 
-		textOras = (TextView) findViewById(R.id.textOras);
-		textJudet = (TextView) findViewById(R.id.textJudet);
+        textOras = (TextView) findViewById(R.id.textOras);
+        textJudet = (TextView) findViewById(R.id.textJudet);
 
-		this.salveazaComandaBtn = (Button) findViewById(R.id.saveCmdBtn);
-		this.salveazaComandaBtn.setVisibility(View.INVISIBLE);
-		addListenerSaveCmdBtn();
+        this.salveazaComandaBtn = (Button) findViewById(R.id.saveCmdBtn);
+        this.salveazaComandaBtn.setVisibility(View.INVISIBLE);
+        addListenerSaveCmdBtn();
 
-		this.stergeComandaBtn = (Button) findViewById(R.id.delCmdBtn);
+        this.stergeComandaBtn = (Button) findViewById(R.id.delCmdBtn);
 
-		aprobareBtn = (Button) findViewById(R.id.aprobareBtn);
+        aprobareBtn = (Button) findViewById(R.id.aprobareBtn);
 
-		if (UtilsUser.isUserKA()) {
-			aprobareBtn.setVisibility(View.VISIBLE);
-			openAprobareDialog();
-		}
+        if (UtilsUser.isUserKA()) {
+            aprobareBtn.setVisibility(View.VISIBLE);
+            openAprobareDialog();
+        }
 
-		addListenerDelCmdBtn();
+        addListenerDelCmdBtn();
 
-		mProgress = (ProgressBar) findViewById(R.id.progress_bar_savecmd);
-		mProgress.setVisibility(View.INVISIBLE);
+        mProgress = (ProgressBar) findViewById(R.id.progress_bar_savecmd);
+        mProgress.setVisibility(View.INVISIBLE);
 
-		valTranspBtn = (Button) findViewById(R.id.valTransp);
-		addListenerValTranspBtn();
-		textAlertaMarja = (TextView) findViewById(R.id.textAlertaMarja);
+        valTranspBtn = (Button) findViewById(R.id.valTransp);
+        addListenerValTranspBtn();
+        textAlertaMarja = (TextView) findViewById(R.id.textAlertaMarja);
 
-		loadListComenzi();
+        loadListComenzi();
 
-	}
+    }
 
-	public void addListenerValTranspBtn() {
-		valTranspBtn.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				showModifValTranspDialogBox();
+    public void addListenerValTranspBtn() {
+        valTranspBtn.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                showModifValTranspDialogBox();
 
-			}
-		});
+            }
+        });
 
-	}
+    }
 
-	private boolean isComandaClpGed() {
-		return !isComandaDistrib && !DateLivrare.getInstance().getCodFilialaCLP().trim().isEmpty()
-				&& DateLivrare.getInstance().getCodFilialaCLP().trim().length() == 4;
-	}
+    private boolean isComandaClpGed() {
+        return !isComandaDistrib && !DateLivrare.getInstance().getCodFilialaCLP().trim().isEmpty()
+                && DateLivrare.getInstance().getCodFilialaCLP().trim().length() == 4;
+    }
 
-	public void showModifValTranspDialogBox() {
-		final Dialog dialogModifValTransp = new Dialog(ModificareComanda.this);
-		dialogModifValTransp.setContentView(R.layout.modifvaltranspdialogbox);
-		dialogModifValTransp.setTitle("Modificare valoare transport");
-		dialogModifValTransp.setCancelable(false);
-		dialogModifValTransp.show();
+    public void showModifValTranspDialogBox() {
+        final Dialog dialogModifValTransp = new Dialog(ModificareComanda.this);
+        dialogModifValTransp.setContentView(R.layout.modifvaltranspdialogbox);
+        dialogModifValTransp.setTitle("Modificare valoare transport");
+        dialogModifValTransp.setCancelable(false);
+        dialogModifValTransp.show();
 
-		final NumberFormat nf3 = NumberFormat.getInstance(new Locale("en", "US"));
-		nf3.setMinimumFractionDigits(2);
-		nf3.setMaximumFractionDigits(2);
-		nf3.setGroupingUsed(false);
+        final NumberFormat nf3 = NumberFormat.getInstance(new Locale("en", "US"));
+        nf3.setMinimumFractionDigits(2);
+        nf3.setMaximumFractionDigits(2);
+        nf3.setGroupingUsed(false);
 
-		final EditText textValTransp = (EditText) dialogModifValTransp.findViewById(R.id.txtValTransp);
+        final EditText textValTransp = (EditText) dialogModifValTransp.findViewById(R.id.txtValTransp);
 
-		TextView txtTranspSAP = (TextView) dialogModifValTransp.findViewById(R.id.txtTranspSAP);
-		txtTranspSAP.setText("SAP: " + nf3.format(valTransportSAP));
+        TextView txtTranspSAP = (TextView) dialogModifValTransp.findViewById(R.id.txtTranspSAP);
+        txtTranspSAP.setText("SAP: " + nf3.format(valTransportSAP));
 
-		ListView listViewArticoleTransp = (ListView) dialogModifValTransp.findViewById(R.id.listArticoleTransp);
+        ListView listViewArticoleTransp = (ListView) dialogModifValTransp.findViewById(R.id.listArticoleTransp);
 
-		ArticolePretTransport adapterArticoleTransport = new ArticolePretTransport(ModificareComanda.this, listArticoleComanda);
-		listViewArticoleTransp.setAdapter(adapterArticoleTransport);
+        ArticolePretTransport adapterArticoleTransport = new ArticolePretTransport(ModificareComanda.this, listArticoleComanda);
+        listViewArticoleTransp.setAdapter(adapterArticoleTransport);
 
-		textValTransp.setText(nf3.format(valTransport));
-		textValTransp.setSelection(textValTransp.getText().length(), textValTransp.getText().length());
+        textValTransp.setText(nf3.format(valTransport));
+        textValTransp.setSelection(textValTransp.getText().length(), textValTransp.getText().length());
 
-		Button btnOkTransp = (Button) dialogModifValTransp.findViewById(R.id.btnOkTransp);
-		btnOkTransp.setOnClickListener(new OnClickListener() {
+        Button btnOkTransp = (Button) dialogModifValTransp.findViewById(R.id.btnOkTransp);
+        btnOkTransp.setOnClickListener(new OnClickListener() {
 
-			public void onClick(View v) {
+            public void onClick(View v) {
 
-				if (textValTransp.getText().toString().trim().length() > 0) {
-					if (Double.parseDouble(textValTransp.getText().toString().trim()) >= 0) {
+                if (textValTransp.getText().toString().trim().length() > 0) {
+                    if (Double.parseDouble(textValTransp.getText().toString().trim()) >= 0) {
 
-						valTransport = Double.parseDouble(textValTransp.getText().toString().trim());
+                        valTransport = Double.parseDouble(textValTransp.getText().toString().trim());
 
-						if (valTransport < valTransportSAP) {
-							Toast.makeText(getApplicationContext(), "Valoarea transportului nu poate fi mai mica decat cea din SAP!", Toast.LENGTH_SHORT)
-									.show();
-							valTransport = valTransportSAP;
-							textValTransp.setText(nf3.format(valTransport));
-						} else {
-							valTranspBtn.setText("Transp: " + textValTransp.getText().toString().trim());
-							calculProcente(listArticoleComanda);
-							dialogModifValTransp.dismiss();
-						}
+                        if (valTransport < valTransportSAP) {
+                            Toast.makeText(getApplicationContext(), "Valoarea transportului nu poate fi mai mica decat cea din SAP!", Toast.LENGTH_SHORT)
+                                    .show();
+                            valTransport = valTransportSAP;
+                            textValTransp.setText(nf3.format(valTransport));
+                        } else {
+                            valTranspBtn.setText("Transp: " + textValTransp.getText().toString().trim());
+                            calculProcente(listArticoleComanda);
+                            dialogModifValTransp.dismiss();
+                        }
 
-						UtilsComenziGed.setValoareArticolTransport(listArticoleComanda, valTransport);
-						adapterArticole.notifyDataSetChanged();
+                        UtilsComenziGed.setValoareArticolTransport(listArticoleComanda, valTransport);
+                        adapterArticole.notifyDataSetChanged();
 
-						DateLivrare.getInstance().setValTransport(valTransport);
+                        DateLivrare.getInstance().setValTransport(valTransport);
 
-					}
+                    }
 
-				}
+                }
 
-			}
-		});
+            }
+        });
 
-		Button btnCancelTransp = (Button) dialogModifValTransp.findViewById(R.id.btnCancelTransp);
-		btnCancelTransp.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				dialogModifValTransp.dismiss();
+        Button btnCancelTransp = (Button) dialogModifValTransp.findViewById(R.id.btnCancelTransp);
+        btnCancelTransp.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                dialogModifValTransp.dismiss();
 
-			}
-		});
+            }
+        });
 
-	}
+    }
 
-	public void openAprobareDialog() {
-		aprobareBtn.setOnClickListener(new OnClickListener() {
+    public void openAprobareDialog() {
+        aprobareBtn.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
 
-				try {
+                try {
 
-					AprobariDialog aprove = new AprobariDialog(ModificareComanda.this);
-					aprove.getAproveData(selectedCmd);
-					aprove.show();
+                    AprobariDialog aprove = new AprobariDialog(ModificareComanda.this);
+                    aprove.getAproveData(selectedCmd);
+                    aprove.show();
 
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				}
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
 
-			}
-		});
-	}
+            }
+        });
+    }
 
-	private void CreateMenu(Menu menu) {
+    private void CreateMenu(Menu menu) {
 
-		if (!isUserCVExc()) {
-			MenuItem mnu2 = menu.add(0, 0, 0, "Articole");
-			mnu2.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-		}
-		MenuItem mnu3 = menu.add(0, 1, 1, "Livrare");
-		mnu3.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        if (!isUserCVExc()) {
+            MenuItem mnu2 = menu.add(0, 0, 0, "Articole");
+            mnu2.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        }
+        MenuItem mnu3 = menu.add(0, 1, 1, "Livrare");
+        mnu3.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-	}
+    }
 
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
 
-		case 0:
-			if (codClientVar.length() > 0) {
+            case 0:
+                if (codClientVar.length() > 0) {
 
-				Intent nextScreen = null;
-				if (isUserCV() || isComandaGed()) {
-					nextScreen = new Intent(getApplicationContext(), SelectArtCmdGed.class);
-					nextScreen.putExtra("totalNegociat", false);
-					nextScreen.putExtra("codClientVar", selectedClientCode);
-					nextScreen.putExtra("depozitUnic", depozitUnic);
-					nextScreen.putExtra("tipComanda", "X");
-					nextScreen.putExtra("rezervStoc", false);
-					nextScreen.putExtra("filialaAlternativa", selectedUnitLog);
-					nextScreen.putExtra("canalDistrib", ModificareComanda.isComandaDistrib ? "10" : "20");
-					nextScreen.putExtra("tipPersClient", comandaSelectata.isCmdInstPublica() ? "IP" : "");
+                    Intent nextScreen = null;
+                    if (isUserCV() || isComandaGed()) {
+                        nextScreen = new Intent(getApplicationContext(), SelectArtCmdGed.class);
+                        nextScreen.putExtra("totalNegociat", false);
+                        nextScreen.putExtra("codClientVar", selectedClientCode);
+                        nextScreen.putExtra("depozitUnic", depozitUnic);
+                        nextScreen.putExtra("tipComanda", "X");
+                        nextScreen.putExtra("rezervStoc", false);
+                        nextScreen.putExtra("filialaAlternativa", selectedUnitLog);
+                        nextScreen.putExtra("canalDistrib", ModificareComanda.isComandaDistrib ? "10" : "20");
+                        nextScreen.putExtra("tipPersClient", comandaSelectata.isCmdInstPublica() ? "IP" : "");
 
-					new SelectArtCmdGed().addFilialaMathaus(selectedUnitLog, getBaseContext());
+                        new SelectArtCmdGed().addFilialaMathaus(selectedUnitLog, getBaseContext());
 
-				} else {
-					nextScreen = new Intent(getApplicationContext(), SelectArtModificareCmd.class);
+                    } else {
+                        nextScreen = new Intent(getApplicationContext(), SelectArtModificareCmd.class);
 
-				}
-				startActivity(nextScreen);
+                    }
+                    startActivity(nextScreen);
 
-			} else {
-				Toast.makeText(getApplicationContext(), "Selectati o comanda!", Toast.LENGTH_SHORT).show();
-			}
+                } else {
+                    Toast.makeText(getApplicationContext(), "Selectati o comanda!", Toast.LENGTH_SHORT).show();
+                }
 
-			return true;
+                return true;
 
-		case 1:
+            case 1:
 
-			if (codClientVar.length() > 0) {
+                if (codClientVar.length() > 0) {
 
-				Intent nextScreenLivr = null;
-				if (isUserCV() || isComandaGed()) {
-					nextScreenLivr = new Intent(getApplicationContext(), SelectAdrLivrCmdGed.class);
-					nextScreenLivr.putExtra("codClient", selectedClientCode);
-					nextScreenLivr.putExtra("parrentClass", "ModificareComanda");
-					nextScreenLivr.putExtra("tipPlataContract", DateLivrare.getInstance().getTipPlata());
-					nextScreenLivr.putExtra("limitaCredit", String.valueOf(DateLivrare.getInstance().getLimitaCredit()));
-					nextScreenLivr.putExtra("termenPlata", DateLivrare.getInstance().getTermenPlata());
+                    Intent nextScreenLivr = null;
+                    if (isUserCV() || isComandaGed()) {
+                        nextScreenLivr = new Intent(getApplicationContext(), SelectAdrLivrCmdGed.class);
+                        nextScreenLivr.putExtra("codClient", selectedClientCode);
+                        nextScreenLivr.putExtra("parrentClass", "ModificareComanda");
+                        nextScreenLivr.putExtra("tipPlataContract", DateLivrare.getInstance().getTipPlata());
+                        nextScreenLivr.putExtra("limitaCredit", String.valueOf(DateLivrare.getInstance().getLimitaCredit()));
+                        nextScreenLivr.putExtra("termenPlata", DateLivrare.getInstance().getTermenPlata());
 
-				} else {
-					nextScreenLivr = new Intent(getApplicationContext(), SelectAdrLivrCmd.class);
-					nextScreenLivr.putExtra("parrentClass", "ModificareComanda");
-					nextScreenLivr.putExtra("tipPlataContract", DateLivrare.getInstance().getTipPlata());
-					nextScreenLivr.putExtra("limitaCredit", String.valueOf(DateLivrare.getInstance().getLimitaCredit()));
-					nextScreenLivr.putExtra("termenPlata", DateLivrare.getInstance().getTermenPlata());
-				}
+                    } else {
+                        nextScreenLivr = new Intent(getApplicationContext(), SelectAdrLivrCmd.class);
+                        nextScreenLivr.putExtra("parrentClass", "ModificareComanda");
+                        nextScreenLivr.putExtra("tipPlataContract", DateLivrare.getInstance().getTipPlata());
+                        nextScreenLivr.putExtra("limitaCredit", String.valueOf(DateLivrare.getInstance().getLimitaCredit()));
+                        nextScreenLivr.putExtra("termenPlata", DateLivrare.getInstance().getTermenPlata());
+                    }
 
-				selectedCmdAdrLivr = selectedCmd;
-				startActivity(nextScreenLivr);
+                    selectedCmdAdrLivr = selectedCmd;
+                    startActivity(nextScreenLivr);
 
-			} else {
-				Toast.makeText(getApplicationContext(), "Selectati o comanda!", Toast.LENGTH_SHORT).show();
-			}
+                } else {
+                    Toast.makeText(getApplicationContext(), "Selectati o comanda!", Toast.LENGTH_SHORT).show();
+                }
 
 
-			return true;
+                return true;
 
-		case android.R.id.home:
+            case android.R.id.home:
 
-			articoleComanda = "";
-			numeClientVar = "";
-			codClientVar = "";
+                articoleComanda = "";
+                numeClientVar = "";
+                codClientVar = "";
 
-			UserInfo.getInstance().setParentScreen("");
-			clearAllData();
+                UserInfo.getInstance().setParentScreen("");
+                clearAllData();
 
-			Intent nextScreen = new Intent(getApplicationContext(), MainMenu.class);
+                Intent nextScreen = new Intent(getApplicationContext(), MainMenu.class);
 
-			startActivity(nextScreen);
+                startActivity(nextScreen);
 
-			finish();
-			return true;
+                finish();
+                return true;
 
-		}
-		return false;
-	}
+        }
+        return false;
+    }
 
-	boolean isUserCV() {
-		return UserInfo.getInstance().getTipUser().equals("CV") || UserInfo.getInstance().getTipUser().equals("CVR")
-				|| UserInfo.getInstance().getTipUser().equals("SM") || UserInfo.getInstance().getTipUserSap().equals("KA3")
-				|| UserInfo.getInstance().getTipUser().equals("SMR") || UserInfo.getInstance().getTipUser().equals("WOOD")
-				|| UserInfo.getInstance().getTipUser().equals("SC");
-	}
+    boolean isUserCV() {
+        return UserInfo.getInstance().getTipUser().equals("CV") || UserInfo.getInstance().getTipUser().equals("CVR")
+                || UserInfo.getInstance().getTipUser().equals("SM") || UserInfo.getInstance().getTipUserSap().equals("KA3")
+                || UserInfo.getInstance().getTipUser().equals("SMR") || UserInfo.getInstance().getTipUser().equals("WOOD")
+                || UserInfo.getInstance().getTipUser().equals("SC");
+    }
 
-	private boolean isUserCVExc() {
-		return UserInfo.getInstance().getTipUser().equals("CVR") || UserInfo.getInstance().getTipUserSap().equals("KA3")
-				|| UserInfo.getInstance().getTipUser().equals("SMR") || UserInfo.getInstance().getTipUser().equals("WOOD");
-	}
+    private boolean isUserCVExc() {
+        return UserInfo.getInstance().getTipUser().equals("CVR") || UserInfo.getInstance().getTipUserSap().equals("KA3")
+                || UserInfo.getInstance().getTipUser().equals("SMR") || UserInfo.getInstance().getTipUser().equals("WOOD");
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		CreateMenu(menu);
-		return true;
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        CreateMenu(menu);
+        return true;
+    }
 
-	@Override
-	public void onResume() {
+    @Override
+    public void onResume() {
 
-		super.onResume();
-		checkStaticVars();
+        super.onResume();
+        checkStaticVars();
 
-		if (DateLivrare.getInstance().getDateLivrare().length() > 0) {
+        if (DateLivrare.getInstance().getDateLivrare().length() > 0) {
 
-			DateLivrare dateLivrareInstance = DateLivrare.getInstance();
+            DateLivrare dateLivrareInstance = DateLivrare.getInstance();
 
-			textJudet.setText(dateLivrareInstance.getNumeJudet());
-			textOras.setText(dateLivrareInstance.getOras());
-			textAdrLivr.setText(dateLivrareInstance.getStrada());
-			textPersContact.setText(dateLivrareInstance.getPersContact());
-			textTelefon.setText(dateLivrareInstance.getNrTel());
+            textJudet.setText(dateLivrareInstance.getNumeJudet());
+            textOras.setText(dateLivrareInstance.getOras());
+            textAdrLivr.setText(dateLivrareInstance.getStrada());
+            textPersContact.setText(dateLivrareInstance.getPersContact());
+            textTelefon.setText(dateLivrareInstance.getNrTel());
 
-			// ***************cantar
-			if (dateLivrareInstance.getCantar().equals("NU"))
-				textCantar.setText("Nu");
-			else
-				textCantar.setText("Da");
-			// ***************sf. cantar
+            // ***************cantar
+            if (dateLivrareInstance.getCantar().equals("NU"))
+                textCantar.setText("Nu");
+            else
+                textCantar.setText("Da");
+            // ***************sf. cantar
 
-			textFactRed.setText(UtilsGeneral.getTipReducere(dateLivrareInstance.getRedSeparat()));
-			textTipPlata.setText(UtilsGeneral.getDescTipPlata(dateLivrareInstance.getTipPlata(), dateLivrareInstance.getTermenPlata()));
-			textTransport.setText(UtilsGeneral.getDescTipTransport(dateLivrareInstance.getTransport()));
+            textFactRed.setText(UtilsGeneral.getTipReducere(dateLivrareInstance.getRedSeparat()));
+            textTipPlata.setText(UtilsGeneral.getDescTipPlata(dateLivrareInstance.getTipPlata(), dateLivrareInstance.getTermenPlata()));
+            textTransport.setText(UtilsGeneral.getDescTipTransport(dateLivrareInstance.getTransport()));
 
-			if (!isUserCV() && !isComandaGed()) {
+            if (!isUserCV() && !isComandaGed()) {
 
-				if (dateLivrareInstance.getZonaBucuresti() != null) {
+                if (dateLivrareInstance.getZonaBucuresti() != null) {
 
-					HelperTranspBuc.eliminaCostTransportZoneBuc(listArticoleComanda);
+                    HelperTranspBuc.eliminaCostTransportZoneBuc(listArticoleComanda);
 
-					if (HelperTranspBuc.isCondTranspZonaBuc(dateLivrareInstance, dateLivrareInstance.getZonaBucuresti())) {
-						HelperTranspBuc.adaugaTransportBucuresti(listArticoleComanda, dateLivrareInstance.getZonaBucuresti());
+                    if (HelperTranspBuc.isCondTranspZonaBuc(dateLivrareInstance, dateLivrareInstance.getZonaBucuresti())) {
+                        HelperTranspBuc.adaugaTransportBucuresti(listArticoleComanda, dateLivrareInstance.getZonaBucuresti());
 
-					}
+                    }
 
-					adapterArticole.setListArticole(listArticoleComanda);
-					adapterArticole.notifyDataSetChanged();
-					listViewArticole.setAdapter(adapterArticole);
+                    adapterArticole.setListArticole(listArticoleComanda);
+                    adapterArticole.notifyDataSetChanged();
+                    listViewArticole.setAdapter(adapterArticole);
 
-				}
+                }
 
-			}
+            }
 
-		}
+        }
 
-	}
+    }
 
-	private double getTotalComanda() {
+    private double getTotalComanda() {
 
-		double localTotalComanda = 0;
+        double localTotalComanda = 0;
 
-		if (listArticoleComanda != null) {
-			for (ArticolComanda articol : listArticoleComanda) {
+        if (listArticoleComanda != null) {
+            for (ArticolComanda articol : listArticoleComanda) {
 
-				localTotalComanda += articol.getPretUnit() * articol.getCantUmb();
+                localTotalComanda += articol.getPretUnit() * articol.getCantUmb();
 
-			}
-		}
+            }
+        }
 
-		return localTotalComanda;
+        return localTotalComanda;
 
-	}
+    }
 
-	public void calculPondereB() {
+    public void calculPondereB() {
 
-		double totalArtB = 0, procentB = 0, localTotalComanda = 0;
+        double totalArtB = 0, procentB = 0, localTotalComanda = 0;
 
-		for (ArticolComanda articol : listArticoleComanda) {
+        for (ArticolComanda articol : listArticoleComanda) {
 
-			if (articol.getTipArt().equalsIgnoreCase("B"))
-				totalArtB += articol.getPret();
+            if (articol.getTipArt().equalsIgnoreCase("B"))
+                totalArtB += articol.getPret();
 
-			localTotalComanda += articol.getPretUnit() * articol.getCantUmb();
+            localTotalComanda += articol.getPretUnit() * articol.getCantUmb();
 
-		}
+        }
 
-		if (localTotalComanda == 0) {
-			procentB = 0;
-		} else {
-			procentB = totalArtB / localTotalComanda * 100;
-		}
+        if (localTotalComanda == 0) {
+            procentB = 0;
+        } else {
+            procentB = totalArtB / localTotalComanda * 100;
+        }
 
-		textPondereB.setText(String.format("%.02f", procentB) + "%");
-		textTotalCmd.setText(String.format("%.02f", localTotalComanda));
-		totalComanda = localTotalComanda;
+        textPondereB.setText(String.format("%.02f", procentB) + "%");
+        textTotalCmd.setText(String.format("%.02f", localTotalComanda));
+        totalComanda = localTotalComanda;
 
-	}
+    }
 
-	public void addListenerSaveCmdBtn() {
-		salveazaComandaBtn.setOnTouchListener(new OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
+    public void addListenerSaveCmdBtn() {
+        salveazaComandaBtn.setOnTouchListener(new OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
 
-				try {
+                try {
 
-					switch (event.getAction()) {
+                    switch (event.getAction()) {
 
-					case MotionEvent.ACTION_DOWN:
+                        case MotionEvent.ACTION_DOWN:
 
-						if (listArticoleComanda.size() == 0) {
-							Toast.makeText(getApplicationContext(), "Comanda nu contine articole!", Toast.LENGTH_SHORT).show();
-							return false;
-						}
+                            if (listArticoleComanda.size() == 0) {
+                                Toast.makeText(getApplicationContext(), "Comanda nu contine articole!", Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
 
-						if (!selectedCmdAdrLivr.equals(selectedCmd)) {
-							Toast.makeText(getApplicationContext(), "Verificati datele de livrare!", Toast.LENGTH_SHORT).show();
-							return false;
-						}
+                            if (!selectedCmdAdrLivr.equals(selectedCmd)) {
+                                Toast.makeText(getApplicationContext(), "Verificati datele de livrare!", Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
 
-						if (!isConditiiAcceptate()) {
-							Toast.makeText(getApplicationContext(), "Preluati toate conditiile!", Toast.LENGTH_SHORT).show();
-							return false;
-						}
+                            if (!isConditiiAcceptate()) {
+                                Toast.makeText(getApplicationContext(), "Preluati toate conditiile!", Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
 
-						if (!isConditiiCmdAccept()) {
-							Toast.makeText(getApplicationContext(), "Comanda nu are toate aprobarile!", Toast.LENGTH_SHORT).show();
-							return false;
-						}
+                            if (!isConditiiCmdAccept()) {
+                                Toast.makeText(getApplicationContext(), "Comanda nu are toate aprobarile!", Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
 
-						mProgress.setVisibility(View.VISIBLE);
-						mProgress.setProgress(0);
-						progressVal = 0;
-						myTimer = new Timer();
-						myTimer.schedule(new UpdateProgress(), 40, 15);
+                            mProgress.setVisibility(View.VISIBLE);
+                            mProgress.setProgress(0);
+                            progressVal = 0;
+                            myTimer = new Timer();
+                            myTimer.schedule(new UpdateProgress(), 40, 15);
 
-						return true;
+                            return true;
 
-					case MotionEvent.ACTION_UP:
+                        case MotionEvent.ACTION_UP:
 
-						if (listArticoleComanda.size() > 0 && myTimer != null) {
-							myTimer.cancel();
-							mProgress.setVisibility(View.INVISIBLE);
-						}
-						return true;
+                            if (listArticoleComanda.size() > 0 && myTimer != null) {
+                                myTimer.cancel();
+                                mProgress.setVisibility(View.INVISIBLE);
+                            }
+                            return true;
 
-					}
-				} catch (Exception ex) {
-					Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_SHORT).show();
-				}
+                    }
+                } catch (Exception ex) {
+                    Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_SHORT).show();
+                }
 
-				return false;
-			}
+                return false;
+            }
 
-		});
+        });
 
-	}
+    }
 
-	class UpdateProgress extends TimerTask {
-		public void run() {
-			progressVal++;
-			if (mProgress.getProgress() == 50) {
-				logonHandler.post(new Runnable() {
-					public void run() {
+    class UpdateProgress extends TimerTask {
+        public void run() {
+            progressVal++;
+            if (mProgress.getProgress() == 50) {
+                logonHandler.post(new Runnable() {
+                    public void run() {
 
-						DateLivrare dateLivrareInstance = DateLivrare.getInstance();
+                        DateLivrare dateLivrareInstance = DateLivrare.getInstance();
 
-						prepareArtForDelivery();
+                        prepareArtForDelivery();
 
-						if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("N") || dateLivrareInstance.getTipPlata().equals("E1") || dateLivrareInstance.getTipPlata().equals("R")) && totalComanda > 5000 && tipClientVar.equals("PJ")) {
-							Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT).show();
-							return;
-						}
+                        dateLivrareInstance.setTotalComanda(String.valueOf(totalComanda));
+                        dateLivrareInstance.setCodAgent(UserInfo.getInstance().getCod());
+                        dateLivrareInstance.setFactRed("-1");
 
-						dateLivrareInstance.setTotalComanda(String.valueOf(totalComanda));
-						dateLivrareInstance.setCodAgent(UserInfo.getInstance().getCod());
-						dateLivrareInstance.setFactRed("-1");
+                        String alerteKA = globalAlertSDKA + "!" + globalAlertDVKA;
 
-						String alerteKA = globalAlertSDKA + "!" + globalAlertDVKA;
+                        // aprobare adr. livrare noua doar pentru agenti
+                        if (!UserInfo.getInstance().getTipAcces().equals("27")) {
+                            if (dateLivrareInstance.isAdrLivrNoua())
+                                comandaBlocata = "1";
+                        }
 
-						// aprobare adr. livrare noua doar pentru agenti
-						if (!UserInfo.getInstance().getTipAcces().equals("27")) {
-							if (dateLivrareInstance.isAdrLivrNoua())
-								comandaBlocata = "1";
-						}
+                        String localRedSeparat = codTipReducere.equals("-1") ? dateLivrareInstance.getRedSeparat() : codTipReducere;
 
-						String localRedSeparat = codTipReducere.equals("-1") ? dateLivrareInstance.getRedSeparat() : codTipReducere;
+                        if (isComandaGed())
+                            localRedSeparat = "NU";
 
-						if (isComandaGed())
-							localRedSeparat = "NU";
+                        if (isReducere())
+                            localRedSeparat = "X";
 
-						if (isReducere())
-							localRedSeparat = "X";
+                        NumberFormat nf3 = NumberFormat.getInstance();
+                        nf3.setMinimumFractionDigits(2);
+                        nf3.setMaximumFractionDigits(2);
 
-						NumberFormat nf3 = NumberFormat.getInstance();
-						nf3.setMinimumFractionDigits(2);
-						nf3.setMaximumFractionDigits(2);
+                        if (dateLivrareInstance.getObsPlata().equals("SO") && dateLivrareInstance.getTipPlata().equals("E")) {
+                            if (!dateLivrareInstance.isValIncModif()) {
+                                dateLivrareInstance.setValoareIncasare(nf3.format(ModificareComanda.totalComanda * Constants.TVA));
+                            }
+                        }
 
-						if (dateLivrareInstance.getObsPlata().equals("SO") && dateLivrareInstance.getTipPlata().equals("E")) {
-							if (!dateLivrareInstance.isValIncModif()) {
-								dateLivrareInstance.setValoareIncasare(nf3.format(ModificareComanda.totalComanda * Constants.TVA));
-							}
-						}
+                        String userSiteMail = " ", isValIncModif = " ", codJ = "", adrLivrareGED = "";
 
-						String userSiteMail = " ", isValIncModif = " ", codJ = "", adrLivrareGED = "";
+                        if (dateLivrareInstance.isValIncModif())
+                            isValIncModif = "X";
 
-						if (dateLivrareInstance.isValIncModif())
-							isValIncModif = "X";
+                        comandaFinala = new Comanda();
+                        comandaFinala.setCodClient(selectedClientCode);
+                        comandaFinala.setComandaBlocata(comandaBlocata);
+                        comandaFinala.setNrCmdSap(selectedCmdSAP);
+                        comandaFinala.setConditieID(conditieID);
 
-						comandaFinala = new Comanda();
-						comandaFinala.setCodClient(selectedClientCode);
-						comandaFinala.setComandaBlocata(comandaBlocata);
-						comandaFinala.setNrCmdSap(selectedCmdSAP);
-						comandaFinala.setConditieID(conditieID);
+                        comandaFinala.setAlerteKA(alerteKA);
+                        comandaFinala.setFactRedSeparat(localRedSeparat);
+                        comandaFinala.setFilialaAlternativa(ModificareComanda.filialaAlternativaM);
+                        comandaFinala.setUserSite(UserInfo.getInstance().getUserSite());
+                        comandaFinala.setUserSiteMail(dateLivrareInstance.getMail());
+                        comandaFinala.setIsValIncModif(isValIncModif);
+                        comandaFinala.setCodJ(codJ);
+                        comandaFinala.setAdresaLivrareGed(serializeDateLivrareGed());
+                        comandaFinala.setNumeClient(dateLivrareInstance.getNumeClient());
+                        comandaFinala.setCnpClient(dateLivrareInstance.getCnpClient());
+                        comandaFinala.setNecesarAprobariCV(comandaSelectata.getAprobariNecesare());
 
-						comandaFinala.setAlerteKA(alerteKA);
-						comandaFinala.setFactRedSeparat(localRedSeparat);
-						comandaFinala.setFilialaAlternativa(ModificareComanda.filialaAlternativaM);
-						comandaFinala.setUserSite(UserInfo.getInstance().getUserSite());
-						comandaFinala.setUserSiteMail(dateLivrareInstance.getMail());
-						comandaFinala.setIsValIncModif(isValIncModif);
-						comandaFinala.setCodJ(codJ);
-						comandaFinala.setAdresaLivrareGed(serializeDateLivrareGed());
-						comandaFinala.setNumeClient(dateLivrareInstance.getNumeClient());
-						comandaFinala.setCnpClient(dateLivrareInstance.getCnpClient());
-						comandaFinala.setNecesarAprobariCV(comandaSelectata.getAprobariNecesare());
+                        if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("N") || dateLivrareInstance.getTipPlata().equals("E1") || dateLivrareInstance.getTipPlata().equals("R")) && tipClientVar.equals("PJ")) {
+                            if (totalComanda > 5000) {
+                                Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT).show();
+                                return;
+                            } else
+                                getTotalComenziNumerar();
+                        } else if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("N") || dateLivrareInstance.getTipPlata().equals("E1") || dateLivrareInstance.getTipPlata().equals("R")) && tipClientVar.equals("PF")) {
+                            if (totalComanda > 10000) {
+                                Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 10000 RON!", Toast.LENGTH_SHORT).show();
+                                return;
+                            } else
+                                getTotalComenziNumerar();
+                        } else
+                            verificaPretMacara();
 
-						verificaPretMacara();
+                    }
+                });
 
-					}
-				});
+                myTimer.cancel();
+            } else {
+                mProgress.setProgress(progressVal);
+            }
 
-				myTimer.cancel();
-			} else {
-				mProgress.setProgress(progressVal);
-			}
+        }
+    }
 
-		}
-	}
+    private void getTotalComenziNumerar() {
 
-	private void verificaPretMacara() {
+        String tipPers = "PJN";
+        String codClientNumerar = comandaFinala.getCodClient();
 
-		HelperCostDescarcare.eliminaCostDescarcare(listArticoleComanda);
+        if (tipClientVar.equals("PF")) {
+            tipPers = "PF";
+            codClientNumerar = DateLivrare.getInstance().getNrTel();
+        } else if (tipClientVar.equals("PJ") && !comandaFinala.getCnpClient().trim().isEmpty()) {
+            tipPers = "PJG";
+            codClientNumerar = CreareComandaGed.cnpClient.replaceAll("RO", "");
+        }
 
-		if ((DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP") || DateLivrare.getInstance().getTransport().equalsIgnoreCase("TCLI"))
-				&& !isExceptieComandaIP() && !UtilsUser.isAV_SD_01()) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("codClient", codClientNumerar);
+        params.put("dataLivrare", DateLivrare.getInstance().getDataLivrare());
+        params.put("tipClient", tipPers);
+        operatiiComenzi.getTotalComenziNumerar(params);
 
-			String codFurnizor = " ";
+    }
 
-			if (DateLivrare.getInstance().getFurnizorComanda() != null
-					&& !DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa().trim().isEmpty())
-				codFurnizor = DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa();
-			else if (!DateLivrare.getInstance().getCodFilialaCLP().trim().isEmpty())
-				codFurnizor = DateLivrare.getInstance().getCodFilialaCLP();
+    private void afisTotalComenziNumerar(String totalNumerar) {
 
-			List<ArticolCalculDesc> artCalcul = HelperCostDescarcare.getDateCalculDescarcare(listArticoleComanda);
+        double valPragNumerar = 5000;
 
-			String listArtSer = operatiiComenzi.serializeArtCalcMacara(artCalcul);
+        if (tipClientVar.equals("PF"))
+            valPragNumerar = 10000;
 
-			HashMap<String, String> params = new HashMap<String, String>();
+        if (totalComanda + Double.valueOf(totalNumerar) > valPragNumerar) {
 
-			params.put("unitLog", DateLivrare.getInstance().getUnitLog());
-			params.put("codAgent", DateLivrare.getInstance().getCodAgent());
-			params.put("codClient", comandaFinala.getCodClient());
-			params.put("codFurnizor", codFurnizor);
-			params.put("listArt", listArtSer);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(
+                    "\nLa acest client valoarea comenzilor cu plata in numerar livrate in data de " + DateLivrare.getInstance().getDataLivrare() + " depaseste " + (int)valPragNumerar + " de lei.\n\n" +
+                            "Pentru a salva comanda trebuie sa schimbati metoda de plata sau data de livrare.\n").setCancelable(false)
+                    .setPositiveButton("Inchide", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
 
-			operatiiComenzi.getCostMacara(params);
-		} else
-			performSaveCmd();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setCancelable(false);
+            alert.show();
 
-	}
+        } else
+            verificaPretMacara();
+    }
 
-	private boolean isExceptieComandaIP() {
-		return UtilsUser.isUserIP() && comandaSelectata.getTipClientInstPublica() == EnumTipClientIP.CONSTR;
-	}
+    private void verificaPretMacara() {
 
-	private void afiseazaPretMacaraDialog(String result) {
+        HelperCostDescarcare.eliminaCostDescarcare(listArticoleComanda);
 
-		costDescarcare = HelperCostDescarcare.deserializeCostMacara(result);
+        if ((DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP") || DateLivrare.getInstance().getTransport().equalsIgnoreCase("TCLI"))
+                && !isExceptieComandaIP() && !UtilsUser.isAV_SD_01()) {
 
-		verificaPaletiComanda(costDescarcare.getArticolePaleti());
+            String codFurnizor = " ";
 
-		if (!costDescarcare.getArticolePaleti().isEmpty()) {
-			costDescarcare.getArticoleDescarcare().get(0).setCantitate(0);
+            if (DateLivrare.getInstance().getFurnizorComanda() != null
+                    && !DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa().trim().isEmpty())
+                codFurnizor = DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa();
+            else if (!DateLivrare.getInstance().getCodFilialaCLP().trim().isEmpty())
+                codFurnizor = DateLivrare.getInstance().getCodFilialaCLP();
 
-			int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.65);
-			int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.55);
+            List<ArticolCalculDesc> artCalcul = HelperCostDescarcare.getDateCalculDescarcare(listArticoleComanda);
 
-			CostPaletiDialog costPaleti = new CostPaletiDialog(this, costDescarcare.getArticolePaleti(), DateLivrare.getInstance().getTransport());
-			costPaleti.setPaletiDialogListener(this);
-			costPaleti.getWindow().setLayout(width, height);
-			costPaleti.show();
+            String listArtSer = operatiiComenzi.serializeArtCalcMacara(artCalcul);
 
-		} else if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0
-				&& DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
+            HashMap<String, String> params = new HashMap<String, String>();
 
-			CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, isComandaGed());
-			macaraDialog.setCostMacaraListener(this);
-			macaraDialog.show();
+            params.put("unitLog", DateLivrare.getInstance().getUnitLog());
+            params.put("codAgent", DateLivrare.getInstance().getCodAgent());
+            params.put("codClient", comandaFinala.getCodClient());
+            params.put("codFurnizor", codFurnizor);
+            params.put("listArt", listArtSer);
 
-		} else {
-			if (!costDescarcare.getSePermite())
-				DateLivrare.getInstance().setMasinaMacara(false);
+            operatiiComenzi.getCostMacara(params);
+        } else
+            performSaveCmd();
 
-			performSaveCmd();
+    }
 
-		}
+    private boolean isExceptieComandaIP() {
+        return UtilsUser.isUserIP() && comandaSelectata.getTipClientInstPublica() == EnumTipClientIP.CONSTR;
+    }
 
-	}
+    private void afiseazaPretMacaraDialog(String result) {
 
-	private void verificaPaletiComanda(List<ArticolPalet> listPaleti) {
+        costDescarcare = HelperCostDescarcare.deserializeCostMacara(result);
 
-		Iterator<ArticolComanda> articolIterator = listArticoleComanda.iterator();
+        verificaPaletiComanda(costDescarcare.getArticolePaleti());
 
-		boolean paletExista;
+        if (!costDescarcare.getArticolePaleti().isEmpty()) {
+            costDescarcare.getArticoleDescarcare().get(0).setCantitate(0);
 
-		while (articolIterator.hasNext()) {
-			ArticolComanda articol = articolIterator.next();
+            int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.65);
+            int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.55);
 
-			paletExista = true;
+            CostPaletiDialog costPaleti = new CostPaletiDialog(this, costDescarcare.getArticolePaleti(), DateLivrare.getInstance().getTransport());
+            costPaleti.setPaletiDialogListener(this);
+            costPaleti.getWindow().setLayout(width, height);
+            costPaleti.show();
 
-			if (articol.isUmPalet()) {
-				paletExista = false;
-			}
+        } else if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0
+                && DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
 
-			for (ArticolPalet palet : listPaleti) {
+            CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, isComandaGed());
+            macaraDialog.setCostMacaraListener(this);
+            macaraDialog.show();
 
-				if (palet.getCodPalet().equals(articol.getCodArticol()) && (palet.getCantitate() == (int) articol.getCantitate())) {
-					paletExista = true;
-				}
+        } else {
+            if (!costDescarcare.getSePermite())
+                DateLivrare.getInstance().setMasinaMacara(false);
 
-			}
+            performSaveCmd();
 
-			if (!paletExista) {
-				articolIterator.remove();
-				adapterArticole.notifyDataSetChanged();
-			}
+        }
 
-		}
+    }
 
-		Iterator<ArticolPalet> paletIterator = listPaleti.iterator();
+    private void verificaPaletiComanda(List<ArticolPalet> listPaleti) {
 
-		for (ArticolComanda articol : listArticoleComanda) {
+        Iterator<ArticolComanda> articolIterator = listArticoleComanda.iterator();
 
-			while (paletIterator.hasNext()) {
-				ArticolPalet palet = paletIterator.next();
+        boolean paletExista;
 
-				if (palet.getCodPalet().equals(articol.getCodArticol()) && (palet.getCantitate() == (int) articol.getCantitate())) {
-					paletIterator.remove();
-				}
+        while (articolIterator.hasNext()) {
+            ArticolComanda articol = articolIterator.next();
 
-			}
+            paletExista = true;
 
-			paletIterator = listPaleti.iterator();
+            if (articol.isUmPalet()) {
+                paletExista = false;
+            }
 
-		}
+            for (ArticolPalet palet : listPaleti) {
 
-	}
+                if (palet.getCodPalet().equals(articol.getCodArticol()) && (palet.getCantitate() == (int) articol.getCantitate())) {
+                    paletExista = true;
+                }
 
-	private void trateazaPretMacara(boolean acceptaPret, double valoarePret) {
+            }
 
-		if (acceptaPret) {
-			DateLivrare.getInstance().setMasinaMacara(true);
+            if (!paletExista) {
+                articolIterator.remove();
+                adapterArticole.notifyDataSetChanged();
+            }
 
-			List<ArticolComanda> articoleDescarcare = HelperCostDescarcare.getArticoleDescarcare(costDescarcare, valoarePret, UserInfo.getInstance()
-					.getUnitLog(), listArticoleComanda);
+        }
 
-			listArticoleComanda.addAll(articoleDescarcare);
+        Iterator<ArticolPalet> paletIterator = listPaleti.iterator();
 
-		} else {
-			DateLivrare.getInstance().setMasinaMacara(false);
-		}
+        for (ArticolComanda articol : listArticoleComanda) {
 
-		performSaveCmd();
+            while (paletIterator.hasNext()) {
+                ArticolPalet palet = paletIterator.next();
 
-	}
+                if (palet.getCodPalet().equals(articol.getCodArticol()) && (palet.getCantitate() == (int) articol.getCantitate())) {
+                    paletIterator.remove();
+                }
 
-	private boolean isReducere() {
-		return globalSubCmp.equals("1") && !UserInfo.getInstance().getCodDepart().equals("07") && !UserInfo.getInstance().getCodDepart().equals("04");
-	}
+            }
 
-	private void performSaveCmd() {
-		try {
+            paletIterator = listPaleti.iterator();
 
-			// comanda cv cu conditii se salveaza direct
-			if (isComandaGed() && UserInfo.getInstance().getTipUser().equals("CV") && !UserInfo.getInstance().getTipUserSap().equals("CONS-GED")) {
-				alertSD = false;
-				alertDV = false;
-			}
+        }
 
-			HashMap<String, String> params = new HashMap<String, String>();
+    }
 
-			String tipUser = "";
-			if (UserInfo.getInstance().getTipAcces().equals("27"))
-				tipUser = "KA";
-			else if (isComandaGed())
-				tipUser = "CV";
-			else if (UserInfo.getInstance().getTipAcces().equals("62"))
-				tipUser = "AV";
-			else
-				tipUser = UserInfo.getInstance().getTipUser();
+    private void trateazaPretMacara(boolean acceptaPret, double valoarePret) {
 
-			params.put("comanda", " ");
-			params.put("tipUser", tipUser);
-			params.put("JSONArt", serializeArticole());
-			params.put("JSONComanda", serializeComanda(comandaFinala));
-			params.put("JSONDateLivrare", serializeDateLivrare());
-			params.put("alertSD", String.valueOf(alertSD));
-			params.put("alertDV", String.valueOf(alertDV));
-			params.put("tipUserSap", UserInfo.getInstance().getTipUserSap());
-			params.put("idCmdAmob", "-1");
+        if (acceptaPret) {
+            DateLivrare.getInstance().setMasinaMacara(true);
 
-			operatiiComenzi.salveazaComandaDistrib(params);
+            List<ArticolComanda> articoleDescarcare = HelperCostDescarcare.getArticoleDescarcare(costDescarcare, valoarePret, UserInfo.getInstance()
+                    .getUnitLog(), listArticoleComanda);
 
-		} catch (Exception e) {
-			Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-		}
-	}
+            listArticoleComanda.addAll(articoleDescarcare);
 
-	private boolean isComandaGed() {
+        } else {
+            DateLivrare.getInstance().setMasinaMacara(false);
+        }
 
-		String tempDistribUL = InfoStrings.getDistribUnitLog(selectedUnitLog);
+        performSaveCmd();
 
-		if (InfoStrings.getClientGenericGed(tempDistribUL, "PF").equals(selectedClientCode)
-				|| InfoStrings.getClientGenericGed(tempDistribUL, "PJ").equals(selectedClientCode)
-				|| InfoStrings.getClientGenericGedWood(tempDistribUL, "PF").equals(selectedClientCode)
-				|| InfoStrings.getClientGenericGedWood(tempDistribUL, "PJ").equals(selectedClientCode)
-				|| InfoStrings.getClientGenericGedWood_faraFact(tempDistribUL, "PF").equals(selectedClientCode)
-				|| InfoStrings.getClientGenericGed_CONSGED_faraFactura(tempDistribUL, "PF").equals(selectedClientCode)
-				|| InfoStrings.getClientCVO_cuFact_faraCnp(tempDistribUL, "").equals(selectedClientCode)
-				|| InfoStrings.getClientGed_FaraFactura(tempDistribUL).equals(selectedClientCode) || !isComandaDistrib)
+    }
 
-			return true;
-		else
-			return false;
-	}
+    private boolean isReducere() {
+        return globalSubCmp.equals("1") && !UserInfo.getInstance().getCodDepart().equals("07") && !UserInfo.getInstance().getCodDepart().equals("04");
+    }
 
-	public String prepareArtForDelivery() {
-		String retVal = "";
+    private void performSaveCmd() {
+        try {
 
-		String[] tokPret;
-		double valCondPret = 0;
-		double taxaVerde = 0;
-		boolean hasTaxaVerde = false;
+            // comanda cv cu conditii se salveaza direct
+            if (isComandaGed() && UserInfo.getInstance().getTipUser().equals("CV") && !UserInfo.getInstance().getTipUserSap().equals("CONS-GED")) {
+                alertSD = false;
+                alertDV = false;
+            }
 
-		alertSD = false;
-		alertDV = false;
-		comandaBlocata = "0";
-		globalAlertSDKA = "?";
-		globalAlertDVKA = "?";
-		globalSubCmp = "0";
+            HashMap<String, String> params = new HashMap<String, String>();
 
-		totalComanda = 0;
+            String tipUser = "";
+            if (UserInfo.getInstance().getTipAcces().equals("27"))
+                tipUser = "KA";
+            else if (isComandaGed())
+                tipUser = "CV";
+            else if (UserInfo.getInstance().getTipAcces().equals("62"))
+                tipUser = "AV";
+            else
+                tipUser = UserInfo.getInstance().getTipUser();
 
-		Collections.sort(listArticoleComanda, ArticolComanda.DepartComparator);
-		Iterator<ArticolComanda> iterator = listArticoleComanda.iterator();
-		ArticolComanda articolComanda = null;
+            params.put("comanda", " ");
+            params.put("tipUser", tipUser);
+            params.put("JSONArt", serializeArticole());
+            params.put("JSONComanda", serializeComanda(comandaFinala));
+            params.put("JSONDateLivrare", serializeDateLivrare());
+            params.put("alertSD", String.valueOf(alertSD));
+            params.put("alertDV", String.valueOf(alertDV));
+            params.put("tipUserSap", UserInfo.getInstance().getTipUserSap());
+            params.put("idCmdAmob", "-1");
 
-		while (iterator.hasNext()) {
+            operatiiComenzi.salveazaComandaDistrib(params);
 
-			articolComanda = iterator.next();
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
+    }
 
-			if (articolComanda.getInfoArticol().contains(";")) {
-				String[] condPret = articolComanda.getInfoArticol().split(";");
+    private boolean isComandaGed() {
 
-				for (int ii = 0; ii < condPret.length; ii++) {
-					tokPret = condPret[ii].split(":");
-					valCondPret = Double.valueOf(tokPret[1].replace(',', '.').trim());
-					if (valCondPret != 0) {
-						if (tokPret[0].toUpperCase(Locale.getDefault()).contains("VERDE")) {
-							taxaVerde += valCondPret;
-						}
+        String tempDistribUL = InfoStrings.getDistribUnitLog(selectedUnitLog);
 
-					}
-				}
-			}
+        if (InfoStrings.getClientGenericGed(tempDistribUL, "PF").equals(selectedClientCode)
+                || InfoStrings.getClientGenericGed(tempDistribUL, "PJ").equals(selectedClientCode)
+                || InfoStrings.getClientGenericGedWood(tempDistribUL, "PF").equals(selectedClientCode)
+                || InfoStrings.getClientGenericGedWood(tempDistribUL, "PJ").equals(selectedClientCode)
+                || InfoStrings.getClientGenericGedWood_faraFact(tempDistribUL, "PF").equals(selectedClientCode)
+                || InfoStrings.getClientGenericGed_CONSGED_faraFactura(tempDistribUL, "PF").equals(selectedClientCode)
+                || InfoStrings.getClientCVO_cuFact_faraCnp(tempDistribUL, "").equals(selectedClientCode)
+                || InfoStrings.getClientGed_FaraFactura(tempDistribUL).equals(selectedClientCode) || !isComandaDistrib)
 
-			if (articolComanda.getAlteValori().toString().equals("1"))
-				globalSubCmp = "1";
+            return true;
+        else
+            return false;
+    }
 
-			if (isUserExceptie()) {
-				if (articolComanda.getTipAlert().contains("SD")) {
-					comandaBlocata = "1";
-					alertSD = true;
+    public String prepareArtForDelivery() {
+        String retVal = "";
 
-					if (!globalAlertSDKA.contains(articolComanda.getDepart()))
-						globalAlertSDKA += articolComanda.getDepart() + "?";
-				}
+        String[] tokPret;
+        double valCondPret = 0;
+        double taxaVerde = 0;
+        boolean hasTaxaVerde = false;
 
-				if (articolComanda.getTipAlert().contains("DV")) {
-					comandaBlocata = "1";
-					alertDV = true;
+        alertSD = false;
+        alertDV = false;
+        comandaBlocata = "0";
+        globalAlertSDKA = "?";
+        globalAlertDVKA = "?";
+        globalSubCmp = "0";
 
-					if (!globalAlertDVKA.contains(articolComanda.getDepart()))
-						globalAlertDVKA += articolComanda.getDepart() + "?";
-				}
+        totalComanda = 0;
 
-			}
+        Collections.sort(listArticoleComanda, ArticolComanda.DepartComparator);
+        Iterator<ArticolComanda> iterator = listArticoleComanda.iterator();
+        ArticolComanda articolComanda = null;
 
-			if (isUserCV()) {
-				comandaBlocata = "0";
-				alertSD = false;
-				alertDV = false;
+        while (iterator.hasNext()) {
 
-			}
+            articolComanda = iterator.next();
 
-			if (articolComanda.getCodArticol().equals("00000000")) {
-				hasTaxaVerde = true;
-			}
+            if (articolComanda.getInfoArticol().contains(";")) {
+                String[] condPret = articolComanda.getInfoArticol().split(";");
 
-			totalComanda += articolComanda.getPretUnit() * articolComanda.getCantUmb();
+                for (int ii = 0; ii < condPret.length; ii++) {
+                    tokPret = condPret[ii].split(":");
+                    valCondPret = Double.valueOf(tokPret[1].replace(',', '.').trim());
+                    if (valCondPret != 0) {
+                        if (tokPret[0].toUpperCase(Locale.getDefault()).contains("VERDE")) {
+                            taxaVerde += valCondPret;
+                        }
 
-		}
+                    }
+                }
+            }
 
-		if (ModificareComanda.isComandaDistrib) {
-			if (hasTaxaVerde) {
-				updateTaxaVerde(taxaVerde);
-			} else {
-				if (taxaVerde > 0)
-					addTaxaVerde(taxaVerde);
-			}
-		}
+            if (articolComanda.getAlteValori().toString().equals("1"))
+                globalSubCmp = "1";
 
-		return retVal;
-	}
+            if (isUserExceptie()) {
+                if (articolComanda.getTipAlert().contains("SD")) {
+                    comandaBlocata = "1";
+                    alertSD = true;
 
-	// userul este agent, sd sau ka
-	boolean isUserExceptie() {
-		return UserInfo.getInstance().getTipAcces().equals("9") || UserInfo.getInstance().getTipAcces().equals("10")
-				|| UserInfo.getInstance().getTipAcces().equals("27") || UserInfo.getInstance().getTipAcces().equals("62");
-	}
+                    if (!globalAlertSDKA.contains(articolComanda.getDepart()))
+                        globalAlertSDKA += articolComanda.getDepart() + "?";
+                }
 
-	private void updateTaxaVerde(double taxaVerde) {
-		Iterator<ArticolComanda> iterator = listArticoleComanda.iterator();
-		ArticolComanda articol = null;
+                if (articolComanda.getTipAlert().contains("DV")) {
+                    comandaBlocata = "1";
+                    alertDV = true;
 
-		while (iterator.hasNext()) {
-			articol = iterator.next();
+                    if (!globalAlertDVKA.contains(articolComanda.getDepart()))
+                        globalAlertDVKA += articolComanda.getDepart() + "?";
+                }
 
-			if (articol.getCodArticol().equals("00000000")) {
-				articol.setTaxaVerde(taxaVerde);
-				break;
-			}
-		}
-	}
+            }
 
-	private void addTaxaVerde(double taxaVerde) {
+            if (isUserCV()) {
+                comandaBlocata = "0";
+                alertSD = false;
+                alertDV = false;
 
-		ArticolComanda articol = new ArticolComanda();
-		articol.setCodArticol("000000000000000000");
-		articol.setCantitate(1.0);
-		articol.setDepozit(listArticoleComanda.get(0).getDepozit());
-		articol.setPretUnit(taxaVerde);
-		articol.setProcent(0);
-		articol.setUm("BUC");
-		articol.setProcentFact(0);
-		articol.setConditie(false);
-		articol.setDiscClient(0);
-		articol.setProcAprob(0);
-		articol.setMultiplu(1);
-		articol.setPret(taxaVerde);
-		articol.setInfoArticol(" ");
-		articol.setCantUmb(1);
-		articol.setUmb("BUC");
-		articol.setDepart(listArticoleComanda.get(0).getDepart());
-		articol.setObservatii("");
-		articol.setIstoricPret("");
-		listArticoleComanda.add(articol);
+            }
 
-	}
+            if (articolComanda.getCodArticol().equals("00000000")) {
+                hasTaxaVerde = true;
+            }
 
-	private String serializeArticole() {
-		JSONArray myArray = new JSONArray();
-		TreeSet<String> aprobariCV = new TreeSet<String>();
-		JSONObject obj = null;
+            totalComanda += articolComanda.getPretUnit() * articolComanda.getCantUmb();
 
-		if (!ModificareComanda.isComandaDistrib && !UtilsUser.isAgentOrSDorKA() && !isExceptieComandaIP() && valTransport > 0) {
-			UtilsComenziGed.setValoareArticolTransport(listArticoleComanda, valTransport);
-		}
+        }
 
-		try {
-			for (int i = 0; i < listArticoleComanda.size(); i++) {
+        if (ModificareComanda.isComandaDistrib) {
+            if (hasTaxaVerde) {
+                updateTaxaVerde(taxaVerde);
+            } else {
+                if (taxaVerde > 0)
+                    addTaxaVerde(taxaVerde);
+            }
+        }
 
-				if (listArticoleComanda.get(i).getStatus() != null && listArticoleComanda.get(i).getStatus().toLowerCase().contains("respins"))
-					continue;
+        return retVal;
+    }
 
-				obj = new JSONObject();
-				obj.put("codArticol", listArticoleComanda.get(i).getCodArticol());
-				obj.put("cantitate", listArticoleComanda.get(i).getCantitate());
-				obj.put("depozit", listArticoleComanda.get(i).getDepozit());
-				obj.put("pretUnit", listArticoleComanda.get(i).getPretUnit());
-				obj.put("procent", listArticoleComanda.get(i).getProcent());
-				obj.put("um", listArticoleComanda.get(i).getUm());
-				obj.put("procentFact", listArticoleComanda.get(i).getProcentFact());
-				obj.put("conditie", listArticoleComanda.get(i).getConditie());
-				obj.put("discClient", listArticoleComanda.get(i).getDiscClient());
-				obj.put("procAprob", listArticoleComanda.get(i).getProcAprob());
-				obj.put("multiplu", listArticoleComanda.get(i).getMultiplu());
-				obj.put("pret", listArticoleComanda.get(i).getPret());
-				obj.put("infoArticol", listArticoleComanda.get(i).getInfoArticol());
-				obj.put("cantUmb", listArticoleComanda.get(i).getCantUmb());
-				obj.put("Umb", listArticoleComanda.get(i).getUmb());
-				obj.put("depart", listArticoleComanda.get(i).getDepart());
-				obj.put("ponderare", listArticoleComanda.get(i).getPonderare());
+    // userul este agent, sd sau ka
+    boolean isUserExceptie() {
+        return UserInfo.getInstance().getTipAcces().equals("9") || UserInfo.getInstance().getTipAcces().equals("10")
+                || UserInfo.getInstance().getTipAcces().equals("27") || UserInfo.getInstance().getTipAcces().equals("62");
+    }
 
-				obj.put("observatii", listArticoleComanda.get(i).getTipAlert());
-				obj.put("departAprob", listArticoleComanda.get(i).getDepartAprob());
-				obj.put("istoricPret", listArticoleComanda.get(i).getIstoricPret());
-				obj.put("valTransport", listArticoleComanda.get(i).getValTransport());
-				obj.put("filialaSite", listArticoleComanda.get(i).getFilialaSite());
-				obj.put("dataExp", listArticoleComanda.get(i).getDataExpPret());
-				obj.put("listCabluri", new OperatiiArticolImpl(this).serializeCabluri05(listArticoleComanda.get(i).getListCabluri()));
+    private void updateTaxaVerde(double taxaVerde) {
+        Iterator<ArticolComanda> iterator = listArticoleComanda.iterator();
+        ArticolComanda articol = null;
 
-				if (!UtilsUser.isAgentOrSDorKA()) {
-					if ((listArticoleComanda.get(i).getNumeArticol() != null && listArticoleComanda.get(i).getPonderare() == 1)
-							|| comandaSelectata.isCmdInstPublica()) {
-						alertDV = true;
-						if (!comandaFinala.getComandaBlocata().equals("21") && !comandaFinala.getComandaBlocata().equals("20"))
-							comandaFinala.setComandaBlocata("1");
+        while (iterator.hasNext()) {
+            articol = iterator.next();
 
-						aprobariCV.add(listArticoleComanda.get(i).getDepartSintetic());
-					}
-				}
+            if (articol.getCodArticol().equals("00000000")) {
+                articol.setTaxaVerde(taxaVerde);
+                break;
+            }
+        }
+    }
 
-				myArray.put(obj);
-			}
-		} catch (Exception ex) {
-			Toast.makeText(this, ex.toString(), Toast.LENGTH_SHORT).show();
-		}
+    private void addTaxaVerde(double taxaVerde) {
 
-		serializedResult = myArray.toString();
+        ArticolComanda articol = new ArticolComanda();
+        articol.setCodArticol("000000000000000000");
+        articol.setCantitate(1.0);
+        articol.setDepozit(listArticoleComanda.get(0).getDepozit());
+        articol.setPretUnit(taxaVerde);
+        articol.setProcent(0);
+        articol.setUm("BUC");
+        articol.setProcentFact(0);
+        articol.setConditie(false);
+        articol.setDiscClient(0);
+        articol.setProcAprob(0);
+        articol.setMultiplu(1);
+        articol.setPret(taxaVerde);
+        articol.setInfoArticol(" ");
+        articol.setCantUmb(1);
+        articol.setUmb("BUC");
+        articol.setDepart(listArticoleComanda.get(0).getDepart());
+        articol.setObservatii("");
+        articol.setIstoricPret("");
+        listArticoleComanda.add(articol);
 
-		if (!UtilsUser.isAgentOrSDorKA()) {
-			String strAprobariCV = new String(aprobariCV.toString());
-			comandaFinala.setNecesarAprobariCV(strAprobariCV.substring(1, strAprobariCV.length() - 1));
-		}
+    }
 
-		return serializedResult;
+    private String serializeArticole() {
+        JSONArray myArray = new JSONArray();
+        TreeSet<String> aprobariCV = new TreeSet<String>();
+        JSONObject obj = null;
 
-	}
+        if (!ModificareComanda.isComandaDistrib && !UtilsUser.isAgentOrSDorKA() && !isExceptieComandaIP() && valTransport > 0) {
+            UtilsComenziGed.setValoareArticolTransport(listArticoleComanda, valTransport);
+        }
 
-	private String serializeComanda(Comanda comanda) {
-		JSONObject obj = new JSONObject();
+        try {
+            for (int i = 0; i < listArticoleComanda.size(); i++) {
 
-		try {
-			obj.put("codClient", comanda.getCodClient());
-			obj.put("numeClient", comanda.getNumeClient());
-			obj.put("persoanaContact", comanda.getPersoanaContact());
-			obj.put("telefon", comanda.getTelefon());
-			obj.put("cantarire", comanda.getCantarire());
-			obj.put("metodaPlata", comanda.getMetodaPlata());
-			obj.put("tipTransport", comanda.getTipTransport());
-			obj.put("comandaBlocata", comanda.getComandaBlocata());
-			obj.put("nrCmdSap", comanda.getNrCmdSap());
-			obj.put("alerteKA", comanda.getAlerteKA());
-			obj.put("factRedSeparat", comanda.getFactRedSeparat());
-			obj.put("filialaAlternativa", comanda.getFilialaAlternativa());
-			obj.put("userSite", comanda.getUserSite());
-			obj.put("userSiteMail", comanda.getUserSiteMail());
-			obj.put("isValIncModif", comanda.getIsValIncModif());
-			obj.put("codJ", comanda.getCodJ());
-			obj.put("cnpClient", comanda.getCnpClient());
-			obj.put("adresaLivrareGed", comanda.getAdresaLivrareGed());
-			obj.put("adresaLivrare", comanda.getAdresaLivrare());
-			obj.put("valoareIncasare", comanda.getValoareIncasare());
-			obj.put("conditieID", comanda.getConditieID());
-			obj.put("canalDistrib", ModificareComanda.isComandaDistrib ? "10" : "20");
-			obj.put("necesarAprobariCV", comanda.getNecesarAprobariCV());
-			obj.put("valTransportSap", "0");
+                if (listArticoleComanda.get(i).getStatus() != null && listArticoleComanda.get(i).getStatus().toLowerCase().contains("respins"))
+                    continue;
 
+                obj = new JSONObject();
+                obj.put("codArticol", listArticoleComanda.get(i).getCodArticol());
+                obj.put("cantitate", listArticoleComanda.get(i).getCantitate());
+                obj.put("depozit", listArticoleComanda.get(i).getDepozit());
+                obj.put("pretUnit", listArticoleComanda.get(i).getPretUnit());
+                obj.put("procent", listArticoleComanda.get(i).getProcent());
+                obj.put("um", listArticoleComanda.get(i).getUm());
+                obj.put("procentFact", listArticoleComanda.get(i).getProcentFact());
+                obj.put("conditie", listArticoleComanda.get(i).getConditie());
+                obj.put("discClient", listArticoleComanda.get(i).getDiscClient());
+                obj.put("procAprob", listArticoleComanda.get(i).getProcAprob());
+                obj.put("multiplu", listArticoleComanda.get(i).getMultiplu());
+                obj.put("pret", listArticoleComanda.get(i).getPret());
+                obj.put("infoArticol", listArticoleComanda.get(i).getInfoArticol());
+                obj.put("cantUmb", listArticoleComanda.get(i).getCantUmb());
+                obj.put("Umb", listArticoleComanda.get(i).getUmb());
+                obj.put("depart", listArticoleComanda.get(i).getDepart());
+                obj.put("ponderare", listArticoleComanda.get(i).getPonderare());
 
-		} catch (Exception ex) {
-			Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
-		}
+                obj.put("observatii", listArticoleComanda.get(i).getTipAlert());
+                obj.put("departAprob", listArticoleComanda.get(i).getDepartAprob());
+                obj.put("istoricPret", listArticoleComanda.get(i).getIstoricPret());
+                obj.put("valTransport", listArticoleComanda.get(i).getValTransport());
+                obj.put("filialaSite", listArticoleComanda.get(i).getFilialaSite());
+                obj.put("dataExp", listArticoleComanda.get(i).getDataExpPret());
+                obj.put("listCabluri", new OperatiiArticolImpl(this).serializeCabluri05(listArticoleComanda.get(i).getListCabluri()));
 
-		return obj.toString();
-	}
+                if (!UtilsUser.isAgentOrSDorKA()) {
+                    if ((listArticoleComanda.get(i).getNumeArticol() != null && listArticoleComanda.get(i).getPonderare() == 1)
+                            || comandaSelectata.isCmdInstPublica()) {
+                        alertDV = true;
+                        if (!comandaFinala.getComandaBlocata().equals("21") && !comandaFinala.getComandaBlocata().equals("20"))
+                            comandaFinala.setComandaBlocata("1");
 
-	private String serializeDateLivrare() {
+                        aprobariCV.add(listArticoleComanda.get(i).getDepartSintetic());
+                    }
+                }
 
-		JSONObject obj = new JSONObject();
+                myArray.put(obj);
+            }
+        } catch (Exception ex) {
+            Toast.makeText(this, ex.toString(), Toast.LENGTH_SHORT).show();
+        }
 
-		try {
+        serializedResult = myArray.toString();
 
-			obj.put("codJudet", DateLivrare.getInstance().getCodJudet());
-			obj.put("numeJudet", DateLivrare.getInstance().getNumeJudet());
-			obj.put("Oras", DateLivrare.getInstance().getOras());
-			obj.put("Strada", DateLivrare.getInstance().getStrada());
-			obj.put("persContact", DateLivrare.getInstance().getPersContact());
-			obj.put("nrTel", DateLivrare.getInstance().getNrTel());
-			obj.put("redSeparat", DateLivrare.getInstance().getRedSeparat());
-			obj.put("Cantar", DateLivrare.getInstance().getCantar());
-			obj.put("tipPlata", UtilsComenzi.getTipPlataClient(DateLivrare.getInstance().getTipPlata(), CreareComandaGed.tipPlataContract.concat(CreareComanda.tipPlataContract).trim()));
-			obj.put("Transport", DateLivrare.getInstance().getTransport());
-			obj.put("dateLivrare", DateLivrare.getInstance().getDateLivrare());
-			obj.put("termenPlata", DateLivrare.getInstance().getTermenPlata());
-			obj.put("obsLivrare", DateLivrare.getInstance().getObsLivrare());
-			obj.put("dataLivrare", DateLivrare.getInstance().getDataLivrare());
-			obj.put("adrLivrNoua", DateLivrare.getInstance().isAdrLivrNoua());
-			obj.put("tipDocInsotitor", DateLivrare.getInstance().getTipDocInsotitor());
-			obj.put("obsPlata", DateLivrare.getInstance().getObsPlata());
-			obj.put("addrNumber", DateLivrare.getInstance().getAddrNumber());
-			obj.put("valoareIncasare", DateLivrare.getInstance().getValoareIncasare());
-			obj.put("isValIncModif", DateLivrare.getInstance().isValIncModif());
-			obj.put("mail", DateLivrare.getInstance().getMail());
-			obj.put("totalComanda", getTotalComanda());
-			obj.put("unitLog", DateLivrare.getInstance().getUnitLog());
-			obj.put("codAgent", DateLivrare.getInstance().getCodAgent());
-			obj.put("idObiectiv", DateLivrare.getInstance().getIdObiectiv());
-			obj.put("isAdresaObiectiv", DateLivrare.getInstance().isAdresaObiectiv());
-			obj.put("coordonateGps", getCoordAdresa());
-			obj.put("tonaj", DateLivrare.getInstance().getTonaj());
-			obj.put("prelucrare", DateLivrare.getInstance().getPrelucrare());
-			obj.put("clientRaft", DateLivrare.getInstance().isClientRaft());
-			obj.put("meserias", DateLivrare.getInstance().getCodMeserias());
-			obj.put("isComandaACZC", comandaSelectata.isComandaACZC());
+        if (!UtilsUser.isAgentOrSDorKA()) {
+            String strAprobariCV = new String(aprobariCV.toString());
+            comandaFinala.setNecesarAprobariCV(strAprobariCV.substring(1, strAprobariCV.length() - 1));
+        }
 
-			if (isComandaGed())
-				obj.put("factRed", "NU");
-			else
-				obj.put("factRed", codTipReducere.equals("-1") ? DateLivrare.getInstance().getFactRed() : codTipReducere);
-			obj.put("macara", DateLivrare.getInstance().isMasinaMacara() ? "X" : " ");
+        return serializedResult;
 
-			obj.put("factPaletiSeparat", DateLivrare.getInstance().isFactPaletSeparat());
+    }
 
-			obj.put("furnizorMarfa", DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa());
-			obj.put("furnizorProduse", DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorProduse());
-			obj.put("isCamionDescoperit", DateLivrare.getInstance().isCamionDescoperit());
-			obj.put("programLivrare", DateLivrare.getInstance().getProgramLivrare());
-			obj.put("livrareSambata", DateLivrare.getInstance().getLivrareSambata());
-			obj.put("codSuperAgent", UserInfo.getInstance().getCodSuperUser());
-			obj.put("filialaCLP", DateLivrare.getInstance().getCodFilialaCLP());
-			obj.put("numeDelegat", DateLivrare.getInstance().getDelegat().getNume());
-			obj.put("ciDelegat", DateLivrare.getInstance().getDelegat().getSerieNumarCI());
-			obj.put("autoDelegat", DateLivrare.getInstance().getDelegat().getNrAuto());
-			obj.put("refClient", DateLivrare.getInstance().getRefClient());
+    private String serializeComanda(Comanda comanda) {
+        JSONObject obj = new JSONObject();
 
-		} catch (Exception ex) {
-			Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
-		}
+        try {
+            obj.put("codClient", comanda.getCodClient());
+            obj.put("numeClient", comanda.getNumeClient());
+            obj.put("persoanaContact", comanda.getPersoanaContact());
+            obj.put("telefon", comanda.getTelefon());
+            obj.put("cantarire", comanda.getCantarire());
+            obj.put("metodaPlata", comanda.getMetodaPlata());
+            obj.put("tipTransport", comanda.getTipTransport());
+            obj.put("comandaBlocata", comanda.getComandaBlocata());
+            obj.put("nrCmdSap", comanda.getNrCmdSap());
+            obj.put("alerteKA", comanda.getAlerteKA());
+            obj.put("factRedSeparat", comanda.getFactRedSeparat());
+            obj.put("filialaAlternativa", comanda.getFilialaAlternativa());
+            obj.put("userSite", comanda.getUserSite());
+            obj.put("userSiteMail", comanda.getUserSiteMail());
+            obj.put("isValIncModif", comanda.getIsValIncModif());
+            obj.put("codJ", comanda.getCodJ());
+            obj.put("cnpClient", comanda.getCnpClient());
+            obj.put("adresaLivrareGed", comanda.getAdresaLivrareGed());
+            obj.put("adresaLivrare", comanda.getAdresaLivrare());
+            obj.put("valoareIncasare", comanda.getValoareIncasare());
+            obj.put("conditieID", comanda.getConditieID());
+            obj.put("canalDistrib", ModificareComanda.isComandaDistrib ? "10" : "20");
+            obj.put("necesarAprobariCV", comanda.getNecesarAprobariCV());
+            obj.put("valTransportSap", "0");
 
-		return obj.toString();
 
-	}
+        } catch (Exception ex) {
+            Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
+        }
 
-	private String serializeDateLivrareGed() {
+        return obj.toString();
+    }
 
-		JSONObject jsonAdresa = new JSONObject();
+    private String serializeDateLivrare() {
 
-		try {
-			jsonAdresa.put("codJudet", DateLivrare.getInstance().getCodJudetD());
-			jsonAdresa.put("oras", DateLivrare.getInstance().getOrasD());
-			jsonAdresa.put("strada", DateLivrare.getInstance().getAdresaD());
+        JSONObject obj = new JSONObject();
 
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+        try {
 
-		return jsonAdresa.toString();
-	}
+            obj.put("codJudet", DateLivrare.getInstance().getCodJudet());
+            obj.put("numeJudet", DateLivrare.getInstance().getNumeJudet());
+            obj.put("Oras", DateLivrare.getInstance().getOras());
+            obj.put("Strada", DateLivrare.getInstance().getStrada());
+            obj.put("persContact", DateLivrare.getInstance().getPersContact());
+            obj.put("nrTel", DateLivrare.getInstance().getNrTel());
+            obj.put("redSeparat", DateLivrare.getInstance().getRedSeparat());
+            obj.put("Cantar", DateLivrare.getInstance().getCantar());
+            obj.put("tipPlata", UtilsComenzi.getTipPlataClient(DateLivrare.getInstance().getTipPlata(), CreareComandaGed.tipPlataContract.concat(CreareComanda.tipPlataContract).trim()));
+            obj.put("Transport", DateLivrare.getInstance().getTransport());
+            obj.put("dateLivrare", DateLivrare.getInstance().getDateLivrare());
+            obj.put("termenPlata", DateLivrare.getInstance().getTermenPlata());
+            obj.put("obsLivrare", DateLivrare.getInstance().getObsLivrare());
+            obj.put("dataLivrare", DateLivrare.getInstance().getDataLivrare());
+            obj.put("adrLivrNoua", DateLivrare.getInstance().isAdrLivrNoua());
+            obj.put("tipDocInsotitor", DateLivrare.getInstance().getTipDocInsotitor());
+            obj.put("obsPlata", DateLivrare.getInstance().getObsPlata());
+            obj.put("addrNumber", DateLivrare.getInstance().getAddrNumber());
+            obj.put("valoareIncasare", DateLivrare.getInstance().getValoareIncasare());
+            obj.put("isValIncModif", DateLivrare.getInstance().isValIncModif());
+            obj.put("mail", DateLivrare.getInstance().getMail());
+            obj.put("totalComanda", getTotalComanda());
+            obj.put("unitLog", DateLivrare.getInstance().getUnitLog());
+            obj.put("codAgent", DateLivrare.getInstance().getCodAgent());
+            obj.put("idObiectiv", DateLivrare.getInstance().getIdObiectiv());
+            obj.put("isAdresaObiectiv", DateLivrare.getInstance().isAdresaObiectiv());
+            obj.put("coordonateGps", getCoordAdresa());
+            obj.put("tonaj", DateLivrare.getInstance().getTonaj());
+            obj.put("prelucrare", DateLivrare.getInstance().getPrelucrare());
+            obj.put("clientRaft", DateLivrare.getInstance().isClientRaft());
+            obj.put("meserias", DateLivrare.getInstance().getCodMeserias());
+            obj.put("isComandaACZC", comandaSelectata.isComandaACZC());
 
-	private String getCoordAdresa() {
-		if (DateLivrare.getInstance().getCoordonateAdresa() != null)
-			return DateLivrare.getInstance().getCoordonateAdresa().latitude + "#" + DateLivrare.getInstance().getCoordonateAdresa().longitude;
-		else
-			return "0#0";
-	}
+            if (isComandaGed())
+                obj.put("factRed", "NU");
+            else
+                obj.put("factRed", codTipReducere.equals("-1") ? DateLivrare.getInstance().getFactRed() : codTipReducere);
+            obj.put("macara", DateLivrare.getInstance().isMasinaMacara() ? "X" : " ");
 
-	private boolean isConditiiAcceptate() {
-		boolean isConditiiAcceptate = true;
+            obj.put("factPaletiSeparat", DateLivrare.getInstance().isFactPaletSeparat());
 
-		for (int i = 0; i < listArticoleComanda.size(); i++) {
+            obj.put("furnizorMarfa", DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa());
+            obj.put("furnizorProduse", DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorProduse());
+            obj.put("isCamionDescoperit", DateLivrare.getInstance().isCamionDescoperit());
+            obj.put("programLivrare", DateLivrare.getInstance().getProgramLivrare());
+            obj.put("livrareSambata", DateLivrare.getInstance().getLivrareSambata());
+            obj.put("codSuperAgent", UserInfo.getInstance().getCodSuperUser());
+            obj.put("filialaCLP", DateLivrare.getInstance().getCodFilialaCLP());
+            obj.put("numeDelegat", DateLivrare.getInstance().getDelegat().getNume());
+            obj.put("ciDelegat", DateLivrare.getInstance().getDelegat().getSerieNumarCI());
+            obj.put("autoDelegat", DateLivrare.getInstance().getDelegat().getNrAuto());
+            obj.put("refClient", DateLivrare.getInstance().getRefClient());
 
-			if (listArticoleComanda.get(i).hasConditii()) {
-				isConditiiAcceptate = false;
-				break;
-			}
-		}
+        } catch (Exception ex) {
+            Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
+        }
 
-		return isConditiiAcceptate;
+        return obj.toString();
 
-	}
+    }
 
-	private boolean isConditiiCmdAccept() {
-		if ((UtilsUser.isAgentOrSD() && isComandaGed()) || comandaSelectata.isCmdInstPublica())
-			return isCmdGEDOkToSave();
-		else
-			return isCommandaOkToSave();
-	}
+    private String serializeDateLivrareGed() {
 
-	private boolean isCmdGEDOkToSave() {
+        JSONObject jsonAdresa = new JSONObject();
 
-		for (ArticolComanda articol : listArticoleComanda) {
-			if (articol.getConditie())
-				return false;
+        try {
+            jsonAdresa.put("codJudet", DateLivrare.getInstance().getCodJudetD());
+            jsonAdresa.put("oras", DateLivrare.getInstance().getOrasD());
+            jsonAdresa.put("strada", DateLivrare.getInstance().getAdresaD());
 
-		}
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-		return true;
-	}
+        return jsonAdresa.toString();
+    }
 
-	private boolean isCommandaOkToSave() {
-		boolean isOkToSave = true;
-		String aprobariNecesare = comandaSelectata.getAprobariNecesare();
-		String aprobariPrimite = comandaSelectata.getAprobariPrimite();
-		String conditiiImpuse = comandaSelectata.getConditiiImpuse();
+    private String getCoordAdresa() {
+        if (DateLivrare.getInstance().getCoordonateAdresa() != null)
+            return DateLivrare.getInstance().getCoordonateAdresa().latitude + "#" + DateLivrare.getInstance().getCoordonateAdresa().longitude;
+        else
+            return "0#0";
+    }
 
-		for (int i = 0; i < listArticoleComanda.size(); i++) {
+    private boolean isConditiiAcceptate() {
+        boolean isConditiiAcceptate = true;
 
-			if (aprobariNecesare.contains(listArticoleComanda.get(i).getDepartSintetic())) {
-				if (!aprobariPrimite.contains(listArticoleComanda.get(i).getDepartSintetic())) {
+        for (int i = 0; i < listArticoleComanda.size(); i++) {
 
-					if (conditiiImpuse.contains(listArticoleComanda.get(i).getDepartSintetic()) && !listArticoleComanda.get(i).hasConditii()) {
-						continue;
-					} else {
-						isOkToSave = false;
-						break;
-					}
+            if (listArticoleComanda.get(i).hasConditii()) {
+                isConditiiAcceptate = false;
+                break;
+            }
+        }
 
-				}
+        return isConditiiAcceptate;
 
-			}
+    }
 
-		}
+    private boolean isConditiiCmdAccept() {
+        if ((UtilsUser.isAgentOrSD() && isComandaGed()) || comandaSelectata.isCmdInstPublica())
+            return isCmdGEDOkToSave();
+        else
+            return isCommandaOkToSave();
+    }
 
-		return isOkToSave;
-	}
+    private boolean isCmdGEDOkToSave() {
 
-	private void saveCmdStatus(String saveResponse) {
-		if (!saveResponse.equals("-1")) {
-			try {
+        for (ArticolComanda articol : listArticoleComanda) {
+            if (articol.getConditie())
+                return false;
 
-				if (!saveResponse.equals("9")) {
-					if (alertSD) {
-						sendMailAlert(0);
-					}
-					if (alertDV) {
+        }
 
-					}
+        return true;
+    }
 
-					if (UserInfo.getInstance().getTipAcces().equals("27"))// alerta
-																			// director
-																			// ka
-					{
-						// este nevoie de cel putin o aprobare
-						if (globalAlertSDKA.contains("0") || globalAlertDVKA.contains("0")) {
-							sendMailAlert(3);
-						}
-					}
+    private boolean isCommandaOkToSave() {
+        boolean isOkToSave = true;
+        String aprobariNecesare = comandaSelectata.getAprobariNecesare();
+        String aprobariPrimite = comandaSelectata.getAprobariPrimite();
+        String conditiiImpuse = comandaSelectata.getConditiiImpuse();
 
-				}
+        for (int i = 0; i < listArticoleComanda.size(); i++) {
 
-				Toast.makeText(getApplicationContext(), InfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_LONG).show();
+            if (aprobariNecesare.contains(listArticoleComanda.get(i).getDepartSintetic())) {
+                if (!aprobariPrimite.contains(listArticoleComanda.get(i).getDepartSintetic())) {
 
-				clearAllData();
-				loadListComenzi();
+                    if (conditiiImpuse.contains(listArticoleComanda.get(i).getDepartSintetic()) && !listArticoleComanda.get(i).hasConditii()) {
+                        continue;
+                    } else {
+                        isOkToSave = false;
+                        break;
+                    }
 
-			} catch (Exception e) {
-				Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-			}
+                }
 
-		} else {
-			Toast.makeText(getApplicationContext(), "Comanda NU a fost salvata!", Toast.LENGTH_LONG).show();
-		}
-	}
+            }
 
-	public void sendMailAlert(int tip) {
-		try {
+        }
 
-			if (tip == 1) // alerta dv
-			{
-				mailAlertTipDest = "2";
-			}
+        return isOkToSave;
+    }
 
-			if (tip == 3) // alerta director KA
-			{
-				mailAlertTipDest = "4";
-			}
+    private void saveCmdStatus(String saveResponse) {
+        if (!saveResponse.equals("-1")) {
+            try {
 
-			if (tip == 1 || tip == 3) {
-				HashMap<String, String> params = new HashMap<String, String>();
+                if (!saveResponse.equals("9")) {
+                    if (alertSD) {
+                        sendMailAlert(0);
+                    }
+                    if (alertDV) {
 
-				params.put("ul", UserInfo.getInstance().getUnitLog());
-				params.put("depart", UserInfo.getInstance().getCodDepart());
-				params.put("dest", mailAlertTipDest); // tip alert
-				params.put("agent", UserInfo.getInstance().getNume()); // agent
-				params.put("clnt", numeClientVar); //
-				params.put("suma", String.format("%.02f", totalComanda)); //
+                    }
 
-				AsyncTaskWSCall call = new AsyncTaskWSCall(this, "sendMailAlert", params);
-				call.getCallResults();
+                    if (UserInfo.getInstance().getTipAcces().equals("27"))// alerta
+                    // director
+                    // ka
+                    {
+                        // este nevoie de cel putin o aprobare
+                        if (globalAlertSDKA.contains("0") || globalAlertDVKA.contains("0")) {
+                            sendMailAlert(3);
+                        }
+                    }
 
-			}
+                }
 
-		} catch (Exception ex) {
-			Log.e("Error", ex.toString());
+                Toast.makeText(getApplicationContext(), InfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_LONG).show();
 
-		}
-	}
+                clearAllData();
+                loadListComenzi();
 
-	private void clearAllData() {
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
 
-		DateLivrare.getInstance().resetAll();
+        } else {
+            Toast.makeText(getApplicationContext(), "Comanda NU a fost salvata!", Toast.LENGTH_LONG).show();
+        }
+    }
 
-		articoleComanda = "";
-		numeClientVar = "";
-		codClientVar = "";
-		selectedCmd = "";
-		totalComanda = 0;
-		codTipReducere = "-1";
-		permitArticoleDistribIP = true;
-		CreareComanda.tipPlataContract = " ";
-		CreareComandaGed.tipPlataContract = " ";
+    public void sendMailAlert(int tip) {
+        try {
 
-		ListaArticoleComandaGed.getInstance().clearArticoleComanda();
-		ListaArticoleComandaGed.getInstance().deleteObserver(this);
+            if (tip == 1) // alerta dv
+            {
+                mailAlertTipDest = "2";
+            }
 
-		ListaArticoleModificareComanda.getInstance().clearArticoleComanda();
-		ListaArticoleModificareComanda.getInstance().deleteObserver(this);
+            if (tip == 3) // alerta director KA
+            {
+                mailAlertTipDest = "4";
+            }
 
-	}
+            if (tip == 1 || tip == 3) {
+                HashMap<String, String> params = new HashMap<String, String>();
 
-	public void addListenerDelCmdBtn() {
-		stergeComandaBtn.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
+                params.put("ul", UserInfo.getInstance().getUnitLog());
+                params.put("depart", UserInfo.getInstance().getCodDepart());
+                params.put("dest", mailAlertTipDest); // tip alert
+                params.put("agent", UserInfo.getInstance().getNume()); // agent
+                params.put("clnt", numeClientVar); //
+                params.put("suma", String.format("%.02f", totalComanda)); //
 
-				if (isUserCV()) {
+                AsyncTaskWSCall call = new AsyncTaskWSCall(this, "sendMailAlert", params);
+                call.getCallResults();
 
-					if (!isConditiiAcceptate()) {
-						Toast.makeText(getApplicationContext(), "Preluati toate conditiile!", Toast.LENGTH_SHORT).show();
-						return;
-					}
+            }
 
-					if (!isCommandaOkToSave()) {
-						Toast.makeText(getApplicationContext(), "Comanda nu are toate aprobarile!", Toast.LENGTH_SHORT).show();
-						return;
-					}
+        } catch (Exception ex) {
+            Log.e("Error", ex.toString());
 
-				}
+        }
+    }
 
-				showConfirmationAlert();
+    private void clearAllData() {
 
-			}
-		});
+        DateLivrare.getInstance().resetAll();
 
-	}
+        articoleComanda = "";
+        numeClientVar = "";
+        codClientVar = "";
+        selectedCmd = "";
+        totalComanda = 0;
+        codTipReducere = "-1";
+        permitArticoleDistribIP = true;
+        CreareComanda.tipPlataContract = " ";
+        CreareComandaGed.tipPlataContract = " ";
 
-	public void showConfirmationAlert() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Stergeti comanda?").setCancelable(false).setPositiveButton("Da", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
+        ListaArticoleComandaGed.getInstance().clearArticoleComanda();
+        ListaArticoleComandaGed.getInstance().deleteObserver(this);
 
-				idOperatieComanda = 3;
-				opereazaComanda();
+        ListaArticoleModificareComanda.getInstance().clearArticoleComanda();
+        ListaArticoleModificareComanda.getInstance().deleteObserver(this);
 
-			}
-		}).setNegativeButton("Nu", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				dialog.cancel();
+    }
 
-			}
-		}).setTitle("Confirmare").setIcon(R.drawable.warning96);
+    public void addListenerDelCmdBtn() {
+        stergeComandaBtn.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
 
-		AlertDialog alert = builder.create();
-		alert.show();
+                if (isUserCV()) {
 
-	}
+                    if (!isConditiiAcceptate()) {
+                        Toast.makeText(getApplicationContext(), "Preluati toate conditiile!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-	public void opereazaComanda() {
+                    if (!isCommandaOkToSave()) {
+                        Toast.makeText(getApplicationContext(), "Comanda nu are toate aprobarile!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-		try {
+                }
 
-			HashMap<String, String> params = new HashMap<String, String>();
+                showConfirmationAlert();
 
-			NumberFormat nf3 = new DecimalFormat("00000000");
-			String fullCode = nf3.format(Integer.parseInt(UserInfo.getInstance().getCod())).toString();
+            }
+        });
 
-			params.put("nrCmd", selectedCmd);
-			params.put("nrCmdSAP", selectedCmdSAP);
-			params.put("tipOp", String.valueOf(idOperatieComanda));
-			params.put("codUser", fullCode);
+    }
 
-			operatiiComenzi.opereazaComanda(params);
+    public void showConfirmationAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Stergeti comanda?").setCancelable(false).setPositiveButton("Da", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
 
-		} catch (Exception e) {
-			Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-		}
-	}
+                idOperatieComanda = 3;
+                opereazaComanda();
 
-	private void loadListComenzi() {
+            }
+        }).setNegativeButton("Nu", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
 
-		HashMap<String, String> params = new HashMap<String, String>();
+            }
+        }).setTitle("Confirmare").setIcon(R.drawable.warning96);
 
-		params.put("filiala", UserInfo.getInstance().getUnitLog());
-		params.put("codUser", UserInfo.getInstance().getCod());
-		params.put("tipCmd", "1");
-		params.put("depart", UserInfo.getInstance().getCodDepart());
-		params.put("tipUser", UserInfo.getInstance().getTipUser());
-		params.put("tipUserSap", UserInfo.getInstance().getTipUserSap());
+        AlertDialog alert = builder.create();
+        alert.show();
 
-		displayCmdDetails(false);
-		operatiiComenzi.getListComenzi(params);
+    }
 
-	}
+    public void opereazaComanda() {
 
-	private void getArticoleComanda() {
+        try {
 
-		HashMap<String, String> params = new HashMap<String, String>();
+            HashMap<String, String> params = new HashMap<String, String>();
 
-		params.put("nrCmd", selectedCmd);
-		params.put("afisCond", "1");
-		params.put("tipUser", UserInfo.getInstance().getTipUser());
+            NumberFormat nf3 = new DecimalFormat("00000000");
+            String fullCode = nf3.format(Integer.parseInt(UserInfo.getInstance().getCod())).toString();
 
-		operatiiComenzi.getArticoleComandaJSON(params);
+            params.put("nrCmd", selectedCmd);
+            params.put("nrCmdSAP", selectedCmdSAP);
+            params.put("tipOp", String.valueOf(idOperatieComanda));
+            params.put("codUser", fullCode);
 
-	}
+            operatiiComenzi.opereazaComanda(params);
 
-	private void afiseazaArticoleComanda(BeanArticoleAfisare articoleComanda) {
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
+    }
 
-		DateLivrareAfisare dateLivrare = articoleComanda.getDateLivrare();
+    private void loadListComenzi() {
 
-		DateLivrare.getInstance().setDateLivrareAfisare(dateLivrare);
-		DateLivrare.getInstance().setClientBlocat(articoleComanda.getDateLivrare().isClientBlocat());
+        HashMap<String, String> params = new HashMap<String, String>();
 
-		listArticoleComanda = articoleComanda.getListArticole();
+        params.put("filiala", UserInfo.getInstance().getUnitLog());
+        params.put("codUser", UserInfo.getInstance().getCod());
+        params.put("tipCmd", "1");
+        params.put("depart", UserInfo.getInstance().getCodDepart());
+        params.put("tipUser", UserInfo.getInstance().getTipUser());
+        params.put("tipUserSap", UserInfo.getInstance().getTipUserSap());
 
-		BeanConditii conditiiComanda = articoleComanda.getConditii();
-		afisConditiiHeader(conditiiComanda.getHeader());
+        displayCmdDetails(false);
+        operatiiComenzi.getListComenzi(params);
 
-		conditieID = String.valueOf(conditiiComanda.getHeader().getId());
+    }
 
-		conditiiComandaArticole = conditiiComanda.getArticole();
+    private void getArticoleComanda() {
 
-		if (isUserCV() || isComandaGed()) {
-			ListaArticoleComandaGed.getInstance().setListaArticole(listArticoleComanda);
-			ListaArticoleComandaGed.getInstance().addObserver(this);
-			getPretTransport();
-		} else {
-			ListaArticoleModificareComanda.getInstance().setListaArticole(listArticoleComanda);
-			ListaArticoleModificareComanda.getInstance().addObserver(this);
-		}
+        HashMap<String, String> params = new HashMap<String, String>();
 
-		ListaArticoleComandaGed.getInstance().setConditiiArticole(conditiiComandaArticole);
+        params.put("nrCmd", selectedCmd);
+        params.put("afisCond", "1");
+        params.put("tipUser", UserInfo.getInstance().getTipUser());
 
-		adapterArticole = new ArticolModificareAdapter(this, listArticoleComanda, conditiiComandaArticole, comandaSelectata);
+        operatiiComenzi.getArticoleComandaJSON(params);
 
-		adapterArticole.setArticolModificareListener(this);
-		listViewArticole.setAdapter(adapterArticole);
+    }
 
-		textJudet.setText(dateLivrare.getNumeJudet());
-		textOras.setText(dateLivrare.getOras());
-		textAdrLivr.setText(dateLivrare.getDateLivrare());
-		textPersContact.setText(dateLivrare.getPersContact());
-		textTelefon.setText(dateLivrare.getNrTel());
-		textCantar.setText(UtilsGeneral.getTipCantarire(dateLivrare.getCantar()));
-		textTipPlata.setText(UtilsGeneral.getDescTipPlata(dateLivrare.getTipPlata(), dateLivrare.getTermenPlata()));
-		textTransport.setText(UtilsGeneral.getDescTipTransport(dateLivrare.getTransport()));
-		textFactRed.setText(UtilsGeneral.getTipReducere(dateLivrare.getRedSeparat()));
+    private void afiseazaArticoleComanda(BeanArticoleAfisare articoleComanda) {
 
-		tipClientVar = dateLivrare.getTipPersClient();
+        DateLivrareAfisare dateLivrare = articoleComanda.getDateLivrare();
 
-		calculPondereB();
+        DateLivrare.getInstance().setDateLivrareAfisare(dateLivrare);
+        DateLivrare.getInstance().setClientBlocat(articoleComanda.getDateLivrare().isClientBlocat());
 
-		if (listArticoleComanda.get(0).getUnitLogAlt().equals("NN10")) {
-			filialaAlternativaM = UserInfo.getInstance().getUnitLog();
-		} else {
-			filialaAlternativaM = listArticoleComanda.get(0).getUnitLogAlt();
-		}
+        listArticoleComanda = articoleComanda.getListArticole();
 
-		if (listArticoleComanda.get(0).getUnitLogAlt().contains("BV9")) {
-			layoutBV90.setVisibility(View.VISIBLE);
-		} else {
-			layoutBV90.setVisibility(View.GONE);
-		}
+        BeanConditii conditiiComanda = articoleComanda.getConditii();
+        afisConditiiHeader(conditiiComanda.getHeader());
 
-		displayCmdDetails(true);
+        conditieID = String.valueOf(conditiiComanda.getHeader().getId());
 
-		adapterArticole.notifyDataSetChanged();
+        conditiiComandaArticole = conditiiComanda.getArticole();
 
-		calculValTransport(listArticoleComanda);
-		calculProcente(listArticoleComanda);
-	}
+        if (isUserCV() || isComandaGed()) {
+            ListaArticoleComandaGed.getInstance().setListaArticole(listArticoleComanda);
+            ListaArticoleComandaGed.getInstance().addObserver(this);
+            getPretTransport();
+        } else {
+            ListaArticoleModificareComanda.getInstance().setListaArticole(listArticoleComanda);
+            ListaArticoleModificareComanda.getInstance().addObserver(this);
+        }
 
-	private void getPretTransport() {
+        ListaArticoleComandaGed.getInstance().setConditiiArticole(conditiiComandaArticole);
 
-		for (int i = 0; i < listArticoleComanda.size(); i++) {
-			if (listArticoleComanda.get(i).getNumeArticol().toLowerCase().contains("servicii")
-					&& listArticoleComanda.get(i).getNumeArticol().toLowerCase().contains("transport")) {
-				DateLivrare.getInstance().setValTransport(listArticoleComanda.get(i).getPretUnit());
-				break;
-			}
+        adapterArticole = new ArticolModificareAdapter(this, listArticoleComanda, conditiiComandaArticole, comandaSelectata);
 
-		}
+        adapterArticole.setArticolModificareListener(this);
+        listViewArticole.setAdapter(adapterArticole);
 
-	}
+        textJudet.setText(dateLivrare.getNumeJudet());
+        textOras.setText(dateLivrare.getOras());
+        textAdrLivr.setText(dateLivrare.getDateLivrare());
+        textPersContact.setText(dateLivrare.getPersContact());
+        textTelefon.setText(dateLivrare.getNrTel());
+        textCantar.setText(UtilsGeneral.getTipCantarire(dateLivrare.getCantar()));
+        textTipPlata.setText(UtilsGeneral.getDescTipPlata(dateLivrare.getTipPlata(), dateLivrare.getTermenPlata()));
+        textTransport.setText(UtilsGeneral.getDescTipTransport(dateLivrare.getTransport()));
+        textFactRed.setText(UtilsGeneral.getTipReducere(dateLivrare.getRedSeparat()));
 
-	private void afisConditiiHeader(BeanConditiiHeader conditiiHeader) {
+        tipClientVar = dateLivrare.getTipPersClient();
 
-		layoutConditiiHeader.setVisibility(View.GONE);
-		boolean isHeaderVisible = false;
-		NumberFormat nf2 = new DecimalFormat("#0.00");
+        calculPondereB();
 
-		if (conditiiHeader.getConditiiCalit() > 0) {
-			textCondProcB.setText(nf2.format(conditiiHeader.getConditiiCalit()));
-			layoutCondProcB.setVisibility(View.VISIBLE);
-			isHeaderVisible = true;
-		} else {
-			layoutCondProcB.setVisibility(View.GONE);
-		}
+        if (listArticoleComanda.get(0).getUnitLogAlt().equals("NN10")) {
+            filialaAlternativaM = UserInfo.getInstance().getUnitLog();
+        } else {
+            filialaAlternativaM = listArticoleComanda.get(0).getUnitLogAlt();
+        }
 
-		if (conditiiHeader.getNrFact() > 0) {
-			textCondNrFacturi.setText(getDescNrFacturi(conditiiHeader.getNrFact()));
-			layoutCondNrFact.setVisibility(View.VISIBLE);
-			isHeaderVisible = true;
-		} else {
-			layoutCondNrFact.setVisibility(View.GONE);
-		}
+        if (listArticoleComanda.get(0).getUnitLogAlt().contains("BV9")) {
+            layoutBV90.setVisibility(View.VISIBLE);
+        } else {
+            layoutBV90.setVisibility(View.GONE);
+        }
 
-		if (!conditiiHeader.getObservatii().equals("null")) {
-			textCondComentarii.setText(conditiiHeader.getObservatii());
-			layoutCondObs.setVisibility(View.VISIBLE);
-			isHeaderVisible = true;
-		} else {
-			layoutCondObs.setVisibility(View.GONE);
-		}
+        displayCmdDetails(true);
 
-		if (isHeaderVisible)
-			layoutConditiiHeader.setVisibility(View.VISIBLE);
+        adapterArticole.notifyDataSetChanged();
 
-	}
+        calculValTransport(listArticoleComanda);
+        calculProcente(listArticoleComanda);
+    }
 
-	private String getDescNrFacturi(int codNrFacturi) {
-		String descNrFacturi = "";
-		switch (codNrFacturi) {
-		case 1:
-			descNrFacturi = "1 fact (red in pret)";
-			codTipReducere = " ";
-			break;
-		case 2:
-			descNrFacturi = "2 facturi";
-			codTipReducere = "X";
-			break;
-		case 3:
-			descNrFacturi = "1 fact (red separat)";
-			codTipReducere = "R";
-			break;
+    private void getPretTransport() {
 
-		}
+        for (int i = 0; i < listArticoleComanda.size(); i++) {
+            if (listArticoleComanda.get(i).getNumeArticol().toLowerCase().contains("servicii")
+                    && listArticoleComanda.get(i).getNumeArticol().toLowerCase().contains("transport")) {
+                DateLivrare.getInstance().setValTransport(listArticoleComanda.get(i).getPretUnit());
+                break;
+            }
 
-		return descNrFacturi;
+        }
 
-	}
+    }
 
-	private void afiseazaListaComenzi(List<BeanComandaCreata> listComenzi) {
+    private void afisConditiiHeader(BeanConditiiHeader conditiiHeader) {
 
-		if (listComenzi.size() > 0) {
-			ComandaModificareAdapter adapter = new ComandaModificareAdapter(listComenzi, this);
-			spinnerComenzi.setAdapter(adapter);
-			displayComenziControl(true);
+        layoutConditiiHeader.setVisibility(View.GONE);
+        boolean isHeaderVisible = false;
+        NumberFormat nf2 = new DecimalFormat("#0.00");
 
-		} else {
-			displayComenziControl(false);
-		}
+        if (conditiiHeader.getConditiiCalit() > 0) {
+            textCondProcB.setText(nf2.format(conditiiHeader.getConditiiCalit()));
+            layoutCondProcB.setVisibility(View.VISIBLE);
+            isHeaderVisible = true;
+        } else {
+            layoutCondProcB.setVisibility(View.GONE);
+        }
 
-	}
+        if (conditiiHeader.getNrFact() > 0) {
+            textCondNrFacturi.setText(getDescNrFacturi(conditiiHeader.getNrFact()));
+            layoutCondNrFact.setVisibility(View.VISIBLE);
+            isHeaderVisible = true;
+        } else {
+            layoutCondNrFact.setVisibility(View.GONE);
+        }
 
-	private void displayComenziControl(boolean isVisible) {
-		if (isVisible) {
-			spinnerComenzi.setVisibility(View.VISIBLE);
-			salveazaComandaBtn.setVisibility(View.VISIBLE);
-			stergeComandaBtn.setVisibility(View.VISIBLE);
+        if (!conditiiHeader.getObservatii().equals("null")) {
+            textCondComentarii.setText(conditiiHeader.getObservatii());
+            layoutCondObs.setVisibility(View.VISIBLE);
+            isHeaderVisible = true;
+        } else {
+            layoutCondObs.setVisibility(View.GONE);
+        }
 
-			if (UtilsUser.isUserKA())
-				aprobareBtn.setVisibility(View.VISIBLE);
+        if (isHeaderVisible)
+            layoutConditiiHeader.setVisibility(View.VISIBLE);
 
-		} else {
-			spinnerComenzi.setVisibility(View.INVISIBLE);
-			salveazaComandaBtn.setVisibility(View.INVISIBLE);
-			stergeComandaBtn.setVisibility(View.INVISIBLE);
-			aprobareBtn.setVisibility(View.INVISIBLE);
+    }
 
-		}
+    private String getDescNrFacturi(int codNrFacturi) {
+        String descNrFacturi = "";
+        switch (codNrFacturi) {
+            case 1:
+                descNrFacturi = "1 fact (red in pret)";
+                codTipReducere = " ";
+                break;
+            case 2:
+                descNrFacturi = "2 facturi";
+                codTipReducere = "X";
+                break;
+            case 3:
+                descNrFacturi = "1 fact (red separat)";
+                codTipReducere = "R";
+                break;
 
-	}
+        }
 
-	public void addListenerListArtModif() {
-		listViewArticole.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+        return descNrFacturi;
 
-				listViewSelPos = position;
-				return false;
+    }
 
-			}
-		});
+    private void afiseazaListaComenzi(List<BeanComandaCreata> listComenzi) {
 
-		listViewArticole.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+        if (listComenzi.size() > 0) {
+            ComandaModificareAdapter adapter = new ComandaModificareAdapter(listComenzi, this);
+            spinnerComenzi.setAdapter(adapter);
+            displayComenziControl(true);
 
-				listViewSelPos = position;
+        } else {
+            displayComenziControl(false);
+        }
 
-				if ((listViewArticole.getFirstVisiblePosition() == listViewSelPos) || (listViewArticole.getFirstVisiblePosition() + 1 == listViewSelPos)) {
-					listViewArticole.smoothScrollToPositionFromTop(listViewSelPos - 1, 0);
-				}
+    }
 
-				if ((listViewArticole.getLastVisiblePosition() == listViewSelPos) || (listViewArticole.getLastVisiblePosition() - 1 == listViewSelPos)) {
-					listViewArticole.smoothScrollToPositionFromTop(listViewArticole.getFirstVisiblePosition() + 1, 0);
-				}
+    private void displayComenziControl(boolean isVisible) {
+        if (isVisible) {
+            spinnerComenzi.setVisibility(View.VISIBLE);
+            salveazaComandaBtn.setVisibility(View.VISIBLE);
+            stergeComandaBtn.setVisibility(View.VISIBLE);
 
-			}
-		});
+            if (UtilsUser.isUserKA())
+                aprobareBtn.setVisibility(View.VISIBLE);
 
-	}
+        } else {
+            spinnerComenzi.setVisibility(View.INVISIBLE);
+            salveazaComandaBtn.setVisibility(View.INVISIBLE);
+            stergeComandaBtn.setVisibility(View.INVISIBLE);
+            aprobareBtn.setVisibility(View.INVISIBLE);
 
-	private void checkStaticVars() {
+        }
 
-		String locLang = getBaseContext().getResources().getConfiguration().locale.getLanguage();
+    }
 
-		if (!locLang.toLowerCase(Locale.getDefault()).equals("en")) {
+    public void addListenerListArtModif() {
+        listViewArticole.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 
-			String languageToLoad = "en";
-			Locale locale = new Locale(languageToLoad);
-			Locale.setDefault(locale);
-			Configuration config = new Configuration();
-			config.locale = locale;
-			getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-		}
+                listViewSelPos = position;
+                return false;
 
-		// restart app la idle
-		if (UserInfo.getInstance().getCod().equals("")) {
+            }
+        });
 
-			Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
-			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(i);
-		}
+        listViewArticole.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 
-	}
+                listViewSelPos = position;
 
-	public double calculTaxaVerde() {
+                if ((listViewArticole.getFirstVisiblePosition() == listViewSelPos) || (listViewArticole.getFirstVisiblePosition() + 1 == listViewSelPos)) {
+                    listViewArticole.smoothScrollToPositionFromTop(listViewSelPos - 1, 0);
+                }
 
-		double totalTaxaVerde = 0;
+                if ((listViewArticole.getLastVisiblePosition() == listViewSelPos) || (listViewArticole.getLastVisiblePosition() - 1 == listViewSelPos)) {
+                    listViewArticole.smoothScrollToPositionFromTop(listViewArticole.getFirstVisiblePosition() + 1, 0);
+                }
 
-		try {
+            }
+        });
 
-			String[] tokVal;
-			Double valCondPret = 0.0;
+    }
 
-			if (ModificareComanda.isComandaDistrib) {
+    private void checkStaticVars() {
 
-				prepareArtForDelivery();
+        String locLang = getBaseContext().getResources().getConfiguration().locale.getLanguage();
 
-				for (int i = 0; i < objArticol.length; i++) {
-					if (objArticol[i] != null) {
-						if (!objArticol[i].getCodArticol().equals("-1")) {
+        if (!locLang.toLowerCase(Locale.getDefault()).equals("en")) {
 
-							if (objArticol[i].getInfoArticol().contains(";")) {
-								String[] tokInfoArt = objArticol[i].getInfoArticol().split(";");
+            String languageToLoad = "en";
+            Locale locale = new Locale(languageToLoad);
+            Locale.setDefault(locale);
+            Configuration config = new Configuration();
+            config.locale = locale;
+            getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+        }
 
-								for (int ii = 0; ii < tokInfoArt.length; ii++) {
-									tokVal = tokInfoArt[ii].split(":");
-									valCondPret = Double.valueOf(tokVal[1].replace(',', '.').trim());
-									if (valCondPret != 0) {
-										if (tokVal[0].toUpperCase(Locale.getDefault()).contains("VERDE")) {
-											totalTaxaVerde += valCondPret;
-										}
+        // restart app la idle
+        if (UserInfo.getInstance().getCod().equals("")) {
 
-									}
+            Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+        }
 
-								}// for
-							}// if
+    }
 
-						}
-					}
-				}// sf. for
+    public double calculTaxaVerde() {
 
-				totalComanda = getTotalComanda();
-				totalComanda += totalTaxaVerde;
+        double totalTaxaVerde = 0;
 
-				textTotalCmd.setText(String.format("%.02f", totalComanda));
+        try {
 
-				if (totalTaxaVerde > 0) {
-					layoutTaxaVerde.setVisibility(View.VISIBLE);
-					textTaxaVerde.setText(String.valueOf(totalTaxaVerde) + ")");
-				}
+            String[] tokVal;
+            Double valCondPret = 0.0;
 
-			}// sf. if
+            if (ModificareComanda.isComandaDistrib) {
 
-		} catch (Exception e) {
-			Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-		}
+                prepareArtForDelivery();
 
-		return totalTaxaVerde;
+                for (int i = 0; i < objArticol.length; i++) {
+                    if (objArticol[i] != null) {
+                        if (!objArticol[i].getCodArticol().equals("-1")) {
 
-	}
+                            if (objArticol[i].getInfoArticol().contains(";")) {
+                                String[] tokInfoArt = objArticol[i].getInfoArticol().split(";");
 
-	public void onBackPressed() {
+                                for (int ii = 0; ii < tokInfoArt.length; ii++) {
+                                    tokVal = tokInfoArt[ii].split(":");
+                                    valCondPret = Double.valueOf(tokVal[1].replace(',', '.').trim());
+                                    if (valCondPret != 0) {
+                                        if (tokVal[0].toUpperCase(Locale.getDefault()).contains("VERDE")) {
+                                            totalTaxaVerde += valCondPret;
+                                        }
 
-		UserInfo.getInstance().setParentScreen("");
-		clearAllData();
+                                    }
 
-		Intent nextScreen = new Intent(getApplicationContext(), MainMenu.class);
-		startActivity(nextScreen);
+                                }// for
+                            }// if
 
-		finish();
-		return;
-	}
+                        }
+                    }
+                }// sf. for
 
-	public void onTaskComplete(String methodName, Object result) {
+                totalComanda = getTotalComanda();
+                totalComanda += totalTaxaVerde;
 
-		if (methodName.equals("sendMailAlert")) {
-			clearAllData();
-		}
+                textTotalCmd.setText(String.format("%.02f", totalComanda));
 
-	}
+                if (totalTaxaVerde > 0) {
+                    layoutTaxaVerde.setVisibility(View.VISIBLE);
+                    textTaxaVerde.setText(String.valueOf(totalTaxaVerde) + ")");
+                }
 
-	private void displayCmdDetails(boolean isVisible) {
-		if (isVisible) {
-			layoutDetaliiCmd.setVisibility(View.VISIBLE);
-			listViewArticole.setVisibility(View.VISIBLE);
-			stergeComandaBtn.setVisibility(View.VISIBLE);
-			salveazaComandaBtn.setVisibility(View.VISIBLE);
-		} else {
-			layoutDetaliiCmd.setVisibility(View.INVISIBLE);
-			listViewArticole.setVisibility(View.INVISIBLE);
-			stergeComandaBtn.setVisibility(View.INVISIBLE);
-			salveazaComandaBtn.setVisibility(View.INVISIBLE);
-		}
+            }// sf. if
 
-	}
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
 
-	private void afiseazaArticoleComanda(BeanComandaCreata comanda) {
+        return totalTaxaVerde;
 
-		textTipPlata.setText("");
-		textAdrLivr.setText("");
-		textPersContact.setText("");
-		textTelefon.setText("");
-		textCantar.setText("");
-		textTransport.setText("");
+    }
 
-		textTotalCmd.setText("0.00");
+    public void onBackPressed() {
 
-		comandaSelectata = comanda;
+        UserInfo.getInstance().setParentScreen("");
+        clearAllData();
 
-		unitLogComanda = comandaSelectata.getFiliala();
+        Intent nextScreen = new Intent(getApplicationContext(), MainMenu.class);
+        startActivity(nextScreen);
 
-		selectedCmd = comanda.getId();
+        finish();
+        return;
+    }
 
-		selectedCmdSAP = comanda.getCmdSap();
+    public void onTaskComplete(String methodName, Object result) {
 
-		totalComanda = getTotalComanda();
+        if (methodName.equals("sendMailAlert")) {
+            clearAllData();
+        }
 
-		textTotalCmd.setText(String.format("%.02f", totalComanda));
+    }
 
-		selectedClientCode = getCodClient(comanda);
+    private void displayCmdDetails(boolean isVisible) {
+        if (isVisible) {
+            layoutDetaliiCmd.setVisibility(View.VISIBLE);
+            listViewArticole.setVisibility(View.VISIBLE);
+            stergeComandaBtn.setVisibility(View.VISIBLE);
+            salveazaComandaBtn.setVisibility(View.VISIBLE);
+        } else {
+            layoutDetaliiCmd.setVisibility(View.INVISIBLE);
+            listViewArticole.setVisibility(View.INVISIBLE);
+            stergeComandaBtn.setVisibility(View.INVISIBLE);
+            salveazaComandaBtn.setVisibility(View.INVISIBLE);
+        }
 
-		selectedUnitLog = comanda.getFiliala();
+    }
 
-		if (selectedUnitLog.substring(2, 3).equals("1"))
-			isComandaDistrib = true;
-		else
-			isComandaDistrib = false;
+    private void afiseazaArticoleComanda(BeanComandaCreata comanda) {
 
-		if (!isComandaDistrib)
-			DateLivrare.getInstance().setFilialeExtraMathaus("");
+        textTipPlata.setText("");
+        textAdrLivr.setText("");
+        textPersContact.setText("");
+        textTelefon.setText("");
+        textCantar.setText("");
+        textTransport.setText("");
 
-		codClientVar = comanda.getCodClient();
-		numeClientVar = comanda.getNumeClient();
+        textTotalCmd.setText("0.00");
 
-		if (!comanda.getDocInsotitor().equals("-1")) {
-			DateLivrare.getInstance().setTipDocInsotitor(comanda.getDocInsotitor());
-		} else {
-			DateLivrare.getInstance().setTipDocInsotitor("1");
-		}
+        comandaSelectata = comanda;
 
-		getArticoleComanda();
+        unitLogComanda = comandaSelectata.getFiliala();
 
-		textTipPlata.setVisibility(View.VISIBLE);
-		textAdrLivr.setVisibility(View.VISIBLE);
-		textPersContact.setVisibility(View.VISIBLE);
-		textTelefon.setVisibility(View.VISIBLE);
-		textCantar.setVisibility(View.VISIBLE);
-		textTransport.setVisibility(View.VISIBLE);
+        selectedCmd = comanda.getId();
 
-	}
+        selectedCmdSAP = comanda.getCmdSap();
 
-	private String getCodClient(BeanComandaCreata comanda) {
+        totalComanda = getTotalComanda();
 
-		return UtilsFormatting.isNumeric(comanda.getCodClient()) ? comanda.getCodClient() : comanda.getCodClientGenericGed();
+        textTotalCmd.setText(String.format("%.02f", totalComanda));
 
-	}
+        selectedClientCode = getCodClient(comanda);
 
-	private void addListenerSpinnerComenzi() {
-		spinnerComenzi.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				displayCmdDetails(false);
-				afiseazaArticoleComanda(listComenzi.get(position));
+        selectedUnitLog = comanda.getFiliala();
 
-			}
+        if (selectedUnitLog.substring(2, 3).equals("1"))
+            isComandaDistrib = true;
+        else
+            isComandaDistrib = false;
 
-			public void onNothingSelected(AdapterView<?> parent) {
-			}
-		});
-	}
+        if (!isComandaDistrib)
+            DateLivrare.getInstance().setFilialeExtraMathaus("");
 
-	@SuppressWarnings("unchecked")
-	public void operationComenziComplete(EnumComenziDAO methodName, Object result) {
-		switch (methodName) {
-		case GET_LIST_COMENZI:
-			this.listComenzi = (List<BeanComandaCreata>) result;
-			afiseazaListaComenzi(this.listComenzi);
-			break;
-		case GET_ARTICOLE_COMANDA_JSON:
-			afiseazaArticoleComanda(operatiiComenzi.deserializeArticoleComanda((String) result));
-			break;
-		case OPERATIE_COMANDA:
-			loadListComenzi();
-			break;
-		case SALVEAZA_COMANDA_DISTRIB:
-			saveCmdStatus((String) result);
-			break;
-		case GET_COST_MACARA:
-			afiseazaPretMacaraDialog((String) result);
-			break;
-		default:
-			break;
-		}
+        codClientVar = comanda.getCodClient();
+        numeClientVar = comanda.getNumeClient();
 
-	}
+        if (!comanda.getDocInsotitor().equals("-1")) {
+            DateLivrare.getInstance().setTipDocInsotitor(comanda.getDocInsotitor());
+        } else {
+            DateLivrare.getInstance().setTipDocInsotitor("1");
+        }
 
-	public void articolModificat() {
-		calculPondereB();
-	}
+        getArticoleComanda();
 
-	private void calculValTransport(ArrayList<ArticolComanda> listArticole) {
+        textTipPlata.setVisibility(View.VISIBLE);
+        textAdrLivr.setVisibility(View.VISIBLE);
+        textPersContact.setVisibility(View.VISIBLE);
+        textTelefon.setVisibility(View.VISIBLE);
+        textCantar.setVisibility(View.VISIBLE);
+        textTransport.setVisibility(View.VISIBLE);
 
-		if (UtilsUser.isAgentOrSDorKA() || UtilsUser.isConsWood() || comandaSelectata.isCmdInstPublica() || UtilsUser.isOIVPD()) {
-			return;
-		}
+    }
 
-		NumberFormat nf3 = NumberFormat.getInstance(new Locale("en", "US"));
-		nf3.setMinimumFractionDigits(2);
-		nf3.setMaximumFractionDigits(2);
-		nf3.setGroupingUsed(false);
+    private String getCodClient(BeanComandaCreata comanda) {
 
-		valTransportSAP = Double.valueOf(nf3.format(UtilsComenziGed.getValoareTransportSap(listArticole)));
-		valTransport = Double.valueOf(nf3.format(UtilsComenziGed.getValoareTransportComanda(listArticole)));
+        return UtilsFormatting.isNumeric(comanda.getCodClient()) ? comanda.getCodClient() : comanda.getCodClientGenericGed();
 
-		if (valTransport < valTransportSAP)
-			valTransport = valTransportSAP;
+    }
 
-		if (!DateLivrare.getInstance().getTransport().equals("TCLI")) {
-			UtilsComenziGed.setValoareArticolTransport(listArticole, valTransport);
-			adapterArticole.notifyDataSetChanged();
-		}
+    private void addListenerSpinnerComenzi() {
+        spinnerComenzi.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                displayCmdDetails(false);
+                afiseazaArticoleComanda(listComenzi.get(position));
 
-		if (DateLivrare.getInstance().getTransport().equals("TRAP") || DateLivrare.getInstance().getTransport().equals("TERT")) {
-			valTranspBtn.setVisibility(View.VISIBLE);
-			valTranspBtn.setText("Transp: " + nf3.format(valTransport));
-		} else {
-			valTranspBtn.setVisibility(View.INVISIBLE);
-			valTransport = 0;
-		}
+            }
 
-	}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
 
-	public boolean esteModificatPretulGed(ArrayList<ArticolComanda> listArticole) {
-		boolean esteModificat = false;
+    @SuppressWarnings("unchecked")
+    public void operationComenziComplete(EnumComenziDAO methodName, Object result) {
+        switch (methodName) {
+            case GET_LIST_COMENZI:
+                this.listComenzi = (List<BeanComandaCreata>) result;
+                afiseazaListaComenzi(this.listComenzi);
+                break;
+            case GET_ARTICOLE_COMANDA_JSON:
+                afiseazaArticoleComanda(operatiiComenzi.deserializeArticoleComanda((String) result));
+                break;
+            case OPERATIE_COMANDA:
+                loadListComenzi();
+                break;
+            case SALVEAZA_COMANDA_DISTRIB:
+                saveCmdStatus((String) result);
+                break;
+            case GET_COST_MACARA:
+                afiseazaPretMacaraDialog((String) result);
+                break;
+            case GET_TOTAL_COMENZI_NUMERAR:
+                afisTotalComenziNumerar((String) result);
+                break;
+            default:
+                break;
+        }
 
-		ArticolComanda articol = null;
+    }
 
-		for (int i = 0; i < listArticole.size(); i++) {
+    public void articolModificat() {
+        calculPondereB();
+    }
 
-			articol = listArticole.get(i);
+    private void calculValTransport(ArrayList<ArticolComanda> listArticole) {
 
-			if (articol.getProcent() > 0) {
-				esteModificat = true;
-				break;
-			}
+        if (UtilsUser.isAgentOrSDorKA() || UtilsUser.isConsWood() || comandaSelectata.isCmdInstPublica() || UtilsUser.isOIVPD()) {
+            return;
+        }
 
-		}
+        NumberFormat nf3 = NumberFormat.getInstance(new Locale("en", "US"));
+        nf3.setMinimumFractionDigits(2);
+        nf3.setMaximumFractionDigits(2);
+        nf3.setGroupingUsed(false);
 
-		if (!esteModificat) {
-			AlgoritmComandaGed algoritm = new AlgoritmComandaGed();
-			algoritm.inlaturaToateAlertelePret(listArticoleComanda);
-		}
+        valTransportSAP = Double.valueOf(nf3.format(UtilsComenziGed.getValoareTransportSap(listArticole)));
+        valTransport = Double.valueOf(nf3.format(UtilsComenziGed.getValoareTransportComanda(listArticole)));
 
-		return esteModificat;
-	}
+        if (valTransport < valTransportSAP)
+            valTransport = valTransportSAP;
 
-	public static double round(double value, int places) {
+        if (!DateLivrare.getInstance().getTransport().equals("TCLI")) {
+            UtilsComenziGed.setValoareArticolTransport(listArticole, valTransport);
+            adapterArticole.notifyDataSetChanged();
+        }
 
-		BigDecimal bd = new BigDecimal(value);
-		bd = bd.setScale(places, BigDecimal.ROUND_HALF_UP);
-		return bd.doubleValue();
-	}
+        if (DateLivrare.getInstance().getTransport().equals("TRAP") || DateLivrare.getInstance().getTransport().equals("TERT")) {
+            valTranspBtn.setVisibility(View.VISIBLE);
+            valTranspBtn.setText("Transp: " + nf3.format(valTransport));
+        } else {
+            valTranspBtn.setVisibility(View.INVISIBLE);
+            valTransport = 0;
+        }
 
-	private void adaugaPalet(ArticolPalet articolPalet, EnumPaleti status) {
+    }
 
-		String depozitPalet = HelperCostDescarcare.getDepozitPalet(listArticoleComanda, articolPalet.getCodArticol());
-		String unitlogPalet = HelperCostDescarcare.getUnitlogPalet(listArticoleComanda, articolPalet.getCodArticol());
+    public boolean esteModificatPretulGed(ArrayList<ArticolComanda> listArticole) {
+        boolean esteModificat = false;
 
-		ArticolComanda articol = HelperCostDescarcare.getArticolPalet(articolPalet, depozitPalet, unitlogPalet);
+        ArticolComanda articol = null;
 
-		listArticoleComanda.add(articol);
-		adapterArticole.setListArticole(listArticoleComanda);
-		adapterArticole.notifyDataSetChanged();
+        for (int i = 0; i < listArticole.size(); i++) {
 
-		costDescarcare.getArticoleDescarcare().get(0).setCantitate(costDescarcare.getArticoleDescarcare().get(0).getCantitate() + articol.getCantitate());
+            articol = listArticole.get(i);
 
-	}
+            if (articol.getProcent() > 0) {
+                esteModificat = true;
+                break;
+            }
 
-	private void respingePalet() {
-		if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0 && DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
+        }
 
-			CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, isComandaGed());
-			macaraDialog.setCostMacaraListener(this);
-			macaraDialog.show();
+        if (!esteModificat) {
+            AlgoritmComandaGed algoritm = new AlgoritmComandaGed();
+            algoritm.inlaturaToateAlertelePret(listArticoleComanda);
+        }
 
-		} else {
-			if (!costDescarcare.getSePermite())
-				DateLivrare.getInstance().setMasinaMacara(false);
+        return esteModificat;
+    }
 
-		}
-	}
+    public static double round(double value, int places) {
 
-	private void calculProcente(ArrayList<ArticolComanda> listArticole) {
-		if (UtilsUser.isAgentOrSDorKA() || UtilsUser.isConsWood() || comandaSelectata.isCmdInstPublica()) {
-			valTranspBtn.setVisibility(View.GONE);
-			return;
-		}
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, BigDecimal.ROUND_HALF_UP);
+        return bd.doubleValue();
+    }
 
-		textAlertaMarja.setVisibility(View.GONE);
+    private void adaugaPalet(ArticolPalet articolPalet, EnumPaleti status) {
 
-		NumberFormat nf = NumberFormat.getInstance();
-		nf.setMinimumFractionDigits(2);
-		nf.setMaximumFractionDigits(2);
+        String depozitPalet = HelperCostDescarcare.getDepozitPalet(listArticoleComanda, articolPalet.getCodArticol());
+        String unitlogPalet = HelperCostDescarcare.getUnitlogPalet(listArticoleComanda, articolPalet.getCodArticol());
 
-		AlgoritmComandaGed algoritm = new AlgoritmComandaGed();
-		algoritm.calculProcenteComanda(listArticole, esteModificatPretulGed(listArticole));
+        ArticolComanda articol = HelperCostDescarcare.getArticolPalet(articolPalet, depozitPalet, unitlogPalet);
 
-		double formulaTotalAdaosClientCorectat = algoritm.getTotalAdaosClientCorectat();
-		double valTransportAlgoritm = valTransport - valTransportSAP;
+        listArticoleComanda.add(articol);
+        adapterArticole.setListArticole(listArticoleComanda);
+        adapterArticole.notifyDataSetChanged();
 
-		if (DateLivrare.getInstance().getTransport().equals("TRAP") || DateLivrare.getInstance().getTransport().equals("TERT")) {
-			formulaTotalAdaosClientCorectat = algoritm.getTotalAdaosClientCorectat() + valTransportAlgoritm;
-		}
+        costDescarcare.getArticoleDescarcare().get(0).setCantitate(costDescarcare.getArticoleDescarcare().get(0).getCantitate() + articol.getCantitate());
 
-		if (formulaTotalAdaosClientCorectat < algoritm.getTotalAdaosMinimReper()) {
+    }
 
-			double deficitComanda = (algoritm.getTotalAdaosMinimReper() - formulaTotalAdaosClientCorectat);
+    private void respingePalet() {
+        if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0 && DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
 
-			textAlertaMarja.setText("Cresteti val. cmd. cu minim " + nf.format(deficitComanda) + " RON");
-			textAlertaMarja.setVisibility(View.VISIBLE);
-			algoritm.redistribuireMarja(listArticole, valTransportAlgoritm);
+            CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, isComandaGed());
+            macaraDialog.setCostMacaraListener(this);
+            macaraDialog.show();
 
-		} else {
-			algoritm.schimbaAlertaArticol(listArticole);
-			textAlertaMarja.setText("");
-		}
-	}
+        } else {
+            if (!costDescarcare.getSePermite())
+                DateLivrare.getInstance().setMasinaMacara(false);
 
-	public void update(Observable observable, Object data) {
-		if (observable instanceof ListaArticoleModificareComanda) {
-			listArticoleComanda = ListaArticoleModificareComanda.getInstance().getListArticoleComanda();
-			conditiiComandaArticole = ListaArticoleModificareComanda.getInstance().getConditiiArticole();
-			adapterArticole.setListArticole(listArticoleComanda);
-			adapterArticole.notifyDataSetChanged();
+        }
+    }
 
-		}
+    private void calculProcente(ArrayList<ArticolComanda> listArticole) {
+        if (UtilsUser.isAgentOrSDorKA() || UtilsUser.isConsWood() || comandaSelectata.isCmdInstPublica()) {
+            valTranspBtn.setVisibility(View.GONE);
+            return;
+        }
 
-		if (observable instanceof ListaArticoleComandaGed) {
-			listArticoleComanda = ListaArticoleComandaGed.getInstance().getListArticoleComanda();
-			conditiiComandaArticole = ListaArticoleComandaGed.getInstance().getConditiiArticole();
-			adapterArticole.setListArticole(listArticoleComanda);
-			adapterArticole.notifyDataSetChanged();
-			calculValTransport(listArticoleComanda);
-			calculProcente(listArticoleComanda);
-		}
+        textAlertaMarja.setVisibility(View.GONE);
 
-	}
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
 
-	@Override
-	public void acceptaCostMacara(boolean acceptaCost, double valoareCost) {
-		trateazaPretMacara(acceptaCost, valoareCost);
+        AlgoritmComandaGed algoritm = new AlgoritmComandaGed();
+        algoritm.calculProcenteComanda(listArticole, esteModificatPretulGed(listArticole));
 
-	}
+        double formulaTotalAdaosClientCorectat = algoritm.getTotalAdaosClientCorectat();
+        double valTransportAlgoritm = valTransport - valTransportSAP;
 
-	@Override
-	public void articolSters() {
-		calculValTransport(listArticoleComanda);
-		calculProcente(listArticoleComanda);
+        if (DateLivrare.getInstance().getTransport().equals("TRAP") || DateLivrare.getInstance().getTransport().equals("TERT")) {
+            formulaTotalAdaosClientCorectat = algoritm.getTotalAdaosClientCorectat() + valTransportAlgoritm;
+        }
 
-	}
+        if (formulaTotalAdaosClientCorectat < algoritm.getTotalAdaosMinimReper()) {
 
-	@Override
-	public void paletiStatus(EnumPaleti status, ArticolPalet palet) {
-		switch (status) {
-		case ACCEPTA:
-			adaugaPalet(palet, status);
-			break;
-		case RESPINGE:
-		case FINALIZEAZA:
-			respingePalet();
-			break;
-		default:
-			break;
-		}
+            double deficitComanda = (algoritm.getTotalAdaosMinimReper() - formulaTotalAdaosClientCorectat);
 
-	}
+            textAlertaMarja.setText("Cresteti val. cmd. cu minim " + nf.format(deficitComanda) + " RON");
+            textAlertaMarja.setVisibility(View.VISIBLE);
+            algoritm.redistribuireMarja(listArticole, valTransportAlgoritm);
+
+        } else {
+            algoritm.schimbaAlertaArticol(listArticole);
+            textAlertaMarja.setText("");
+        }
+    }
+
+    public void update(Observable observable, Object data) {
+        if (observable instanceof ListaArticoleModificareComanda) {
+            listArticoleComanda = ListaArticoleModificareComanda.getInstance().getListArticoleComanda();
+            conditiiComandaArticole = ListaArticoleModificareComanda.getInstance().getConditiiArticole();
+            adapterArticole.setListArticole(listArticoleComanda);
+            adapterArticole.notifyDataSetChanged();
+
+        }
+
+        if (observable instanceof ListaArticoleComandaGed) {
+            listArticoleComanda = ListaArticoleComandaGed.getInstance().getListArticoleComanda();
+            conditiiComandaArticole = ListaArticoleComandaGed.getInstance().getConditiiArticole();
+            adapterArticole.setListArticole(listArticoleComanda);
+            adapterArticole.notifyDataSetChanged();
+            calculValTransport(listArticoleComanda);
+            calculProcente(listArticoleComanda);
+        }
+
+    }
+
+    @Override
+    public void acceptaCostMacara(boolean acceptaCost, double valoareCost) {
+        trateazaPretMacara(acceptaCost, valoareCost);
+
+    }
+
+    @Override
+    public void articolSters() {
+        calculValTransport(listArticoleComanda);
+        calculProcente(listArticoleComanda);
+
+    }
+
+    @Override
+    public void paletiStatus(EnumPaleti status, ArticolPalet palet) {
+        switch (status) {
+            case ACCEPTA:
+                adaugaPalet(palet, status);
+                break;
+            case RESPINGE:
+            case FINALIZEAZA:
+                respingePalet();
+                break;
+            default:
+                break;
+        }
+
+    }
 }

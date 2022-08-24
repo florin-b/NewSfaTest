@@ -204,6 +204,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
     private TextView textFurnizor;
     public static String tipPlataContract = " ";
 
+
     public void onCreate(Bundle savedInstanceState) {
 
         try {
@@ -1164,10 +1165,6 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
                                 return true;
                             }
 
-                            if (isCondPF10_000()) {
-                                Toast.makeText(getApplicationContext(), "Valoarea comenzii este mai mare de 10000 RON.", Toast.LENGTH_SHORT).show();
-                                return true;
-                            }
 
                             if (isComandaDifValorica()) {
                             } else {
@@ -1214,7 +1211,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
     private boolean isCondPF10_000() {
         return DateLivrare.getInstance().getTipPersClient().equals("PF")
                 && (DateLivrare.getInstance().getTipPlata().equals("E") || DateLivrare.getInstance().getTipPlata().equals("E1") || DateLivrare.getInstance().getTipPlata().equals("N") || DateLivrare.getInstance().getTipPlata().equals("R"))
-                && Double.valueOf(DateLivrare.getInstance().getTotalComanda()) > 10000;
+                ;
     }
 
     class UpdateProgress extends TimerTask {
@@ -1225,12 +1222,6 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
                     public void run() {
 
                         DateLivrare dateLivrareInstance = DateLivrare.getInstance();
-
-                        if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("E1") || dateLivrareInstance.getTipPlata().equals("N") || dateLivrareInstance.getTipPlata().equals("R")) && totalComanda > 5000
-                                && CreareComandaGed.tipClient.equals("PJ")) {
-                            Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
 
                         String redSeparat = "";
                         String cmdSAP = "-1"; // se foloseste doar la modificare
@@ -1269,7 +1260,22 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
                         comandaFinala.setValoareIncasare(valIncasare);
 
-                        valideazaFinal();
+                        if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("E1") || dateLivrareInstance.getTipPlata().equals("N") || dateLivrareInstance.getTipPlata().equals("R"))
+                                && CreareComandaGed.tipClient.equals("PJ")) {
+                            if (totalComanda > 5000) {
+                                Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT).show();
+                                return;
+                            } else
+                                getTotalComenziNumerar();
+
+                        } else if (isCondPF10_000()) {
+                            if (totalComanda > 10000) {
+                                Toast.makeText(getApplicationContext(), "Valoarea comenzii este mai mare de 10000 RON.", Toast.LENGTH_SHORT).show();
+                                return;
+                            } else
+                                getTotalComenziNumerar();
+                        } else
+                            valideazaFinal();
 
                     }
                 });
@@ -1281,6 +1287,56 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
         }
     }
+
+    private void getTotalComenziNumerar() {
+
+        String tipPers = "PJN";
+        String codClientNumerar = comandaFinala.getCodClient();
+
+        if (CreareComandaGed.tipClient.equals("PF")) {
+            tipPers = "PF";
+            codClientNumerar = DateLivrare.getInstance().getNrTel();
+        }
+        else if (CreareComandaGed.tipClient.equals("PJ") && !CreareComandaGed.cnpClient.trim().isEmpty()){
+            tipPers = "PJG";
+            codClientNumerar = CreareComandaGed.cnpClient.replaceAll("RO","");
+        }
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("codClient", codClientNumerar);
+        params.put("dataLivrare", DateLivrare.getInstance().getDataLivrare());
+        params.put("tipClient", tipPers);
+        comandaDAO.getTotalComenziNumerar(params);
+
+    }
+
+    private void afisTotalComenziNumerar(String totalNumerar) {
+
+        double valPragNumerar = 5000;
+
+        if (DateLivrare.getInstance().getTipPersClient().equals("PF"))
+            valPragNumerar = 10000;
+
+        if (totalComanda + Double.valueOf(totalNumerar) > valPragNumerar) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(
+                    "\nLa acest client valoarea comenzilor cu plata in numerar livrate in data de " + DateLivrare.getInstance().getDataLivrare() + " depaseste " + (int)valPragNumerar + " de lei.\n\n" +
+                            "Pentru a salva comanda trebuie sa schimbati metoda de plata sau data de livrare.\n").setCancelable(false)
+                    .setPositiveButton("Inchide", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setCancelable(false);
+            alert.show();
+
+        } else
+            valideazaFinal();
+    }
+
 
     private boolean isComandaBV() {
 
@@ -1494,7 +1550,6 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
         adapter.notifyDataSetChanged();
 
     }
-
 
 
     private String serializeDateLivrareGed() {
@@ -2589,6 +2644,9 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
         switch (methodName) {
             case GET_COST_MACARA:
                 afiseazaPretMacaraDialog((String) result);
+                break;
+            case GET_TOTAL_COMENZI_NUMERAR:
+                afisTotalComenziNumerar((String) result);
                 break;
             case GET_ARTICOLE_AMOB:
                 listArticoleAMOB = comandaDAO.deserializeArticoleAmob((String) result);

@@ -593,6 +593,7 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 					setTextNumeClientEnabled(true);
 					clearDateLivrare();
 
+
 				}
 
 			}
@@ -618,6 +619,8 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 
 					layoutLabelRefClient.setVisibility(View.GONE);
 					layoutTextRefClient.setVisibility(View.GONE);
+
+
 
 				}
 
@@ -647,6 +650,7 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 
 					layoutLabelRefClient.setVisibility(View.GONE);
 					layoutTextRefClient.setVisibility(View.GONE);
+
 
 				}
 
@@ -705,6 +709,8 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 				setTextNumeClientEnabled(false);
 
 				tipClient = EnumTipClient.MESERIAS;
+
+
 
 				int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.6);
 				int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.55);

@@ -57,11 +57,13 @@ import my.logon.screen.beans.ArticolCalculDesc;
 import my.logon.screen.beans.ArticolPalet;
 import my.logon.screen.beans.ArticolTaxaVerde;
 import my.logon.screen.beans.BeanArticolStoc;
+import my.logon.screen.beans.ComandaCalculDescarcare;
 import my.logon.screen.beans.ComandaMathaus;
 import my.logon.screen.beans.CostDescarcare;
 import my.logon.screen.beans.CostTransportMathaus;
 import my.logon.screen.beans.DateArticolMathaus;
 import my.logon.screen.beans.LivrareMathaus;
+import my.logon.screen.beans.RezumatComanda;
 import my.logon.screen.dialogs.ArtComplDialog;
 import my.logon.screen.dialogs.CostMacaraDialog;
 import my.logon.screen.dialogs.CostPaletiDialog;
@@ -180,6 +182,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
     public static String filialaLivrareMathaus = UserInfo.getInstance().getFiliala();
     public static String filialeArondateMathaus = UserInfo.getInstance().getFiliala();
     private static boolean saveComandaMathaus = false;
+    private LivrareMathaus livrareMathaus;
 
     public static String tipComanda = "N"; // N = normala, S = simulata
 
@@ -988,25 +991,9 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
                         DateLivrare dateLivrareInstance = DateLivrare.getInstance();
 
-                        if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("N") || dateLivrareInstance.getTipPlata().equals("R")) && totalComanda > 5000 && CreareComanda.tipClientVar.equals("PJ")) {
-                            Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-
                         String cmdSAP = "-1"; // se foloseste doar la modificare
-                        // comanda
 
                         String alerteKA = globalAlertSDKA + "!" + globalAlertDVKA;
-
-                        // aprobare adr. livrare noua doar pentru agenti
-                        if (!UserInfo.getInstance().getTipAcces().equals("27")) {
-                            if (dateLivrareInstance.isAdrLivrNoua())
-                                comandaBlocata = "1";
-                        }
-
-                        if (CreareComanda.tipComanda.equals("S"))
-                            comandaBlocata = "21";
 
                         String localRedSeparat = dateLivrareInstance.getRedSeparat();
 
@@ -1047,7 +1034,14 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
                         comandaJson = serializeComanda(comandaFinala);
 
 
-                        valideazaFinal();
+                        if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("N") || dateLivrareInstance.getTipPlata().equals("R")) && CreareComanda.tipClientVar.equals("PJ")) {
+                            if (totalComanda > 5000) {
+                                Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT).show();
+                                return;
+                            } else
+                                getTotalComenziNumerar();
+                        } else
+                            valideazaFinal();
 
                     }
                 });
@@ -1068,8 +1062,42 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         } else if (HelperCreareComanda.isConditiiAlertaIndoire(ListaArticoleComanda.getInstance().getListArticoleComanda())) {
             HelperDialog.showInfoDialog(CreareComanda.this, "Atentie!", "Selectati tipul de prelucrare (indoire sau debitare).");
         } else {
-            verificaPretMacara();
+            getLivrariMathaus();
         }
+
+    }
+
+    private void getTotalComenziNumerar() {
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("codClient", comandaFinala.getCodClient());
+        params.put("dataLivrare", DateLivrare.getInstance().getDataLivrare());
+        params.put("tipClient", "PJ");
+        comandaDAO.getTotalComenziNumerar(params);
+
+    }
+
+    private void afisTotalComenziNumerar(String totalNumerar){
+
+        if (totalComanda + Double.valueOf(totalNumerar) > 5000){
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(
+                    "\nLa acest client valoarea comenzilor cu plata in numerar livrate in data de " + DateLivrare.getInstance().getDataLivrare() + " depaseste 5000 de lei.\n\n" +
+                             "Pentru a salva comanda trebuie sa schimbati metoda de plata sau data de livrare.\n").setCancelable(false)
+                    .setPositiveButton("Inchide", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setCancelable(false);
+            alert.show();
+
+        }else
+            valideazaFinal();
+
 
     }
 
@@ -1081,6 +1109,42 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
     private void afiseazaPretMacaraDialog(String result) {
 
         costDescarcare = HelperCostDescarcare.deserializeCostMacara(result);
+        verificaPaletiComanda(costDescarcare.getArticolePaleti());
+
+        if (!costDescarcare.getArticolePaleti().isEmpty()) {
+
+            for (int ii = 0; ii < costDescarcare.getArticoleDescarcare().size(); ii++)
+                costDescarcare.getArticoleDescarcare().get(ii).setCantitate(0);
+
+            int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.65);
+            int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.55);
+
+            CostPaletiDialog costPaleti = new CostPaletiDialog(this, costDescarcare.getArticolePaleti(), DateLivrare.getInstance().getTransport());
+            costPaleti.setPaletiDialogListener(this);
+            costPaleti.getWindow().setLayout(width, height);
+            costPaleti.show();
+
+        } else if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0
+                && DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
+
+            CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, false);
+            macaraDialog.setCostMacaraListener(this);
+            macaraDialog.show();
+
+        } else {
+            if (!costDescarcare.getSePermite())
+                DateLivrare.getInstance().setMasinaMacara(false);
+
+            trateazaConditiiSuplimentare();
+        }
+
+    }
+
+
+    private void afiseazaPretMacaraComenziDialog(String result) {
+
+        costDescarcare = HelperCostDescarcare.deserializeCostComenziMacara(result);
+
         verificaPaletiComanda(costDescarcare.getArticolePaleti());
 
         if (!costDescarcare.getArticolePaleti().isEmpty()) {
@@ -1171,8 +1235,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
             DateLivrare.getInstance().setMasinaMacara(true);
 
-            List<ArticolComanda> articoleDescarcare = HelperCostDescarcare.getArticoleDescarcare(costDescarcare, valoarePret, UserInfo.getInstance()
-                    .getUnitLog(), ListaArticoleComanda.getInstance().getListArticoleComanda());
+            List<ArticolComanda> articoleDescarcare = HelperCostDescarcare.getArticoleDescarcareDistrib(costDescarcare, valoarePret, ListaArticoleComanda.getInstance().getListArticoleComanda());
 
             ListaArticoleComanda.getInstance().getListArticoleComanda().addAll(articoleDescarcare);
 
@@ -1219,15 +1282,57 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
     }
 
+
+    private void verificaPretMacaraRezumat() {
+
+        HelperCostDescarcare.eliminaCostDescarcare(ListaArticoleComanda.getInstance().getListArticoleComanda());
+
+        if (!UtilsUser.isAV_SD_01()) {
+
+            String codFurnizor = " ";
+
+            if (tipComandaDistributie == TipCmdDistrib.DISPOZITIE_LIVRARE || tipComandaDistributie == TipCmdDistrib.ARTICOLE_COMANDA)
+                codFurnizor = DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa();
+            else if (tipComandaDistributie == TipCmdDistrib.COMANDA_LIVRARE)
+                codFurnizor = DateLivrare.getInstance().getCodFilialaCLP();
+
+            List<RezumatComanda> listComenziRezumat = HelperMathaus.getRezumatComanda(ListaArticoleComanda.getInstance().getListArticoleComanda());
+            List<ComandaCalculDescarcare> listComenziDescarcare = HelperCostDescarcare.getComenziCalculDescarcare(listComenziRezumat);
+
+            String comenziSer = comandaDAO.serializeCalcComenziMacara(listComenziDescarcare);
+
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put("codAgent", DateLivrare.getInstance().getCodAgent());
+            params.put("codClient", comandaFinala.getCodClient());
+            params.put("codFurnizor", codFurnizor);
+            params.put("listComenzi", comenziSer);
+
+            comandaDAO.getCostMacaraComenzi(params);
+        } else {
+            trateazaConditiiSuplimentare();
+        }
+
+    }
+
     private boolean isReducere() {
         return globalSubCmp.equals("1") && !UserInfo.getInstance().getCodDepart().equals("07") && !UserInfo.getInstance().getCodDepart().equals("04");
+    }
+
+    private void verificaStareComanda() {
+
+        if (!UserInfo.getInstance().getTipAcces().equals("27")) {
+            if (DateLivrare.getInstance().isAdrLivrNoua())
+                comandaBlocata = "1";
+        }
+
+        comandaFinala.setComandaBlocata(comandaBlocata);
+        comandaJson = serializeComanda(comandaFinala);
     }
 
     private void performSaveCmd() {
         try {
 
-            comandaFinala.setComandaBlocata(comandaBlocata);
-            comandaJson = serializeComanda(comandaFinala);
+            verificaStareComanda();
 
             String tipUser = "AV";
             HashMap<String, String> params = new HashMap<String, String>();
@@ -1690,7 +1795,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
     private void setLivrariMathaus(String result) {
 
-        LivrareMathaus livrareMathaus = opArticol.deserializeLivrareMathaus(result);
+        livrareMathaus = opArticol.deserializeLivrareMathaus(result);
 
         DateLivrare.getInstance().setCostTransportMathaus(livrareMathaus.getCostTransport());
 
@@ -1727,9 +1832,9 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         prepareArtForDelivery();
         articoleFinaleStr = serializedResult;
 
-        if (!saveComandaMathaus)
-            afisRezumatComandaDialog(livrareMathaus.getCostTransport());
-        else
+        if (!saveComandaMathaus) {
+            verificaPretMacaraRezumat();
+        } else
             performSaveCmd();
 
     }
@@ -1765,7 +1870,6 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
             listArticoleMat.add(dateArticol);
 
-
         }
 
         comandaMathaus.setDeliveryEntryDataList(listArticoleMat);
@@ -1787,13 +1891,18 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
     }
 
+
+    private void getRezumatComanda() {
+        List<RezumatComanda> listComenzi = HelperMathaus.getRezumatComanda(ListaArticoleComanda.getInstance().getListArticoleComanda());
+
+    }
+
     private void afisRezumatComandaDialog(List<CostTransportMathaus> costTransport) {
 
         saveComandaMathaus = false;
 
         int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.7);
         int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.65);
-
 
         RezumatComandaDialog rezumatComanda = new RezumatComandaDialog(this, ListaArticoleComanda.getInstance().getListArticoleComanda(), "10", costTransport, DateLivrare.getInstance().getTransport(), CreareComanda.filialeArondateMathaus);
         rezumatComanda.setRezumatListener(this);
@@ -2127,8 +2236,14 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             case GET_COST_MACARA:
                 afiseazaPretMacaraDialog((String) result);
                 break;
+            case GET_COST_MACARA_COMENZI:
+                afiseazaPretMacaraComenziDialog((String) result);
+                break;
             case GET_LIVRARI_MATHAUS:
                 setLivrariMathaus((String) result);
+                break;
+            case GET_TOTAL_COMENZI_NUMERAR:
+                afisTotalComenziNumerar((String) result);
                 break;
             default:
                 break;
@@ -2217,9 +2332,13 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
                 prepareArtForDelivery();
                 articoleFinaleStr = serializedResult;
                 performSaveCmd();
+            } else {
+                //am modificat aici
+                // getLivrariMathaus();
+
+                afisRezumatComandaDialog(livrareMathaus.getCostTransport());
+
             }
-            else
-                getLivrariMathaus();
 
         }
 

@@ -148,6 +148,9 @@ public class SelectClientCmd extends ListActivity implements OperatiiClientListe
 		radioCmdFerma = (RadioButton) findViewById(R.id.radio_cmd_ferma);
 		radioCmdSimulata = (RadioButton) findViewById(R.id.radio_cmd_simulata);
 
+		radioCmdFerma.setVisibility(View.INVISIBLE);
+		radioCmdSimulata.setVisibility(View.INVISIBLE);
+
 	}
 
 	@Override
