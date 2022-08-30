@@ -110,7 +110,6 @@ public class DepartamentAgent {
 		}
 
 		depart.add("Mathaus");
-
 		return depart;
 	}
 

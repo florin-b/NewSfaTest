@@ -56,7 +56,6 @@ public class RezumatComandaDialog extends Dialog implements RezumatListener {
 
         listViewComenzi = (ListView) findViewById(R.id.listComenzi);
 
-
         AdapterRezumatComanda adapterRezumat = new AdapterRezumatComanda(context, getRezumatComanda(), costTransport, tipTransport, filialeArondate);
         adapterRezumat.setRezumatListener(this);
         listViewComenzi.setAdapter(adapterRezumat);

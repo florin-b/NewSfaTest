@@ -1077,14 +1077,14 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
     }
 
-    private void afisTotalComenziNumerar(String totalNumerar){
+    private void afisTotalComenziNumerar(String totalNumerar) {
 
-        if (totalComanda + Double.valueOf(totalNumerar) > 5000){
+        if (totalComanda + Double.valueOf(totalNumerar) > 5000) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(
                     "\nLa acest client valoarea comenzilor cu plata in numerar livrate in data de " + DateLivrare.getInstance().getDataLivrare() + " depaseste 5000 de lei.\n\n" +
-                             "Pentru a salva comanda trebuie sa schimbati metoda de plata sau data de livrare.\n").setCancelable(false)
+                            "Pentru a salva comanda trebuie sa schimbati metoda de plata sau data de livrare.\n").setCancelable(false)
                     .setPositiveButton("Inchide", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
@@ -1095,7 +1095,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             alert.setCancelable(false);
             alert.show();
 
-        }else
+        } else
             valideazaFinal();
 
 
@@ -1793,20 +1793,27 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
     }
 
+    private boolean isComandaDL_TRAP() {
+        return tipComandaDistributie.equals(TipCmdDistrib.DISPOZITIE_LIVRARE) && DateLivrare.getInstance().getTransport().equals("TRAP");
+    }
+
     private void setLivrariMathaus(String result) {
 
         livrareMathaus = opArticol.deserializeLivrareMathaus(result);
 
-        DateLivrare.getInstance().setCostTransportMathaus(livrareMathaus.getCostTransport());
+        if (DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_VANZARE) || isComandaDL_TRAP())
+            DateLivrare.getInstance().setCostTransportMathaus(livrareMathaus.getCostTransport());
 
         List<DateArticolMathaus> articoleMathaus = livrareMathaus.getComandaMathaus().getDeliveryEntryDataList();
-
         List<ArticolComanda> articoleComandaDistrib = ListaArticoleComanda.getInstance().getListArticoleComanda();
 
         String codArticolComanda;
         for (ArticolComanda articolComanda : articoleComandaDistrib) {
 
             articolComanda.setTipTransport(null);
+
+            if (tipComandaDistributie.equals(TipCmdDistrib.DISPOZITIE_LIVRARE))
+                articolComanda.setTipTransport(DateLivrare.getInstance().getTransport());
 
             if (articolComanda.getArticolMathaus() == null)
                 continue;
@@ -1820,6 +1827,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
                 if (codArticolComanda.equals(articolMathaus.getProductCode())) {
                     articolComanda.setFilialaSite(articolMathaus.getDeliveryWarehouse());
+                    articolComanda.setDepozit(articolMathaus.getDepozit());
                     break;
                 }
 
@@ -1827,7 +1835,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
         }
 
-        HelperMathaus.adaugaArticolTransport(livrareMathaus.getCostTransport(), "10");
+        if (DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_VANZARE) || isComandaDL_TRAP())
+            HelperMathaus.adaugaArticolTransport(livrareMathaus.getCostTransport(), "10");
 
         prepareArtForDelivery();
         articoleFinaleStr = serializedResult;
@@ -2333,11 +2342,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
                 articoleFinaleStr = serializedResult;
                 performSaveCmd();
             } else {
-                //am modificat aici
-                // getLivrariMathaus();
-
                 afisRezumatComandaDialog(livrareMathaus.getCostTransport());
-
             }
 
         }
