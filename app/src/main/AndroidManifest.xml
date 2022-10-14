@@ -436,6 +436,14 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
 
+        <activity
+            android:name=".screens.AfisareComandaReturStatus"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+
+
 
     </application>
 

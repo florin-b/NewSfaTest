@@ -1,7 +1,5 @@
 package my.logon.screen.beans;
 
-import my.logon.screen.beans.ArticolDB;
-
 public class ArticolMathaus extends ArticolDB {
 	private String cod;
 	private String nume;
@@ -14,6 +12,7 @@ public class ArticolMathaus extends ArticolDB {
 	private boolean isArticolSite;
 	private String tip1;
 	private String tip2;
+	private String planificator;
 
 	public String getCod() {
 		return cod;
@@ -103,6 +102,11 @@ public class ArticolMathaus extends ArticolDB {
 		this.tip2 = tip2;
 	}
 
-	
-	
+	public String getPlanificator() {
+		return planificator;
+	}
+
+	public void setPlanificator(String planificator) {
+		this.planificator = planificator;
+	}
 }

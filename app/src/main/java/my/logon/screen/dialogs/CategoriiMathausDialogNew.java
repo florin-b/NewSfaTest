@@ -278,14 +278,13 @@ public class CategoriiMathausDialogNew extends Dialog implements OperatiiMathaus
             public void onClick(View v) {
                 tipAfisArticole = AfisArtMathaus.CAUTARE;
                 paginaCurenta = 1;
+                categorieCurenta = null;
                 cautaArticoleMathaus();
 
             }
 
         });
     }
-
-
 
     private void cautaArticoleMathaus() {
 

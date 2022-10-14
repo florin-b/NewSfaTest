@@ -32,6 +32,7 @@ public class PretArticolGed {
 	private double procReducereCmp;
 	private double pretFaraTva;
 	private String dataExp;
+	private double greutate;
 
 	public String getPret() {
 		return pret;
@@ -273,5 +274,11 @@ public class PretArticolGed {
 		this.dataExp = dataExp;
 	}
 
-	
+	public double getGreutate() {
+		return greutate;
+	}
+
+	public void setGreutate(double greutate) {
+		this.greutate = greutate;
+	}
 }

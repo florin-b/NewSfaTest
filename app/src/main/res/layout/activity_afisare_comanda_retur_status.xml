@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".screens.AfisareComandaReturStatus"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_weight="2.5"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp">
+            <Spinner
+                android:id="@+id/spinnerCmdRetur"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_weight="0.15"
+                android:background="@drawable/spinner_style_2" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp">
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp">
+
+            <Spinner
+                android:id="@+id/spinnerAgentiAfisCmd"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.15"
+                android:background="@drawable/spinner_style_2" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mainPannel"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:orientation="horizontal">
+
+        /*principal din stanga*/
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:layout_width="0dp"
+            android:orientation="vertical"
+            >
+
+
+            <LinearLayout
+
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"
+                android:layout_marginTop="5dp">
+                <ListView
+                    android:id="@+id/listVArticoleComandaRetur"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="10dip"
+                    android:choiceMode="singleChoice"
+                    android:divider="@android:color/transparent"
+                    android:dividerHeight="7.0sp"
+                    android:layout_weight="1"
+
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+        /*sfarsit panel stanga*/
+
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:layout_width="0dp"
+            android:orientation="vertical"
+            android:layout_marginLeft="20dp">
+
+
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"
+                >
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:textColor="@color/antetColor1"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:typeface="sans"
+                    android:layout_marginRight="10dp"
+                    android:text="Status din comanda:"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp">
+
+                <ListView
+                    android:id="@+id/listVStatusRetur"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="5dip"
+                    android:choiceMode="singleChoice"
+                    android:divider="@android:color/transparent"
+                    android:dividerHeight="7.0sp"
+                    android:layout_weight="1"
+                    />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"
+                style="@style/dateLivrareDlLayout"
+                android:layout_marginTop="10dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:textSize="15sp"
+                    style="@style/dateLivrareDlLabel"
+                    android:layout_marginRight="10dp"
+                    android:text="Pers. contact:"/>
+                <TextView
+                    android:id="@+id/persoanaContactRetur"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="3"
+                    style="@style/dateLivrareDlValori"
+                    android:gravity="left"
+                    android:textSize="15sp"
+                    android:layout_marginRight="10dp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"
+                style="@style/dateLivrareDlLayout"
+                android:layout_marginTop="10dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    style="@style/dateLivrareDlLabel"
+                    android:textSize="15sp"
+                    android:layout_marginRight="10dp"
+                    android:text="Telefon:"/>
+                <TextView
+                    android:id="@+id/telefonRetur"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="3"
+                    android:gravity="left"
+                    style="@style/dateLivrareDlValori"
+                    android:textSize="15sp"
+                    android:layout_marginRight="10dp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"
+                style="@style/dateLivrareDlLayout"
+                android:layout_marginTop="10dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    style="@style/dateLivrareDlLabel"
+                    android:textSize="15sp"
+                    android:layout_marginRight="10dp"
+                    android:text="Adresa:"/>
+                <TextView
+                    android:id="@+id/adresaRetur"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="3"
+                    android:gravity="left"
+                    style="@style/dateLivrareDlValori"
+                    android:textSize="15sp"
+                    android:layout_marginRight="10dp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"
+                style="@style/dateLivrareDlLayout"
+                android:layout_marginTop="10dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    style="@style/dateLivrareDlLabel"
+                    android:textSize="15sp"
+                    android:layout_marginRight="10dp"
+                    android:text="Tip transport:"/>
+                <TextView
+                    android:id="@+id/tipTransportRetur"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="3"
+                    android:gravity="left"
+                    style="@style/dateLivrareDlValori"
+                    android:textSize="15sp"
+                    android:layout_marginRight="10dp"
+                    />
+            </LinearLayout>
+
+
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
+

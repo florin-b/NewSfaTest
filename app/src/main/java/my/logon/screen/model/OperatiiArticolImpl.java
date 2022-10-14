@@ -545,6 +545,7 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 				pretArticol.setProcReducereCmp(Double.valueOf(jsonObject.getString("procReducereCmp")));
 				pretArticol.setPretFaraTva(Double.valueOf(jsonObject.getString("pretFaraTva")));
 				pretArticol.setDataExp(jsonObject.getString("dataExp"));
+				pretArticol.setGreutate(Double.valueOf(jsonObject.getString("greutate")));
 
 			}
 
@@ -694,6 +695,7 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 				cost.setTipTransp(transpObject.getString("tipTransp"));
 				cost.setValTransp(transpObject.getString("valTransp").equals("null") ? "0" : transpObject.getString("valTransp"));
 				cost.setCodArtTransp(transpObject.getString("codArtTransp").equals("null") ? "0" : transpObject.getString("codArtTransp"));
+				cost.setDepart(transpObject.getString("depart"));
 				listCostTransport.add(cost);
 
 			}
@@ -778,6 +780,7 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 				jsonObject.put("unit", articol.getUnit());
 				jsonObject.put("valPoz", String.valueOf(articol.getValPoz()));
 				jsonObject.put("tip2", articol.getTip2());
+				jsonObject.put("ulStoc", articol.getUlStoc());
 				jsonArray.put(jsonObject);
 			}
 

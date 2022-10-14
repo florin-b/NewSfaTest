@@ -72,7 +72,7 @@ public class MainMenu extends Activity {
 
 	public String[] btnNamesSD = { "Utilizator", "Creare comanda", "Modificare comanda", "Afisare comanda", "Creare cmd GED", "Comenzi simulate",
 			"Cmz.blocate limita credit", "Creare CLP", "Aprobare CLP", "Afisare CLP", "Aprobare DL", "Afisare DL", "Retur paleti", "Stare retur",
-			"Retur comenzi", "Modificare custodie", "Modificare data livrare", "Vanzari", "Neincasate", "Stocuri", "Obiective", "Preturi",
+			"Retur comenzi",  "Modificare custodie", "Modificare data livrare", "Vanzari", "Neincasate", "Stocuri", "Obiective", "Preturi",
 			"Preturi concurenta", "Stare comenzi", "Pierderi vanzari", "Salarizare", "Articole avarie", "Creare sablon", "Afisare sablon", "Urmarire sablon",
 			"Aprobare comanda", "Comenzi conditionate", "Info client", "Plati CEC", "Clienti alocati", "Adrese clienti", "Delegatii", "Despre", "Iesire" };
 
@@ -525,6 +525,7 @@ public class MainMenu extends Activity {
 					finish();
 
 				}
+
 
 				if (selectedBtnName.equalsIgnoreCase("Stare retur")) {
 

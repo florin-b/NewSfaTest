@@ -100,6 +100,8 @@ public class ArticolComanda implements Comparable<ArticolComanda> {
 
 	private String tipTransport;
 
+	private double greutate;
+
 	public int getNrCrt() {
 		return nrCrt;
 	}
@@ -681,6 +683,14 @@ public class ArticolComanda implements Comparable<ArticolComanda> {
 
 	public void setListCabluri(List<BeanCablu05> listCabluri) {
 		this.listCabluri = listCabluri;
+	}
+
+	public double getGreutate() {
+		return greutate;
+	}
+
+	public void setGreutate(double greutate) {
+		this.greutate = greutate;
 	}
 
 	@Override

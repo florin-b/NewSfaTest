@@ -137,7 +137,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
     private AutoCompleteTextView textLocalitate, textStrada;
     private Button btnPozitieAdresa;
     private EditText textNrStr;
-    private Spinner spinnerTonaj, spinnerIndoire;
+    private Spinner spinnerTonaj, spinnerIndoire, spinnerDebitare;
     private ArrayList<BeanAdresaLivrare> adreseList;
     private LinearLayout layoutPrelucrare04;
 
@@ -178,7 +178,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
         if (bundle != null && bundle.getString("parrentClass") != null && bundle.getString("parrentClass").equals("ModificareComanda")) {
 
-            if ((Double.parseDouble(bundle.getString("limitaCredit")) > 1) && !bundle.getString("termenPlata").equals("C000")){
+            if ((Double.parseDouble(bundle.getString("limitaCredit")) > 1) && !bundle.getString("termenPlata").equals("C000")) {
 
                 if (!DateLivrare.getInstance().getTipPlata().equals("N") && !DateLivrare.getInstance().getTipPlata().equals("R")) {
                     CreareComanda.tipPlataContract = bundle.getString("tipPlataContract");
@@ -475,11 +475,24 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         spinnerIndoire = (Spinner) findViewById(R.id.spinnerIndoire);
         setupSpinnerIndoire();
 
+        spinnerDebitare = (Spinner) findViewById(R.id.spinnerDebitare);
+        setupSpinnerDebitare();
+
         layoutPrelucrare04 = (LinearLayout) findViewById(R.id.layoutIndoire);
         layoutPrelucrare04.setVisibility(View.INVISIBLE);
 
-        if (UtilsUser.isAgentOrSD() && UserInfo.getInstance().getCodDepart().startsWith("04"))
+        if (UtilsUser.isAgentOrSD() && (UserInfo.getInstance().getCodDepart().startsWith("04") || UserInfo.getInstance().getCodDepart().startsWith("01"))) {
             layoutPrelucrare04.setVisibility(View.VISIBLE);
+
+            if (UserInfo.getInstance().getCodDepart().startsWith("04")) {
+                spinnerIndoire.setVisibility(View.VISIBLE);
+                spinnerDebitare.setVisibility(View.INVISIBLE);
+            } else if (UserInfo.getInstance().getCodDepart().startsWith("01")) {
+                spinnerIndoire.setVisibility(View.GONE);
+                spinnerDebitare.setVisibility(View.VISIBLE);
+            }
+
+        }
 
         if (UtilsUser.isKA() || UtilsUser.isUserSDKA() || UtilsUser.isUserSK())
             layoutPrelucrare04.setVisibility(View.VISIBLE);
@@ -553,8 +566,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         }
 
     }
-
-
 
 
     private boolean isComandaBV() {
@@ -806,6 +817,16 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
     }
 
+    private void setupSpinnerDebitare() {
+
+        String[] debitareValues = {"Tip prelucrare lemn", "DEBITARE"};
+
+        ArrayAdapter<String> adapterDebitare = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, debitareValues);
+        adapterDebitare.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDebitare.setAdapter(adapterDebitare);
+
+    }
+
     private void addSpinnerTranspListener() {
         spinnerTransp.setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -967,7 +988,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         return DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.LIVRARE_CUSTODIE);
     }
 
-    private boolean isComandaACZC(){
+    private boolean isComandaACZC() {
         return DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.ARTICOLE_COMANDA);
     }
 
@@ -1020,7 +1041,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
                 spinnerResponsabil.setEnabled(true);
                 spinnerTermenPlata.setEnabled(true);
                 ((TextView) findViewById(R.id.tipPlataContract)).setVisibility(View.INVISIBLE);
-
+                String rawTipPlataStr = spinnerPlata.getSelectedItem().toString();
 
                 if (spinnerPlata.getSelectedItem().toString().substring(0, 1).equals("N") || spinnerPlata.getSelectedItem().toString().substring(0, 1).equals("R")) {
 
@@ -1077,6 +1098,12 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
                 } else {
                     layoutValoareIncasare.setVisibility(View.GONE);
                 }
+
+                if (rawTipPlataStr.toLowerCase().contains("numerar") || rawTipPlataStr.toLowerCase().contains("ramburs")) {
+                    checkAviz.setChecked(false);
+                    checkAviz.setEnabled(false);
+                } else
+                    checkAviz.setEnabled(true);
             }
 
             public void onNothingSelected(AdapterView<?> arg0) {
@@ -1905,6 +1932,11 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
             dateLivrareInstance.setPrelucrare(spinnerIndoire.getSelectedItem().toString());
         } else
             dateLivrareInstance.setPrelucrare("-1");
+
+        if (spinnerDebitare.getVisibility() == View.VISIBLE && spinnerDebitare.getSelectedItemPosition() > 0) {
+            dateLivrareInstance.setPrelucrareLemn(spinnerDebitare.getSelectedItem().toString());
+        } else
+            dateLivrareInstance.setPrelucrareLemn("-1");
 
         if (dateLivrareInstance.getOras().equalsIgnoreCase("bucuresti") || dateLivrareInstance.getOras().toLowerCase().contains("sector")) {
             beans.LatLng coordAdresa = new beans.LatLng(dateLivrareInstance.getCoordonateAdresa().latitude, dateLivrareInstance.getCoordonateAdresa().longitude);

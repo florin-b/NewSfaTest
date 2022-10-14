@@ -24,6 +24,7 @@ import my.logon.screen.beans.CostTransportMathaus;
 import my.logon.screen.beans.RezumatComanda;
 import my.logon.screen.listeners.RezumatListener;
 import my.logon.screen.model.ArticolComanda;
+import my.logon.screen.model.UserInfo;
 
 public class AdapterRezumatComanda extends BaseAdapter {
 
@@ -124,6 +125,24 @@ public class AdapterRezumatComanda extends BaseAdapter {
 
     }
 
+    private boolean isExceptieTransportBV90(String filialaLivrare) {
+        return UserInfo.getInstance().getUnitLog().equals("BV10") && filialaLivrare.equals("BV90") && isLivrareBV10();
+    }
+
+    private boolean isLivrareBV10() {
+
+        if (!UserInfo.getInstance().getUnitLog().equals("BV10"))
+            return false;
+
+        for (int ii = 0; ii < listComenzi.size(); ii++) {
+            for (int jj = 0; jj < listComenzi.get(ii).getListArticole().size(); jj++) {
+                if (listComenzi.get(ii).getFilialaLivrare().equals("BV10"))
+                    return true;
+            }
+        }
+        return false;
+    }
+
     private void setListenerSpinnerTransport(Spinner spinnerTransport, RezumatComanda rezumat, ViewHolder viewHolder) {
 
         spinnerTransport.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -170,7 +189,6 @@ public class AdapterRezumatComanda extends BaseAdapter {
             }
 
         }
-
 
 
     }

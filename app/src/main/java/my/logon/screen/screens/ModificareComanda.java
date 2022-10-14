@@ -63,14 +63,17 @@ import my.logon.screen.beans.BeanConditiiHeader;
 import my.logon.screen.beans.CostDescarcare;
 import my.logon.screen.beans.DateLivrareAfisare;
 import my.logon.screen.dialogs.AprobariDialog;
+import my.logon.screen.dialogs.CnpDialog;
 import my.logon.screen.dialogs.CostMacaraDialog;
 import my.logon.screen.dialogs.CostPaletiDialog;
 import my.logon.screen.enums.EnumComenziDAO;
 import my.logon.screen.enums.EnumPaleti;
 import my.logon.screen.enums.EnumTipClientIP;
 import my.logon.screen.helpers.HelperCostDescarcare;
+import my.logon.screen.helpers.HelperCreareComanda;
 import my.logon.screen.listeners.ArticolModificareListener;
 import my.logon.screen.listeners.AsyncTaskListener;
+import my.logon.screen.listeners.CnpDialogListener;
 import my.logon.screen.listeners.ComenziDAOListener;
 import my.logon.screen.listeners.CostMacaraListener;
 import my.logon.screen.listeners.PaletiListener;
@@ -93,7 +96,7 @@ import my.logon.screen.utils.UtilsGeneral;
 import my.logon.screen.utils.UtilsUser;
 
 public class ModificareComanda extends Activity implements AsyncTaskListener, ComenziDAOListener, ArticolModificareListener, Observer, CostMacaraListener,
-        PaletiListener {
+        PaletiListener, CnpDialogListener {
 
     Button quitBtn, stocBtn, clientBtn, articoleBtn, livrareBtn, salveazaComandaBtn, stergeComandaBtn, btnCommentariiCond, aprobareBtn;
     String filiala = "", nume = "", cod = "", globalSubCmp = "0";
@@ -598,6 +601,11 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
                                 return false;
                             }
 
+                            if (isConditiiSolicitCnp() && DateLivrare.getInstance().getCnpClient().trim().length() == 0) {
+                                showCnpDialog();
+                                return false;
+                            }
+
                             mProgress.setVisibility(View.VISIBLE);
                             mProgress.setProgress(0);
                             progressVal = 0;
@@ -623,6 +631,48 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
             }
 
         });
+
+    }
+
+
+    private boolean isConditiiSolicitCnp() {
+
+        if (!ModificareComanda.tipClientVar.equals("PF"))
+            return false;
+
+        double valGreutateCmd = 0;
+        double valFTvaCmd = 0;
+
+        for (ArticolComanda articol : listArticoleComanda) {
+            if (articol.getGreutate() > 0) {
+                valGreutateCmd += articol.getGreutate();
+
+                if (isComandaDistrib)
+                    valFTvaCmd += articol.getPret();
+                else
+                    valFTvaCmd += HelperCreareComanda.getPretFaraTVA(articol);
+            }
+        }
+
+        if (valGreutateCmd > Constants.MAX_GREUTATE_CNP || valFTvaCmd >= Constants.MAX_VALOARE_CNP)
+            return true;
+
+        return false;
+
+    }
+
+    private void showCnpDialog() {
+        CnpDialog dialog = new CnpDialog(this);
+        dialog.setCnpListener(ModificareComanda.this);
+        dialog.show();
+    }
+
+    @Override
+    public void cnpSaved(String cnp) {
+       DateLivrare.getInstance().setCnpClient(cnp);
+        mProgress.setProgress(50);
+        myTimer = new Timer();
+        myTimer.schedule(new UpdateProgress(), 40, 15);
 
     }
 
@@ -1137,6 +1187,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
                 obj.put("filialaSite", listArticoleComanda.get(i).getFilialaSite());
                 obj.put("dataExp", listArticoleComanda.get(i).getDataExpPret());
                 obj.put("listCabluri", new OperatiiArticolImpl(this).serializeCabluri05(listArticoleComanda.get(i).getListCabluri()));
+                obj.put("greutate", listArticoleComanda.get(i).getGreutate());
 
                 if (!UtilsUser.isAgentOrSDorKA()) {
                     if ((listArticoleComanda.get(i).getNumeArticol() != null && listArticoleComanda.get(i).getPonderare() == 1)
@@ -1261,6 +1312,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
             obj.put("ciDelegat", DateLivrare.getInstance().getDelegat().getSerieNumarCI());
             obj.put("autoDelegat", DateLivrare.getInstance().getDelegat().getNrAuto());
             obj.put("refClient", DateLivrare.getInstance().getRefClient());
+            obj.put("prelucrareLemn", DateLivrare.getInstance().getPrelucrareLemn());
 
         } catch (Exception ex) {
             Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();

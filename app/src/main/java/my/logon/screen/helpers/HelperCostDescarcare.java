@@ -271,8 +271,7 @@ public class HelperCostDescarcare {
             for (int i = 0; i < jsonObject.length(); i++) {
                 JSONObject comandaObject = jsonObject.getJSONObject(i);
 
-                if (Boolean.valueOf(comandaObject.getString("sePermite"))){
-                    costDescarcare.setSePermite(true);
+                    costDescarcare.setSePermite(Boolean.valueOf(comandaObject.getString("sePermite")));
 
                     JSONArray jsonArray = new JSONArray(comandaObject.getString("articoleDescarcare"));
 
@@ -316,7 +315,6 @@ public class HelperCostDescarcare {
 
                 }
 
-            }
 
         } catch (JSONException e) {
 

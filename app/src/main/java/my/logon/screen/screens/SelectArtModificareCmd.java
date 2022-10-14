@@ -97,7 +97,7 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 	private TextView textPromo;
 	private boolean pretMod = false;
 	private double initPrice = 0, cmpArt = 0;
-	private double finalPrice = 0, minimKAPrice = 0;
+	private double finalPrice = 0, minimKAPrice = 0, greutateArt = 0;
 	private double listPrice = 0, procDiscClient = 0;
 	private double discMaxAV = 0, discMaxSD = 0; // , discMaxDV = 0;
 
@@ -1008,6 +1008,7 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 						unArticol.setDepartAprob(articolDBSelected.getDepartAprob());
 						unArticol.setDataExpPret(dataExpPret);
 						unArticol.setListCabluri(listCabluri);
+						unArticol.setGreutate(greutateArt);
 
 						if (procRedFin > 0)
 							unArticol.setIstoricPret(istoricPret);
@@ -1051,7 +1052,7 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 						globalCantArt = 0;
 						globalCodDepartSelectetItem = "";
 						subCmp = "0";
-						
+						greutateArt = 0;
 						listCabluri = null;
 
 						redBtnTable.setVisibility(View.GONE);
@@ -1212,6 +1213,7 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 
 				cantUmb = tokenPret[14];
 				Umb = tokenPret[15];
+				greutateArt = Double.parseDouble(tokenPret[24].trim());
 
 				cmpArt = Double.parseDouble(tokenPret[17]);
 

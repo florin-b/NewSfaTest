@@ -162,6 +162,8 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
     private CheckBox checkFactura, checkAviz;
     private BeanAdreseJudet listAdreseJudet, listAlteAdrese;
 
+    private Spinner spinnerDebitare;
+
     private ActivityResultLauncher<Intent> startActivityForResult;
 
     @Override
@@ -346,6 +348,9 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
             spinnerIndoire = (Spinner) findViewById(R.id.spinnerIndoire);
             setupSpinnerIndoire();
+
+            spinnerDebitare = (Spinner) findViewById(R.id.spinnerDebitare);
+            setupSpinnerDebitare();
 
             spinnerTransp = (Spinner) findViewById(R.id.spinnerTransp);
             spinnerTonaj = (Spinner) findViewById(R.id.spinnerTonaj);
@@ -927,6 +932,16 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         ArrayAdapter<String> adapterIndoire = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, indoireValues);
         adapterIndoire.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerIndoire.setAdapter(adapterIndoire);
+
+    }
+
+    private void setupSpinnerDebitare() {
+
+        String[] debitareValues = {"Tip prelucrare lemn", "DEBITARE"};
+
+        ArrayAdapter<String> adapterDebitare = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, debitareValues);
+        adapterDebitare.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDebitare.setAdapter(adapterDebitare);
 
     }
 
@@ -1774,6 +1789,11 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
             dateLivrareInstance.setPrelucrare(spinnerIndoire.getSelectedItem().toString());
         } else
             dateLivrareInstance.setPrelucrare("-1");
+
+        if (spinnerDebitare.getVisibility() == View.VISIBLE && spinnerDebitare.getSelectedItemPosition() > 0) {
+            dateLivrareInstance.setPrelucrareLemn(spinnerDebitare.getSelectedItem().toString());
+        } else
+            dateLivrareInstance.setPrelucrareLemn("-1");
 
         if (spinnerMeseriasi.getSelectedItem() != null)
             dateLivrareInstance.setCodMeserias(((BeanClient) spinnerMeseriasi.getSelectedItem()).getCodClient());

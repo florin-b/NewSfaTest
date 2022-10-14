@@ -236,7 +236,7 @@ public class HelperTranspBuc {
         String codDepart = "";
         if (UtilsUser.isAgentOrSD())
             codDepart = UserInfo.getInstance().getCodDepart();
-        else if (UtilsUser.isKA())
+        else if (UtilsUser.isKA() || UtilsUser.isUserSDKA())
             codDepart = "01"; //cand se solicita adresa inaintea articolelor nu mai stiu pe ce depart sa pun taxa.
 
         if (UtilsUser.isUserKA() || UtilsUser.isUserSK() || UtilsUser.isInfoUser() || UtilsUser.isSMR() || UtilsUser.isCVR() || UtilsUser.isSSCM()

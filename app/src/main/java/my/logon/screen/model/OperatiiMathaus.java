@@ -1,24 +1,24 @@
 package my.logon.screen.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import my.logon.screen.listeners.AsyncTaskListener;
-import my.logon.screen.listeners.OperatiiMathausListener;
-import my.logon.screen.screens.AsyncTaskWSCall;
+import android.content.Context;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import android.content.Context;
-import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import my.logon.screen.beans.ArticolMathaus;
 import my.logon.screen.beans.CategorieMathaus;
 import my.logon.screen.beans.RezultatArtMathaus;
 import my.logon.screen.enums.EnumOperatiiMathaus;
+import my.logon.screen.listeners.AsyncTaskListener;
+import my.logon.screen.listeners.OperatiiMathausListener;
+import my.logon.screen.screens.AsyncTaskWSCall;
 
 public class OperatiiMathaus implements AsyncTaskListener {
 
@@ -134,6 +134,7 @@ public class OperatiiMathaus implements AsyncTaskListener {
 					
 					articol.setTip1(catObject.getString("tip1"));
 					articol.setTip2(catObject.getString("tip2"));
+					articol.setPlanificator(catObject.getString("planificator"));
 
 					objectsList.add(articol);
 

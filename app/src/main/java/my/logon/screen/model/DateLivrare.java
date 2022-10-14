@@ -91,6 +91,7 @@ public class DateLivrare {
 	private List<CostTransportMathaus> costTransportMathaus;
 	private boolean isClientBlocat;
 	private double limitaCredit;
+	private String prelucrareLemn;
 
 	private DateLivrareAfisare dateLivrareAfisare;
 
@@ -663,6 +664,14 @@ public class DateLivrare {
 		this.limitaCredit = limitaCredit;
 	}
 
+	public String getPrelucrareLemn() {
+		return prelucrareLemn;
+	}
+
+	public void setPrelucrareLemn(String prelucrareLemn) {
+		this.prelucrareLemn = prelucrareLemn;
+	}
+
 	public void resetAll() {
 		codJudet = "";
 		numeJudet = "";
@@ -720,6 +729,7 @@ public class DateLivrare {
 		costTransportMathaus = null;
 		isClientBlocat = false;
 		limitaCredit = 0;
+		prelucrareLemn = "";
 
 	}
 

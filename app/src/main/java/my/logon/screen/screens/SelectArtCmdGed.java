@@ -1473,7 +1473,7 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 
     @SuppressWarnings("unchecked")
     public void addListenerBtnSaveArt() {
-        saveArtBtn.setOnClickListener(new OnClickListener() {
+        saveArtBtn .setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
 
                 try {
@@ -1714,6 +1714,8 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
                         articol.setLungime(articolDBSelected.getLungime());
                         articol.setDataExpPret(selectedArticol.getDataExp());
                         articol.setListCabluri(listCabluri);
+                        articol.setGreutate(selectedArticol.getGreutate());
+                        articol.setPretFaraTva(selectedArticol.getPretFaraTva());
 
                         if (procRedFin > 0)
                             articol.setIstoricPret(selectedArticol.getIstoricPret());

@@ -463,6 +463,9 @@ public class InfoStrings {
 		if (numeUL.equals("SB10"))
 			numeFil = "SIBIU";
 
+		if (numeUL.equals("SV10"))
+			numeFil = "SUCEAVA";
+
 		return numeFil;
 
 	}

@@ -725,13 +725,22 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="left|bottom"
                     android:layout_marginRight="180dip"
-                    android:layout_weight="0.1"
+                    android:layout_weight="0.13"
+                    android:gravity="left" />
+
+                <Spinner
+                    android:id="@+id/spinnerDebitare"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left|bottom"
+                    android:layout_marginRight="180dip"
+                    android:layout_weight="0.13"
                     android:gravity="left" />
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.3" />
+                    android:layout_weight="0.1" />
             </LinearLayout>
 
             <LinearLayout

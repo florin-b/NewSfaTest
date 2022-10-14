@@ -17,6 +17,7 @@ import java.util.List;
 import my.logon.screen.beans.ArticolAmob;
 import my.logon.screen.beans.ArticolCalculDesc;
 import my.logon.screen.beans.ArticolSimulat;
+import my.logon.screen.beans.BeanArticolComandaRetur;
 import my.logon.screen.beans.BeanArticoleAfisare;
 import my.logon.screen.beans.BeanClientBorderou;
 import my.logon.screen.beans.BeanComandaCreata;
@@ -24,6 +25,8 @@ import my.logon.screen.beans.BeanComandaDeschisa;
 import my.logon.screen.beans.BeanConditii;
 import my.logon.screen.beans.BeanConditiiArticole;
 import my.logon.screen.beans.BeanConditiiHeader;
+import my.logon.screen.beans.BeanHeaderComandaRetur;
+import my.logon.screen.beans.BeanStatusComandaRetur;
 import my.logon.screen.beans.ComandaAmobAfis;
 import my.logon.screen.beans.ComandaCalculDescarcare;
 import my.logon.screen.beans.DateLivrareAfisare;
@@ -202,6 +205,21 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 
     public void getTotalComenziNumerar(HashMap<String, String> params) {
         numeComanda = EnumComenziDAO.GET_TOTAL_COMENZI_NUMERAR;
+        performOperation(params);
+    }
+
+    public void getListComenziRetur(HashMap<String, String> params) {
+        numeComanda = EnumComenziDAO.GET_LIST_DOCRETUR_STARE;
+        performOperation(params);
+    }
+
+    public void getListaArticoleRetur(HashMap<String, String> params) {
+        numeComanda = EnumComenziDAO.GET_LIST_ARTICOLE_RETUR;
+        performOperation(params);
+    }
+
+    public void getStareReturComanda(HashMap<String, String> params) {
+        numeComanda = EnumComenziDAO.GET_STATUS_COMANDA_RETUR;
         performOperation(params);
     }
 
@@ -501,6 +519,9 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 
                     if (articolObject.has("aczcLivrat"))
                         articol.setAczcLivrat(Double.valueOf(articolObject.getString("aczcLivrat")));
+
+                    if (articolObject.has("greutate"))
+                        articol.setGreutate(Double.valueOf(articolObject.getString("greutate")));
 
                     listArticole.add(articol);
 
@@ -838,6 +859,89 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
         CriteriulDivizie criteriu = new CriteriulDivizie();
         List<BeanComandaCreata> listCmd = criteriu.indeplinesteCriteriu(listComenziCreate, divizie);
         return listCmd;
+    }
+
+
+    public ArrayList<BeanHeaderComandaRetur> deserializeHeadeComandaRetur(String serializedResult) {
+        BeanHeaderComandaRetur comandaRetur = null;
+        ArrayList<BeanHeaderComandaRetur> listComenziRetur = new ArrayList<BeanHeaderComandaRetur>();
+        try {
+            Object json = new JSONTokener(serializedResult).nextValue();
+
+            if (json instanceof JSONArray){
+                JSONArray jsonObject = new JSONArray(serializedResult);
+                for (int i=0;i<jsonObject.length();i++){
+                    JSONObject comandaReturObject = jsonObject.getJSONObject(i);
+                    comandaRetur = new BeanHeaderComandaRetur();
+                    comandaRetur.setVbeln(comandaReturObject.getString("vbeln"));
+                    comandaRetur.setKunnr(comandaReturObject.getString("kunnr"));
+                    comandaRetur.setAuart(comandaReturObject.getString("auart"));
+                    comandaRetur.setAudat(comandaReturObject.getString("audat"));
+                    comandaRetur.setReferinta(comandaReturObject.getString("referinta"));
+                    comandaRetur.setTraty(comandaReturObject.getString("traty"));
+                    comandaRetur.setName1(comandaReturObject.getString("name1"));
+                    comandaRetur.setTranspzone(comandaReturObject.getString("transpzone"));
+                    comandaRetur.setPers_contact(comandaReturObject.getString("pers_contact"));
+                    comandaRetur.setTel_contact(comandaReturObject.getString("tel_contact"));
+                    comandaRetur.setCity1(comandaReturObject.getString("city1"));
+                    comandaRetur.setStreet(comandaReturObject.getString("street"));
+
+                    listComenziRetur.add(comandaRetur);
+                }
+            }
+
+        } catch (JSONException e) {
+            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+        }
+        return listComenziRetur;
+    }
+
+    public ArrayList<BeanStatusComandaRetur> deserializeListaStatusRetur(String serializedResult) {
+        BeanStatusComandaRetur statusComandaRetur = null;
+        ArrayList<BeanStatusComandaRetur> listStatus = new ArrayList<BeanStatusComandaRetur>();
+        try {
+            Object json = new JSONTokener(serializedResult).nextValue();
+            if (json instanceof JSONArray) {
+                JSONArray jsonObject = new JSONArray(serializedResult);
+                for (int i=0;i<jsonObject.length();i++) {
+                    JSONObject statusReturObject = jsonObject.getJSONObject(i);
+                    statusComandaRetur = new BeanStatusComandaRetur();
+                    statusComandaRetur.setNrDocument(statusReturObject.getString("nrDocument"));
+                    statusComandaRetur.setStare(statusReturObject.getString("stare"));
+
+                    listStatus.add(statusComandaRetur);
+                }
+            }
+        }
+        catch (JSONException e) {
+            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+        }
+        return listStatus;
+    }
+    public ArrayList<BeanArticolComandaRetur> deserializeListaArticoleRetur(String serializedResult) {
+        BeanArticolComandaRetur articolComandaRetur = null;
+        ArrayList<BeanArticolComandaRetur> listArticoleRetur = new ArrayList<BeanArticolComandaRetur>();
+        try {
+            Object json = new JSONTokener(serializedResult).nextValue();
+            if (json instanceof JSONArray) {
+                JSONArray jsonObject = new JSONArray(serializedResult);
+                for (int i=0;i<jsonObject.length();i++) {
+                    JSONObject articolReturObject = jsonObject.getJSONObject(i);
+                    articolComandaRetur = new BeanArticolComandaRetur();
+                    articolComandaRetur.setMatnr(articolReturObject.getString("matnr"));
+                    articolComandaRetur.setArktx(articolReturObject.getString("arktx"));
+                    articolComandaRetur.setKwmeng(articolReturObject.getString("kwmeng"));
+                    articolComandaRetur.setVrkme(articolReturObject.getString("vrkme"));
+                    articolComandaRetur.setValoare_pozitie(articolReturObject.getString("valoare_pozitie"));
+
+                    listArticoleRetur.add(articolComandaRetur);
+                }
+            }
+        }
+        catch (JSONException e) {
+            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+        }
+        return listArticoleRetur;
     }
 
 }
