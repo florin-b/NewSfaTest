@@ -8,6 +8,8 @@ public class CostTransportMathaus {
 	private String codArtTransp;
 	private String depart;
 
+
+
 	public String getFiliala() {
 		return filiala;
 	}
@@ -47,4 +49,6 @@ public class CostTransportMathaus {
 	public void setDepart(String depart) {
 		this.depart = depart;
 	}
+
+
 }
