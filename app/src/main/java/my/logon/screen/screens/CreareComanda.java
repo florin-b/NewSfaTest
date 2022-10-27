@@ -1154,7 +1154,9 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
     private void afiseazaPretMacaraDialog(String result) {
 
         costDescarcare = HelperCostDescarcare.deserializeCostMacara(result);
-        verificaPaletiComanda(costDescarcare.getArticolePaleti());
+
+        if (!DateLivrare.getInstance().isClientFurnizor())
+            verificaPaletiComanda(costDescarcare.getArticolePaleti());
 
         if (!costDescarcare.getArticolePaleti().isEmpty()) {
 
@@ -1190,7 +1192,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
         costDescarcare = HelperCostDescarcare.deserializeCostComenziMacara(result);
 
-        verificaPaletiComanda(costDescarcare.getArticolePaleti());
+        if (!DateLivrare.getInstance().isClientFurnizor())
+            verificaPaletiComanda(costDescarcare.getArticolePaleti());
 
         if (!costDescarcare.getArticolePaleti().isEmpty()) {
 
@@ -1850,7 +1853,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
         livrareMathaus = opArticol.deserializeLivrareMathaus(result);
 
-        if (DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_VANZARE)  || DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_LIVRARE) || isComandaDL_TRAP())
+        if (DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_VANZARE) || DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_LIVRARE) || isComandaDL_TRAP())
             DateLivrare.getInstance().setCostTransportMathaus(livrareMathaus.getCostTransport());
 
         List<DateArticolMathaus> articoleMathaus = livrareMathaus.getComandaMathaus().getDeliveryEntryDataList();
@@ -1880,8 +1883,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
                 if (codArticolComanda.equals(articolMathaus.getProductCode())) {
                     if (articolComanda.getFilialaSite().equals("BV90")) {
                         articolComanda.setDepozit(articolComanda.getDepart() + "V1");
-                    }
-                    else {
+                    } else {
                         articolComanda.setFilialaSite(articolMathaus.getDeliveryWarehouse());
                         articolComanda.setDepozit(articolMathaus.getDepozit());
                     }
@@ -2461,7 +2463,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         ArticolComanda articol = HelperCostDescarcare.getArticolPalet(articolPalet, depozitPalet, unitlogPalet);
         ListaArticoleComanda.getInstance().addArticolComanda(articol);
 
-        for (int ii=0;ii<costDescarcare.getArticoleDescarcare().size();ii++){
+        for (int ii = 0; ii < costDescarcare.getArticoleDescarcare().size(); ii++) {
             if (costDescarcare.getArticoleDescarcare().get(ii).getFiliala().equals(articolPalet.getFiliala())) {
                 costDescarcare.getArticoleDescarcare().get(ii).setCantitate(costDescarcare.getArticoleDescarcare().get(ii).getCantitate() + articol.getCantitate());
             }
