@@ -92,6 +92,7 @@ public class DateLivrare {
 	private boolean isClientBlocat;
 	private double limitaCredit;
 	private String prelucrareLemn;
+	private String tipPersAgent;
 
 	private DateLivrareAfisare dateLivrareAfisare;
 
@@ -153,6 +154,7 @@ public class DateLivrare {
 		this.delegat = dateLivrareAfisare.getDelegat();
 		this.refClient = dateLivrareAfisare.getRefClient();
 		this.limitaCredit = dateLivrareAfisare.getLimitaCredit();
+		this.tipPersAgent = dateLivrareAfisare.getTipPersAgent();
 	}
 
 	public boolean isClientRaft() {
@@ -672,6 +674,14 @@ public class DateLivrare {
 		this.prelucrareLemn = prelucrareLemn;
 	}
 
+	public String getTipPersAgent() {
+		return tipPersAgent;
+	}
+
+	public void setTipPersAgent(String tipPersAgent) {
+		this.tipPersAgent = tipPersAgent;
+	}
+
 	public void resetAll() {
 		codJudet = "";
 		numeJudet = "";
@@ -730,6 +740,7 @@ public class DateLivrare {
 		isClientBlocat = false;
 		limitaCredit = 0;
 		prelucrareLemn = "";
+		tipPersAgent = "";
 
 	}
 

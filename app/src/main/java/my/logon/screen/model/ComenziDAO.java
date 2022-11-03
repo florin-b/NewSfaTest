@@ -420,6 +420,9 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
                 dateLivrare.setMarjaBrutaCantVal(Double.valueOf(jsonLivrare.getString("marjaBrutaCantVal")));
                 dateLivrare.setMarjaBrutaPalProc(Double.valueOf(jsonLivrare.getString("marjaBrutaPalProc")));
                 dateLivrare.setMarjaBrutaCantProc(Double.valueOf(jsonLivrare.getString("marjaBrutaCantProc")));
+
+                dateLivrare.setTipPersAgent(jsonLivrare.getString("tipPersAgent"));
+
                 dateLivrare.setRefClient(jsonLivrare.getString("refClient"));
 
                 if (jsonLivrare.has("isClientBlocat"))

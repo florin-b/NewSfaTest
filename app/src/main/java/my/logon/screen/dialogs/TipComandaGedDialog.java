@@ -203,7 +203,9 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 
 	private void getComenziAMOB() {
 		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("codAgent", UserInfo.getInstance().getCod());
+		//params.put("codAgent", UserInfo.getInstance().getCod());
+
+		params.put("codAgent", "00060109");
 		comandaDAO.getComenziAmob(params);
 
 	}
