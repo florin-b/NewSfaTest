@@ -16,6 +16,7 @@ import java.util.List;
 import my.logon.screen.beans.AntetCmdMathaus;
 import my.logon.screen.beans.ArticolCant;
 import my.logon.screen.beans.ArticolDB;
+import my.logon.screen.beans.BeanArticolCautare;
 import my.logon.screen.beans.BeanArticolSimulat;
 import my.logon.screen.beans.BeanArticolStoc;
 import my.logon.screen.beans.BeanCablu05;
@@ -78,6 +79,12 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 
 	public void getStocDepozit(HashMap<String, String> params) {
 		numeComanda = EnumArticoleDAO.GET_STOC_DEPOZIT;
+		this.params = params;
+		performOperation();
+	}
+
+	public void getStocDisponibil(HashMap<String, String> params) {
+		numeComanda = EnumArticoleDAO.GET_STOC_DISPONIBIL;
 		this.params = params;
 		performOperation();
 	}
@@ -223,6 +230,30 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 		}
 
 		return listCabluri;
+	}
+
+
+	public ArrayList<BeanArticolCautare> deserializeArtRecom(String serListArticole) {
+
+		ArrayList<BeanArticolCautare> listArtRecom = new ArrayList<BeanArticolCautare>();
+
+		try {
+
+			JSONArray jsonArray = new JSONArray(serListArticole);
+
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject articolObject = jsonArray.getJSONObject(i);
+				BeanArticolCautare artRecom = new BeanArticolCautare();
+				artRecom.setCod(articolObject.getString("cod"));
+				artRecom.setNume(articolObject.getString("nume"));
+				listArtRecom.add(artRecom);
+			}
+
+		} catch (JSONException e) {
+			Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+		}
+
+		return listArtRecom;
 	}
 
 	public ArrayList<BeanCablu05> deserializeCantCabluri05(String serListArticole) {
@@ -546,6 +577,7 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 				pretArticol.setPretFaraTva(Double.valueOf(jsonObject.getString("pretFaraTva")));
 				pretArticol.setDataExp(jsonObject.getString("dataExp"));
 				pretArticol.setGreutate(Double.valueOf(jsonObject.getString("greutate")));
+				pretArticol.setArticoleRecomandate(deserializeArtRecom(jsonObject.getString("articoleRecomandate")));
 
 			}
 
@@ -754,6 +786,8 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 			jsonAntet.put("codClient", antetComanda.getCodClient());
 			jsonAntet.put("tipPers", antetComanda.getTipPers());
 			jsonAntet.put("depart", antetComanda.getDepart());
+			jsonAntet.put("codPers", antetComanda.getCodPers());
+			jsonAntet.put("tipTransp", antetComanda.getTipTransp());
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -781,6 +815,7 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 				jsonObject.put("valPoz", String.valueOf(articol.getValPoz()));
 				jsonObject.put("tip2", articol.getTip2());
 				jsonObject.put("ulStoc", articol.getUlStoc());
+				jsonObject.put("depozit", articol.getDepozit());
 				jsonArray.put(jsonObject);
 			}
 

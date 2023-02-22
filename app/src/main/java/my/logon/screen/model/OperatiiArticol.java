@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import my.logon.screen.listeners.OperatiiArticolListener;
 import my.logon.screen.beans.AntetCmdMathaus;
 import my.logon.screen.beans.ArticolCant;
 import my.logon.screen.beans.ArticolDB;
+import my.logon.screen.beans.BeanArticolCautare;
 import my.logon.screen.beans.BeanArticolSimulat;
 import my.logon.screen.beans.BeanArticolStoc;
 import my.logon.screen.beans.BeanCablu05;
@@ -17,6 +17,7 @@ import my.logon.screen.beans.ComandaMathaus;
 import my.logon.screen.beans.CostTransportMathaus;
 import my.logon.screen.beans.LivrareMathaus;
 import my.logon.screen.beans.PretArticolGed;
+import my.logon.screen.listeners.OperatiiArticolListener;
 
 public interface OperatiiArticol {
 	public void getPret(HashMap<String, String> params);
@@ -26,6 +27,8 @@ public interface OperatiiArticol {
 	public void getPretGedJson(HashMap<String, String> params);
 
 	public void getStocDepozit(HashMap<String, String> params);
+
+	public void getStocDisponibil(HashMap<String, String> params);
 
 	public void getFactorConversie(HashMap<String, String> params);
 
@@ -94,5 +97,7 @@ public interface OperatiiArticol {
 	public String serializeCostTransportMathaus(List<CostTransportMathaus> costTransport);
 
 	public void getArticoleACZC(HashMap<String, String> params);
+
+	public ArrayList<BeanArticolCautare> deserializeArtRecom(String serListArticole) ;
 
 }

@@ -827,6 +827,25 @@
                         android:textSize="15sp"
                         android:typeface="monospace" />
                 </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/layoutRecommend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    >
+
+                    <Button
+                        android:id="@+id/afisArtRecomBtn"
+                        style="@style/ok_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dip"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:background="@drawable/cancel_button_style"
+                        android:paddingLeft="15dip"
+                        android:paddingRight="15dip"
+                        android:text="Clientii au mai cumparat si..." />
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

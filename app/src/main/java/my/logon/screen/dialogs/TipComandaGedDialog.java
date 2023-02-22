@@ -70,6 +70,7 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 		final RadioButton radioAmob = (RadioButton) findViewById(R.id.radioAmob);
 		final RadioButton radioCLP = (RadioButton) findViewById(R.id.radioCLP);
 		final RadioButton radioACZC = (RadioButton) findViewById(R.id.radioACZC);
+		final RadioButton radioDeteriorate = (RadioButton) findViewById(R.id.radioDeteriorate);
 		
 		if (UtilsUser.isUserIP())
 			radioCLP.setVisibility(View.INVISIBLE);
@@ -98,6 +99,8 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 					tipComanda = TipCmdGed.DISPOZITIE_LIVRARE;
 				else if (radioACZC.isChecked())
 					tipComanda = TipCmdGed.ARTICOLE_COMANDA;
+				else if (radioDeteriorate.isChecked())
+					tipComanda = TipCmdGed.ARTICOLE_DETERIORATE;
 				else if (radioAmob.isChecked()) {
 					tipComanda = TipCmdGed.COMANDA_AMOB;
 					if (idComanda.equals("-1"))
@@ -128,7 +131,7 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 
 			@Override
 			public void onClick(View v) {
-				spinnerComenziAmob.setVisibility(View.INVISIBLE);
+				spinnerComenziAmob.setVisibility(View.GONE);
 				spinnerFilialeClp.setVisibility(View.INVISIBLE);
 				textInfoClp.setVisibility(View.INVISIBLE);
 
@@ -140,7 +143,7 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 
 			@Override
 			public void onClick(View v) {
-				spinnerComenziAmob.setVisibility(View.INVISIBLE);
+				spinnerComenziAmob.setVisibility(View.GONE);
 				spinnerFilialeClp.setVisibility(View.INVISIBLE);
 				textInfoClp.setVisibility(View.INVISIBLE);
 
@@ -154,6 +157,7 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 			public void onClick(View v) {
 				spinnerFilialeClp.setVisibility(View.VISIBLE);
 				textInfoClp.setVisibility(View.VISIBLE);
+				spinnerComenziAmob.setVisibility(View.GONE);
 
 			}
 
@@ -164,6 +168,7 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 			@Override
 			public void onClick(View v) {
 				spinnerComenziAmob.setVisibility(View.VISIBLE);
+				spinnerFilialeClp.setVisibility(View.GONE);
 				getComenziAMOB();
 
 			}
@@ -174,7 +179,19 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 
 			@Override
 			public void onClick(View v) {
-				spinnerComenziAmob.setVisibility(View.INVISIBLE);
+				spinnerComenziAmob.setVisibility(View.GONE);
+				spinnerFilialeClp.setVisibility(View.INVISIBLE);
+				textInfoClp.setVisibility(View.INVISIBLE);
+
+			}
+
+		});
+
+		radioDeteriorate.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				spinnerComenziAmob.setVisibility(View.GONE);
 				spinnerFilialeClp.setVisibility(View.INVISIBLE);
 				textInfoClp.setVisibility(View.INVISIBLE);
 
@@ -203,9 +220,7 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 
 	private void getComenziAMOB() {
 		HashMap<String, String> params = new HashMap<String, String>();
-		//params.put("codAgent", UserInfo.getInstance().getCod());
-
-		params.put("codAgent", "00060109");
+		params.put("codAgent", UserInfo.getInstance().getCod());
 		comandaDAO.getComenziAmob(params);
 
 	}

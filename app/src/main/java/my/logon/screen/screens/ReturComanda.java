@@ -155,7 +155,7 @@ public class ReturComanda extends FragmentActivity implements ClientReturListene
         this.codClient = codClient;
 
         String codDepart = UserInfo.getInstance().getCodDepart();
-        if (UtilsUser.isUserGed() || UtilsUser.isUserIP())
+        if (UtilsUser.isUserGed() || UtilsUser.isUserIP() || tipComanda == EnumTipComanda.GED)
             codDepart = "11";
 
         HashMap<String, String> params = UtilsGeneral.newHashMapInstance();

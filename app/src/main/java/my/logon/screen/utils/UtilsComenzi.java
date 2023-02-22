@@ -4,6 +4,7 @@ import android.widget.Spinner;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -150,6 +151,23 @@ public class UtilsComenzi {
 			return "C";
 
 		return tipPlataClient;
+	}
+
+	public static boolean isComandaClp() {
+		return !DateLivrare.getInstance().getCodFilialaCLP().trim().isEmpty() && DateLivrare.getInstance().getCodFilialaCLP().trim().length() == 4;
+	}
+
+	public static boolean isDespozitDeteriorate(String depozit){
+
+		List<String> listDepozDeteriorate = Arrays.asList("01D1","01D2","02D1","02D2","03D1","03D2","04D1","04D2","05D1","05D2","06D1","06D2","07D1","07D2","08D1","08D2","09D1","09D2","MAD1","MAD2") ;
+
+		for (String depoz : listDepozDeteriorate){
+			if (depoz.equals(depozit))
+				return true;
+		}
+
+		return false;
+
 	}
 
 }

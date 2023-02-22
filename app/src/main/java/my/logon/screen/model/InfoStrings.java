@@ -70,6 +70,7 @@ public class InfoStrings {
 			break;
 		case 96:
 			retVal = "Comanda salvata. Tipul de transport a fost redeterminat.";
+
 			break;	
 		case 98:
 			retVal = "Comanda nu a fost salvata. Tipul de transport nu s-a putut determina.";

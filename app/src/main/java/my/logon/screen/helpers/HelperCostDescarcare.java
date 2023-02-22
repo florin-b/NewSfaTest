@@ -19,7 +19,7 @@ import my.logon.screen.model.ArticolComanda;
 
 public class HelperCostDescarcare {
 
-    public static List<ArticolComanda> getArticoleDescarcare(CostDescarcare costDescarcare, double valoareCost, String filiala,
+    public static List<ArticolComanda> getArticoleDescarcare(CostDescarcare costDescarcare, double valoareCost,
                                                              List<ArticolComanda> articoleComanda) {
 
         double procentReducere = valoareCost / costDescarcare.getValoareDescarcare();
@@ -54,7 +54,7 @@ public class HelperCostDescarcare {
             articolComanda.setTipArt("");
             articolComanda.setDepart(artDesc.getDepart());
             articolComanda.setDepartSintetic(artDesc.getDepart());
-            articolComanda.setFilialaSite(filiala);
+            articolComanda.setFilialaSite(artDesc.getFiliala());
 
             listArticole.add(articolComanda);
         }

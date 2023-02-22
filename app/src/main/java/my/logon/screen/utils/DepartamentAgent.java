@@ -155,12 +155,12 @@ public class DepartamentAgent {
 		}
 
 		depart.add("Mathaus");
-		
-		
+
+
 		return depart;
 	}
-	
-	
+
+
 	public static List<String> getDepartamenteAgentGED() {
 
 		ArrayList<String> depart = new ArrayList<String>();
@@ -175,7 +175,7 @@ public class DepartamentAgent {
 
 		else if (isAG()) {
 			depart.add(EnumDepartExtra.getNumeDepart(UserInfo.getInstance().getCodDepart()));
-			
+
 			if (UserInfo.getInstance().getCodDepart().startsWith("04") && UserInfo.getInstance().getDepartExtra().length() > 0) {
 				String[] depExtra = UserInfo.getInstance().getDepartExtra().split(";");
 
@@ -183,18 +183,18 @@ public class DepartamentAgent {
 					depart.add(EnumDepartExtra.getNumeDepart(depExtra[i]));
 				}
 			}
-			
-			
+
 			depart.add(EnumDepartExtra.getNumeDepart("11"));
+			depart.add("Mathaus");
+
+		}else {
+			depart.add(EnumDepartExtra.getNumeDepart("11"));
+			depart.add("Mathaus");
 		}
 
-		if (UserInfo.getInstance().getTipUserSap().equals("SD"))
-			depart.add("Mathaus");
-		
-		
 		return depart;
 	}
-	
+
 
 	public static List<String> getDepartamenteAgentCLP(String diviziiClient) {
 

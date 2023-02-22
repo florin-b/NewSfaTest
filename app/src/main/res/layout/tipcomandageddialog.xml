@@ -54,6 +54,19 @@
 
 
             <RadioButton
+                android:id="@+id/radioDeteriorate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dip"
+                android:checked="false"
+                android:text="Articole deteriorate 30%"
+                android:textColor="@color/detColor1"
+                android:textSize="17sp"
+                android:typeface="sans" >
+            </RadioButton>
+
+
+            <RadioButton
                 android:id="@+id/radioCLP"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +87,7 @@
                 android:textColor="@color/detColor1"
                 android:textSize="17sp"
                 android:typeface="sans"
-                android:visibility="invisible"></RadioButton>
+                android:visibility="visible"></RadioButton>
         </RadioGroup>
 
         <Spinner
@@ -95,7 +108,7 @@
             android:layout_gravity="bottom|left"
             android:layout_marginLeft="30dip"
             android:layout_marginBottom="20dip"
-            android:layout_weight="0.1"
+            android:layout_weight="0.2"
             android:gravity="left"
             android:visibility="invisible" />
     </LinearLayout>

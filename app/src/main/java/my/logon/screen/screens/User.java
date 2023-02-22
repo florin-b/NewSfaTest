@@ -192,6 +192,11 @@ public class User extends Activity implements HelperSiteListener, CodPinDialogLi
 			spinnerFiliala.setOnItemSelectedListener(new onSelectedFiliala());
 			spinnerFiliala.setSelection(EnumFiliale.getItemPosition(UserInfo.getInstance().getUnitLog()));
 
+			if (UtilsUser.isUserIP())
+				spinnerFiliala.setEnabled(false);
+
+
+
 		}
 
 		if ((UserInfo.getInstance().getTipAcces().equals("27") || UserInfo.getInstance().getTipAcces().equals("32")

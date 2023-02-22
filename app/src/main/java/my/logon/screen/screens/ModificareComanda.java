@@ -1039,8 +1039,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
         if (acceptaPret) {
             DateLivrare.getInstance().setMasinaMacara(true);
 
-            List<ArticolComanda> articoleDescarcare = HelperCostDescarcare.getArticoleDescarcare(costDescarcare, valoarePret, UserInfo.getInstance()
-                    .getUnitLog(), listArticoleComanda);
+            List<ArticolComanda> articoleDescarcare = HelperCostDescarcare.getArticoleDescarcare(costDescarcare, valoarePret, listArticoleComanda);
 
             listArticoleComanda.addAll(articoleDescarcare);
 
@@ -1413,6 +1412,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
             obj.put("autoDelegat", DateLivrare.getInstance().getDelegat().getNrAuto());
             obj.put("refClient", DateLivrare.getInstance().getRefClient());
             obj.put("prelucrareLemn", DateLivrare.getInstance().getPrelucrareLemn());
+            obj.put("filialaPlata", DateLivrare.getInstance().getFilialaPlata());
 
         } catch (Exception ex) {
             Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();

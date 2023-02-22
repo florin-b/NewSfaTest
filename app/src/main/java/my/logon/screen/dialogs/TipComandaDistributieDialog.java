@@ -55,6 +55,7 @@ public class TipComandaDistributieDialog extends Dialog {
 		final RadioButton radioCC = (RadioButton) findViewById(R.id.radioCC);
 		final RadioButton radioCLP = (RadioButton) findViewById(R.id.radioCLP);
 		final RadioButton radioACZC = (RadioButton) findViewById(R.id.radioACZC);
+		final RadioButton radioDeteriorate = (RadioButton) findViewById(R.id.radioDeteriorate);
 
 		final Spinner spinnerFilialeClp = (Spinner) findViewById(R.id.spinFilialaCLP);
 
@@ -80,6 +81,8 @@ public class TipComandaDistributieDialog extends Dialog {
 					tipComanda = TipCmdDistrib.LIVRARE_CUSTODIE;
 				else if (radioACZC.isChecked())
 					tipComanda = TipCmdDistrib.ARTICOLE_COMANDA;
+				else if (radioDeteriorate.isChecked())
+					tipComanda = TipCmdDistrib.ARTICOLE_DETERIORATE;
 				else if (radioCLP.isChecked()) {
 					if (spinnerFilialeClp.getSelectedItemPosition() == 0) {
 						Toast.makeText(context, "Selectati filiala", Toast.LENGTH_LONG).show();
@@ -149,6 +152,17 @@ public class TipComandaDistributieDialog extends Dialog {
 				spinnerFilialeClp.setVisibility(View.INVISIBLE);
 				textInfo.setVisibility(View.VISIBLE);
 				textInfo.setText("Trebuie sa existe un proces verbal de angajament semnat de client.");
+
+			}
+
+		});
+
+		radioDeteriorate.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				spinnerFilialeClp.setVisibility(View.INVISIBLE);
+				textInfo.setVisibility(View.INVISIBLE);
 
 			}
 

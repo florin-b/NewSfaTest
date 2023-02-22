@@ -745,6 +745,9 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 
 	private void clearDateLivrare() {
 
+		if (DateLivrare.getInstance().getTipComandaGed() == TipCmdGed.ARTICOLE_DETERIORATE)
+			return;
+
 		String filialaClp = "";
 
 		if (DateLivrare.getInstance().getTipComandaGed() == TipCmdGed.COMANDA_LIVRARE) {
@@ -1226,8 +1229,6 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 			CreareComandaGed.tipPlataContract = client.getTipPlata();
 			DateLivrare.getInstance().setClientBlocat(client.isClientBlocat());
 			
-			
-
 			layoutLabelRefClient.setVisibility(View.VISIBLE);
 			layoutTextRefClient.setVisibility(View.VISIBLE);
 
@@ -1241,7 +1242,13 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 				txtNumeClientGed.setText(client.getNumeClient().replaceFirst("\\(.*", ""));
 
 				if (DateLivrare.getInstance().getFurnizorComanda() != null) {
-				} else {
+				} else if (DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.ARTICOLE_DETERIORATE)){
+				}
+				else {
+					if (!client.getFilialaClientIP().equals(UserInfo.getInstance().getUnitLog()))
+						UserInfo.getInstance().setUnitLog(client.getFilialaClientIP());
+
+					/*
 					if (!client.getFilialaClientIP().equals(UserInfo.getInstance().getUnitLog())) {
 						CreareComandaGed.tipComandaGed = TipCmdGed.COMANDA_LIVRARE;
 						DateLivrare.getInstance().setTipComandaGed(TipCmdGed.COMANDA_LIVRARE);
@@ -1253,6 +1260,8 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 						DateLivrare.getInstance().setTipComandaGed(TipCmdGed.COMANDA_VANZARE);
 						DateLivrare.getInstance().setCodFilialaCLP("");
 					}
+
+					 */
 
 				}
 

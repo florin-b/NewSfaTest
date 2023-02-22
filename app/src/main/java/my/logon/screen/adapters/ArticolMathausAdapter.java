@@ -65,15 +65,8 @@ public class ArticolMathausAdapter extends BaseAdapter {
 		nameTextView.setText(articol.getNume());
 		pretTextView.setText(articol.getCod().replaceFirst("^0*", ""));
 
-		/*
-		if (articol.getStoc() == null || articol.getStoc().equals("null"))
-			stocTextView.setText(" ");
-		else if (Double.valueOf(articol.getStoc()) < 0)
-			stocTextView.setText("0 " + articol.getUmVanz());
-		else
-			stocTextView.setText(articol.getStoc() + " " + articol.getUmVanz());
+		stocTextView.setText(articol.getPlanificator());
 
-		 */
 
 		// if (imageView.getDrawable() == null)
 		// if (!hasImage(imageView))

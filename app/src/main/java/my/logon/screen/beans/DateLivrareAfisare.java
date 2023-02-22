@@ -70,6 +70,7 @@ public class DateLivrareAfisare {
     private double procMarjaBruta = 0;
 
     private String tipPersAgent;
+    private String filialaPlata;
 
     public DateLivrareAfisare() {
 
@@ -594,5 +595,13 @@ public class DateLivrareAfisare {
 
     public void setTipPersAgent(String tipPersAgent) {
         this.tipPersAgent = tipPersAgent;
+    }
+
+    public String getFilialaPlata() {
+        return filialaPlata;
+    }
+
+    public void setFilialaPlata(String filialaPlata) {
+        this.filialaPlata = filialaPlata;
     }
 }

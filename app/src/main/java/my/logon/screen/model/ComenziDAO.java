@@ -198,6 +198,11 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
         performOperation(params);
     }
 
+    public void getLivrariMathausTCLI(HashMap<String, String> params) {
+        numeComanda = EnumComenziDAO.GET_LIVRARI_MATHAUS_TCLI;
+        performOperation(params);
+    }
+
     public void getCostMacaraComenzi(HashMap<String, String> params) {
         numeComanda = EnumComenziDAO.GET_COST_MACARA_COMENZI;
         performOperation(params);
@@ -220,6 +225,11 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 
     public void getStareReturComanda(HashMap<String, String> params) {
         numeComanda = EnumComenziDAO.GET_STATUS_COMANDA_RETUR;
+        performOperation(params);
+    }
+
+    public void getProcMarjaIP(HashMap<String, String> params) {
+        numeComanda = EnumComenziDAO.GET_PROC_MARJA_IP;
         performOperation(params);
     }
 
@@ -440,6 +450,9 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 
                 if (jsonLivrare.has("procMarjaBruta"))
                     dateLivrare.setProcMarjaBruta(Double.valueOf(jsonLivrare.getString("procMarjaBruta")));
+
+                if (jsonLivrare.has("filialaPlata"))
+                    dateLivrare.setFilialaPlata(jsonLivrare.getString("filialaPlata"));
 
                 JSONArray jsonArticole = jsonObject.getJSONArray("articoleComanda");
                 String tipAlert, subCmp;

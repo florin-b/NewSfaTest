@@ -671,19 +671,37 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 		textTransport.setText(UtilsGeneral.getDescTipTransport(dateLivrare.getTransport()));
 		textDataLivrare.setText(dateLivrare.getDataLivrare());
 		textCantar.setText(dateLivrare.getCantar().equals("1") ? "Cu cantarire" : "Fara cantarire");
-		textOras.setText(dateLivrare.getOras());
-		textJudet.setText(InfoStrings.numeJudet(dateLivrare.getCodJudet()));
-		textAdrLivr.setText(dateLivrare.getDateLivrare());
+		//textOras.setText(dateLivrare.getOras());
+		//textJudet.setText(InfoStrings.numeJudet(dateLivrare.getCodJudet()));
+		//textAdrLivr.setText(dateLivrare.getDateLivrare());
 		textPersContact.setText(dateLivrare.getPersContact());
 		textTelefon.setText(dateLivrare.getNrTel());
 		textObsLivrare.setText(dateLivrare.getObsLivrare());
 
+		if (!dateLivrare.getCodJudetD().trim().isEmpty()) {
+			textOras.setText(dateLivrare.getOrasD());
+			textJudet.setText(InfoStrings.numeJudet(dateLivrare.getCodJudetD()));
+			textAdrLivr.setText(dateLivrare.getAdresaD());
+
+			((LinearLayout) findViewById(R.id.layoutAdrLivrare)).setVisibility(View.VISIBLE);
+			((TextView) findViewById(R.id.textAdrLivrare)).setText("jud. " + InfoStrings.numeJudet(dateLivrare.getCodJudet()) + ", loc. "
+					+ dateLivrare.getOras() + ", " + dateLivrare.getDateLivrare());
+		} else {
+			textOras.setText(dateLivrare.getOras());
+			textJudet.setText(InfoStrings.numeJudet(dateLivrare.getCodJudet()));
+			textAdrLivr.setText(dateLivrare.getDateLivrare());
+			((LinearLayout) findViewById(R.id.layoutAdrLivrare)).setVisibility(View.GONE);
+		}
+
+		/*
 		if (!dateLivrare.getCodJudetD().trim().isEmpty()) {
 			((LinearLayout) findViewById(R.id.layoutAdrLivrare)).setVisibility(View.VISIBLE);
 			((TextView) findViewById(R.id.textAdrLivrare)).setText("jud. " + InfoStrings.numeJudet(dateLivrare.getCodJudetD()) + ", loc. "
 					+ dateLivrare.getOrasD() + ", " + dateLivrare.getAdresaD());
 		} else
 			((LinearLayout) findViewById(R.id.layoutAdrLivrare)).setVisibility(View.GONE);
+
+		 */
 
 		if (!dateLivrare.getNrCmdClp().trim().isEmpty() || dateLivrare.getCodFilialaCLP().length() == 4) {
 			((LinearLayout) findViewById(R.id.layoutNrCmdClp)).setVisibility(View.VISIBLE);

@@ -14,6 +14,7 @@ import my.logon.screen.beans.DateLivrareAfisare;
 import my.logon.screen.beans.Delegat;
 import my.logon.screen.beans.FurnizorComanda;
 import my.logon.screen.beans.ObiectivConsilier;
+import my.logon.screen.beans.TranspComenzi;
 import my.logon.screen.enums.TipCmdDistrib;
 import my.logon.screen.enums.TipCmdGed;
 
@@ -93,6 +94,9 @@ public class DateLivrare {
 	private double limitaCredit;
 	private String prelucrareLemn;
 	private String tipPersAgent;
+	private String filialaLivrareTCLI;
+	private List<TranspComenzi> transpComenzi;
+	private String filialaPlata;
 
 	private DateLivrareAfisare dateLivrareAfisare;
 
@@ -155,6 +159,7 @@ public class DateLivrare {
 		this.refClient = dateLivrareAfisare.getRefClient();
 		this.limitaCredit = dateLivrareAfisare.getLimitaCredit();
 		this.tipPersAgent = dateLivrareAfisare.getTipPersAgent();
+		this.filialaPlata = dateLivrareAfisare.getFilialaPlata();
 	}
 
 	public boolean isClientRaft() {
@@ -682,6 +687,30 @@ public class DateLivrare {
 		this.tipPersAgent = tipPersAgent;
 	}
 
+	public String getFilialaLivrareTCLI() {
+		return filialaLivrareTCLI;
+	}
+
+	public void setFilialaLivrareTCLI(String filialaLivrareTCLI) {
+		this.filialaLivrareTCLI = filialaLivrareTCLI;
+	}
+
+	public List<TranspComenzi> getTranspComenzi() {
+		return transpComenzi;
+	}
+
+	public void setTranspComenzi(List<TranspComenzi> transpComenzi) {
+		this.transpComenzi = transpComenzi;
+	}
+
+	public String getFilialaPlata() {
+		return filialaPlata;
+	}
+
+	public void setFilialaPlata(String filialaPlata) {
+		this.filialaPlata = filialaPlata;
+	}
+
 	public void resetAll() {
 		codJudet = "";
 		numeJudet = "";
@@ -741,6 +770,9 @@ public class DateLivrare {
 		limitaCredit = 0;
 		prelucrareLemn = "";
 		tipPersAgent = "";
+		filialaLivrareTCLI = "";
+		transpComenzi = null;
+		filialaPlata = "";
 
 	}
 
