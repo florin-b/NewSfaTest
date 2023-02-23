@@ -544,7 +544,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
             isAdresaLivrareTCLI = false;
             if (bundle != null && bundle.getString("parrentClass") != null && bundle.getString("parrentClass").equals("CreareComandaGed")) {
-                if (bundle.getString("adrLivrareTCLI")!= null && bundle.getString("adrLivrareTCLI").equals(("true"))) {
+                if (bundle.getString("adrLivrareTCLI") != null && bundle.getString("adrLivrareTCLI").equals(("true"))) {
                     isAdresaLivrareTCLI = true;
                     ((LinearLayout) findViewById(R.id.layoutFilLivrare)).setVisibility(View.GONE);
                     spinnerTonaj.setVisibility(View.VISIBLE);
@@ -555,8 +555,8 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
                 }
             }
 
-          if (DateLivrare.getInstance().getTransport().trim().isEmpty() || DateLivrare.getInstance().getTransport().equals("TRAP") || DateLivrare.getInstance().getTransport().equals("TERT") || DateLivrare.getInstance().getTransport().equals("TFRN"))
-              performGetJudete();
+            if (DateLivrare.getInstance().getTransport().trim().isEmpty() || DateLivrare.getInstance().getTransport().equals("TRAP") || DateLivrare.getInstance().getTransport().equals("TERT") || DateLivrare.getInstance().getTransport().equals("TFRN"))
+                performGetJudete();
 
         } catch (Exception ex) {
             Toast.makeText(this, ex.toString(), Toast.LENGTH_SHORT).show();
@@ -990,10 +990,6 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         radioAltaAdresa = (RadioButton) findViewById(R.id.radioAltaAdresa);
         radioAdresaObiectiv = (RadioButton) findViewById(R.id.radioAdresaObiectiv);
 
-
-        LinearLayout radioGroupAltaAdresa = (LinearLayout) findViewById(R.id.layoutOptiuniAdrLivrare);
-        radioGroupAltaAdresa.setVisibility(View.GONE);
-
         TextView labelAdresa2 = (TextView) findViewById(R.id.labelAdresa2);
 
         if (DateLivrare.getInstance().getTipPersClient().equals("PF"))
@@ -1011,21 +1007,20 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         spinnerJudetLivrare = (Spinner) findViewById(R.id.spinnerJudetLivrare);
         spinnerJudetLivrare.setOnItemSelectedListener(new regionLivrareSelectedListener());
 
-        radioAltaAdresa.setChecked(true);
-
-        layoutAdrLivrare1.setVisibility(View.VISIBLE);
-        layoutAdrLivrare2.setVisibility(View.VISIBLE);
-        DateLivrare.getInstance().setAltaAdresa(true);
-
-        addJudeteFacturare();
-
-
-        if (DateLivrare.getInstance().isAltaAdresa() && !DateLivrare.getInstance().getOrasD().trim().isEmpty()) {
+        if (!DateLivrare.getInstance().getOrasD().trim().isEmpty()) {
             radioAltaAdresa.setChecked(true);
-
+            layoutAdrLivrare1.setVisibility(View.VISIBLE);
+            layoutAdrLivrare2.setVisibility(View.VISIBLE);
+            DateLivrare.getInstance().setAltaAdresa(true);
+            addJudeteFacturare();
             textLocalitateLivrare.setText(DateLivrare.getInstance().getOrasD());
             textStradaLivrare.setText(DateLivrare.getInstance().getAdresaD());
             setJudetLivrare();
+        }
+        else {
+            layoutAdrLivrare1.setVisibility(View.GONE);
+            layoutAdrLivrare2.setVisibility(View.GONE);
+            radioAdresaSediu.setChecked(true);
         }
 
     }
@@ -1051,7 +1046,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
     }
 
-    private void addJudeteFacturare(){
+    private void addJudeteFacturare() {
 
         ArrayList<HashMap<String, String>> listJudeteFacturare = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> temp;
@@ -1180,23 +1175,22 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
         if (isAdresaLivrareTCLI)
             getJudeteFilialaLivrare();
-        else
-            if (UtilsUser.isUserSite() || CreareComandaGed.tipClient.equals("IP") || !DateLivrare.getInstance().getCodJudet().isEmpty() || isComandaClp()
-                    || isComandaDl() || UtilsUser.isUserIP()) {
-                fillJudeteClient(EnumJudete.getRegionCodes());
+        else if (UtilsUser.isUserSite() || CreareComandaGed.tipClient.equals("IP") || !DateLivrare.getInstance().getCodJudet().isEmpty() || isComandaClp()
+                || isComandaDl() || UtilsUser.isUserIP()) {
+            fillJudeteClient(EnumJudete.getRegionCodes());
 
-            } else {
-                String unitLog = UserInfo.getInstance().getUnitLog();
+        } else {
+            String unitLog = UserInfo.getInstance().getUnitLog();
 
-                if (unitLog.equals("NN10"))
-                    unitLog = "AG10";
+            if (unitLog.equals("NN10"))
+                unitLog = "AG10";
 
-                HashMap<String, String> params = new HashMap<String, String>();
-                params.put("filiala", unitLog);
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put("filiala", unitLog);
 
-                AsyncTaskWSCall call = new AsyncTaskWSCall(this, METHOD_NAME, params);
-                call.getCallResultsSyncActivity();
-            }
+            AsyncTaskWSCall call = new AsyncTaskWSCall(this, METHOD_NAME, params);
+            call.getCallResultsSyncActivity();
+        }
 
 
     }
@@ -1387,12 +1381,11 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
                     DateLivrare.getInstance().setFilialaLivrareTCLI(filialaLivrareTCLI);
 
 
-
                     CreareComandaGed.filialaLivrareMathaus = filialaLivrareTCLI;
                     CreareComandaGed.filialeArondateMathaus = filialaLivrareTCLI;
 
 
-                    if (!UtilsGeneral.isAceeasiFiliala(filialaLivrareTCLI,UserInfo.getInstance().getUnitLog())) {
+                    if (!UtilsGeneral.isAceeasiFiliala(filialaLivrareTCLI, UserInfo.getInstance().getUnitLog())) {
                         DateLivrare.getInstance().setTipComandaGed(TipCmdGed.COMANDA_LIVRARE);
                         DateLivrare.getInstance().setCodFilialaCLP(filialaLivrareTCLI);
                     } else {
@@ -1836,8 +1829,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
                 return;
             }
 
-        }
-        else {
+        } else {
             strada = textStrada.getText().toString().trim() + " " + nrStrada;
             dateLivrareInstance.setStrada(strada);
         }
@@ -1917,8 +1909,6 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         }
 
 
-
-
         if (((LinearLayout) findViewById(R.id.layoutFilialaPlata)).getVisibility() == View.VISIBLE) {
             if (((RadioButton) findViewById(R.id.radioPlataFilialaAg)).isChecked())
                 DateLivrare.getInstance().setFilialaPlata(UserInfo.getInstance().getUnitLog());
@@ -1940,7 +1930,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
                 if (DateLivrare.getInstance().getTipPersClient().equals("PF"))
                     Toast.makeText(getApplicationContext(), "Completati adresa de facturare.", Toast.LENGTH_SHORT).show();
-                 else
+                else
                     Toast.makeText(getApplicationContext(), "Completati adresa sediului social.", Toast.LENGTH_SHORT).show();
 
                 return;
@@ -2237,8 +2227,6 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
                 mapDialog.show();
 
 
-
-
             }
         });
     }
@@ -2466,10 +2454,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
             CreareComandaGed.filialeArondateMathaus = (String) result;
         } else if (numeComanda == EnumOperatiiAdresa.GET_ADRESA_FILIALA) {
             setAdresalivrareFiliala((String) result);
-        }
-
-
-        else {
+        } else {
             switch (tipLocalitate) {
                 case LOCALITATE_SEDIU:
                     populateListLocSediu(operatiiAdresa.deserializeListAdrese(result));

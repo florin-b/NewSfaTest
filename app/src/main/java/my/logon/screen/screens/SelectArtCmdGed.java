@@ -1629,12 +1629,6 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
                         return;
                     }
 
-                    if (!unitLogUnic.equals(CreareComandaGed.filialaAlternativa) && UtilsUser.isUserIP()
-                            && CreareComandaGed.tipComandaGed == TipCmdGed.COMANDA_VANZARE) {
-                        Toast.makeText(getApplicationContext(), "Selectati articole dintr-o singura filiala!", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
                     if (UtilsUser.isUserIP() && !conditiiCmdIP()) {
                         return;
                     }

@@ -1247,22 +1247,6 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 				else {
 					if (!client.getFilialaClientIP().equals(UserInfo.getInstance().getUnitLog()))
 						UserInfo.getInstance().setUnitLog(client.getFilialaClientIP());
-
-					/*
-					if (!client.getFilialaClientIP().equals(UserInfo.getInstance().getUnitLog())) {
-						CreareComandaGed.tipComandaGed = TipCmdGed.COMANDA_LIVRARE;
-						DateLivrare.getInstance().setTipComandaGed(TipCmdGed.COMANDA_LIVRARE);
-						DateLivrare.getInstance().setCodFilialaCLP(UserInfo.getInstance().getUnitLog());
-						UserInfo.getInstance().setUnitLog(client.getFilialaClientIP());
-
-					} else {
-						CreareComandaGed.tipComandaGed = TipCmdGed.COMANDA_VANZARE;
-						DateLivrare.getInstance().setTipComandaGed(TipCmdGed.COMANDA_VANZARE);
-						DateLivrare.getInstance().setCodFilialaCLP("");
-					}
-
-					 */
-
 				}
 
 				getInfoCreditClient(client.getCodClient());
@@ -1306,9 +1290,9 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 		txtNumeClientGed.setText(datePersonale.getNume());
 		txtCNPClient.setText(datePersonale.getCnp());
 
-		DateLivrare.getInstance().setCodJudet(datePersonale.getCodjudet());
-		DateLivrare.getInstance().setOras(datePersonale.getLocalitate());
-		DateLivrare.getInstance().setStrada(datePersonale.getStrada());
+		DateLivrare.getInstance().setCodJudetD(datePersonale.getCodjudet());
+		DateLivrare.getInstance().setOrasD(datePersonale.getLocalitate());
+		DateLivrare.getInstance().setAdresaD(datePersonale.getStrada());
 
 	}
 

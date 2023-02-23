@@ -2213,8 +2213,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
                 obj.put("Umb", listArticole.get(i).getUmb());
                 obj.put("ponderare", listArticole.get(i).getPonderare());
 
-                //am modificat aici
-                //obj.put("filialaSite", getFilialaDistrib(listArticole.get(i).getFilialaSite()));
+
                 obj.put("filialaSite", listArticole.get(i).getFilialaSite());
 
                 obj.put("istoricPret", listArticole.get(i).getIstoricPret());
@@ -2224,6 +2223,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
                 obj.put("depart", listArticole.get(i).getDepart());
                 obj.put("listCabluri", new OperatiiArticolImpl(this).serializeCabluri05(listArticole.get(i).getListCabluri()));
                 obj.put("greutate", listArticole.get(i).getGreutate());
+                obj.put("tipTransport", listArticole.get(i).getTipTransport());
 
                 myArray.put(obj);
 
