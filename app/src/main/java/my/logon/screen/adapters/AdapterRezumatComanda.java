@@ -30,6 +30,7 @@ import my.logon.screen.model.ArticolComanda;
 import my.logon.screen.model.ArticolComandaGed;
 import my.logon.screen.model.DateLivrare;
 import my.logon.screen.model.UserInfo;
+import my.logon.screen.utils.UtilsGeneral;
 
 public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTransportListener {
 
@@ -117,7 +118,7 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
             viewHolder.textTotal.setText("Total: " + nf.format(valoareTotal));
             String tipTranspArt = getTipTransport(rezumat.getFilialaLivrare());
 
-            if (filialeArondate.contains(rezumat.getFilialaLivrare()) || isCondTranspTrapBV90(rezumat.getFilialaLivrare(), tipTranspArt)) {
+            if (filialeArondate.contains(UtilsGeneral.getUnitLogDistrib(rezumat.getFilialaLivrare())) || isCondTranspTrapBV90(rezumat.getFilialaLivrare(), tipTranspArt)) {
 
                 ArrayAdapter<String> adapterSpinnerTransp = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, tipTransportArray);
                 adapterSpinnerTransp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

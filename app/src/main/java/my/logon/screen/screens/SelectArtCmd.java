@@ -384,12 +384,12 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
         List<String> departamenteComanda = DepartamentAgent.getDepartamenteAgent();
 
         if (isComandaDL())
-            departamenteComanda.remove("Mathaus");
+            departamenteComanda.remove("Catalog site");
         else if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.COMANDA_VANZARE) {
 
             if (!CreareComanda.filialeArondateMathaus.contains(UserInfo.getInstance().getUnitLog())) {
                 departamenteComanda.clear();
-                departamenteComanda.add("Mathaus");
+                departamenteComanda.add("Catalog site");
                 DateLivrare.getInstance().setTipComandaDistrib(TipCmdDistrib.COMANDA_LIVRARE);
                 DateLivrare.getInstance().setCodFilialaCLP(CreareComanda.filialaLivrareMathaus);
             } else {
@@ -408,7 +408,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
         spinnerDepartament.setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
-                if (spinnerDepartament.getSelectedItem().toString().equalsIgnoreCase("mathaus")) {
+                if (spinnerDepartament.getSelectedItem().toString().equalsIgnoreCase("catalog site")) {
                     selectedDepartamentAgent = UserInfo.getInstance().getCodDepart();
                     isDepartMathaus = true;
                     spinnerDepoz.setVisibility(View.INVISIBLE);

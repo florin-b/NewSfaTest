@@ -420,6 +420,12 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
                 if (jsonLivrare.has("procentT1"))
                     dateLivrare.setProcentT1(Double.valueOf(jsonLivrare.getString("procentT1")));
 
+                if (jsonLivrare.has("marjaT1Tot"))
+                    dateLivrare.setMarjaT1Tot(Double.valueOf(jsonLivrare.getString("marjaT1Tot")));
+
+                if (jsonLivrare.has("procentT1Tot"))
+                    dateLivrare.setProcentT1Tot(Double.valueOf(jsonLivrare.getString("procentT1Tot")));
+
                 if (jsonLivrare.has("mCantCmd"))
                     dateLivrare.setmCantCmd(Double.valueOf(jsonLivrare.getString("mCantCmd")));
 
@@ -450,6 +456,13 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 
                 if (jsonLivrare.has("procMarjaBruta"))
                     dateLivrare.setProcMarjaBruta(Double.valueOf(jsonLivrare.getString("procMarjaBruta")));
+
+                if (jsonLivrare.has("marjaBrutaTot"))
+                    dateLivrare.setMarjaBrutaTot(Double.valueOf(jsonLivrare.getString("marjaBrutaTot")));
+
+                if (jsonLivrare.has("procMarjaBrutaTot"))
+                    dateLivrare.setProcMarjaBrutaTot(Double.valueOf(jsonLivrare.getString("procMarjaBrutaTot")));
+
 
                 if (jsonLivrare.has("filialaPlata"))
                     dateLivrare.setFilialaPlata(jsonLivrare.getString("filialaPlata"));

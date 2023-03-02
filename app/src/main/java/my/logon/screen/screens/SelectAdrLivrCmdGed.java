@@ -103,11 +103,9 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
     private static final String METHOD_NAME = "getClientJud";
 
-    String[] tipTransport = {"TRAP - Transport Arabesque", "TCLI - Transport client", "TFRN - Transport furnizor"};
-
-    String[] tipTransportIP = {"TRAP - Transport Arabesque", "TCLI - Transport client", "TERT - Transport tert", "TFRN - Transport furnizor"};
-
-    String[] tipTransportOnline = {"TRAP - Transport Arabesque", "TCLI - Transport client", "TERT - Transport tert", "TFRN - Transport furnizor"};
+    String[] tipTransport = {"TRAP - Transport Arabesque", "TCLI - Transport client"};
+    String[] tipTransportIP = {"TRAP - Transport Arabesque", "TCLI - Transport client"};
+    String[] tipTransportOnline = {"TRAP - Transport Arabesque", "TCLI - Transport client"};
 
     String[] docInsot = {"Factura", "Aviz de expeditie"};
 
@@ -1029,8 +1027,6 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
         if (DateLivrare.getInstance().getCodJudetD() != null && !DateLivrare.getInstance().getCodJudetD().trim().isEmpty()) {
 
-            listJudeteLivrare = new ArrayList<HashMap<String, String>>();
-
             adapterJudeteLivrare = new SimpleAdapter(this, listJudeteLivrare, R.layout.rowlayoutjudete, new String[]{"numeJudet", "codJudet"}, new int[]{
                     R.id.textNumeJudet, R.id.textCodJudet});
 
@@ -1040,7 +1036,16 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
             listJudeteLivrare.add(temp);
 
             spinnerJudetLivrare.setAdapter(adapterJudeteLivrare);
-            spinnerJudetLivrare.setSelection(0);
+
+            for (int i = 0; i < spinnerJudetLivrare.getAdapter().getCount(); i++) {
+                @SuppressWarnings("unchecked")
+                HashMap<String, String> artMap = (HashMap<String, String>) spinnerJudetLivrare.getAdapter().getItem(i);
+                if (artMap.get("codJudet").equals(DateLivrare.getInstance().getCodJudetD())) {
+                    spinnerJudetLivrare.setSelection(i);
+                    break;
+                }
+
+            }
 
         }
 
@@ -2390,18 +2395,28 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
         this.dateLivrareClient = dateLivrareClient;
 
-        if (spinnerJudet.getAdapter() == null)
-            return;
+        textLocalitateLivrare.setText(dateLivrareClient.getLocalitate());
+        DateLivrare.getInstance().setOrasD(dateLivrareClient.getLocalitate());
 
-        int nrJudete = spinnerJudet.getAdapter().getCount();
+        if (!dateLivrareClient.getStrada().isEmpty() && !dateLivrareClient.getStrada().equals("null")) {
+            textStradaLivrare.setText(dateLivrareClient.getStrada());
+            DateLivrare.getInstance().setAdresaD(dateLivrareClient.getStrada());
+        }
+
+        DateLivrare.getInstance().setCodJudetD(dateLivrareClient.getCodJudet());
+        addJudeteFacturare();
+        setJudetLivrare();
+        addAdresaLivrare();
+
+        int nrJudete = spinnerJudetLivrare.getAdapter().getCount();
 
         for (int i = 0; i < nrJudete; i++) {
 
             @SuppressWarnings("unchecked")
-            HashMap<String, String> artMap = (HashMap<String, String>) spinnerJudet.getAdapter().getItem(i);
+            HashMap<String, String> artMap = (HashMap<String, String>) spinnerJudetLivrare.getAdapter().getItem(i);
 
             if (artMap.get("codJudet").equals(dateLivrareClient.getCodJudet())) {
-                spinnerJudet.setSelection(i);
+                spinnerJudetLivrare.setSelection(i);
                 break;
             }
 
@@ -2412,14 +2427,15 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
     private void setDateLivrareClient() {
 
         if ((UtilsUser.isCGED() || UtilsUser.isSSCM() || CreareComandaGed.tipClient.equals("IP")) && dateLivrareClient != null) {
-            textLocalitate.setText(dateLivrareClient.getLocalitate());
+            textLocalitateLivrare.setText(dateLivrareClient.getLocalitate());
+
 
             if (!dateLivrareClient.getStrada().isEmpty() && !dateLivrareClient.getStrada().equals("null")) {
-                textStrada.setText(dateLivrareClient.getStrada());
+                textStradaLivrare.setText(dateLivrareClient.getStrada());
             }
 
             if (!dateLivrareClient.getNrStrada().isEmpty() && !dateLivrareClient.getNrStrada().equals("null")) {
-                textNrStr.setText(dateLivrareClient.getNrStrada());
+                //textNrStr.setText(dateLivrareClient.getNrStrada());
             }
 
             if (!dateLivrareClient.getNumePersContact().isEmpty() && !dateLivrareClient.getNumePersContact().equals("null")) {

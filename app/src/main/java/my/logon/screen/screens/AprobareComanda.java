@@ -94,6 +94,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
 
     private TextView textNumeArt, textCodArt, textUmArt, textProcCalitAprob, textNrFacturiAprob, textMarjaCmd, textAdrLivrNoua, labelAdresa, textAdresaLivrare,
             textPondereArtB, textCastigBrut, textPondereB_30, textTipTransport;
+    private TextView textCastigBrutTotal, textMarjaCmdTotal;
     private LinearLayout condTable;
     private LinearLayout conditiiArticolLayout;
 
@@ -122,7 +123,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
     private EnumTipReducere tipReducere;
     private BeanComandaCreata comandaCurenta;
     private TextView textTipReducere;
-    private TextView textValMarjaT1, textProcMarjaT1, textMetodaPlata;
+    private TextView textValMarjaT1, textProcMarjaT1,textValMarjaT1Total, textProcMarjaT1Total, textMetodaPlata;
     private TextView textFilialaClp;
 
     @Override
@@ -163,6 +164,9 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
         this.textMarjaCmd = (TextView) findViewById(R.id.textMarjaCmd);
         textMarjaCmd.setVisibility(View.INVISIBLE);
 
+        this.textMarjaCmdTotal = (TextView) findViewById(R.id.textMarjaCmdTotal);
+        textMarjaCmdTotal.setVisibility(View.INVISIBLE);
+
         this.btnCommentAprob = (Button) findViewById(R.id.btnComentariiAprob);
         addListenerBtnCommentAprob();
         this.conditiiArticolLayout = (LinearLayout) findViewById(R.id.tabelaDetaliiCmd);
@@ -185,6 +189,9 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
 
         textCastigBrut = (TextView) findViewById(R.id.textCastigBrut);
         textCastigBrut.setVisibility(View.INVISIBLE);
+
+        textCastigBrutTotal = (TextView) findViewById(R.id.textCastigBrutTotal);
+        textCastigBrutTotal.setVisibility(View.INVISIBLE);
 
         textPondereB_30 = (TextView) findViewById(R.id.textPondereB_30);
         textPondereB_30.setVisibility(View.INVISIBLE);
@@ -235,6 +242,9 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
 
         textValMarjaT1 = (TextView) findViewById(R.id.textValMarjaT1);
         textProcMarjaT1 = (TextView) findViewById(R.id.textProcMarjaT1);
+
+        textValMarjaT1Total = (TextView) findViewById(R.id.textValMarjaT1Total);
+        textProcMarjaT1Total = (TextView) findViewById(R.id.textProcMarjaT1Total);
 
         textMetodaPlata = (TextView) findViewById(R.id.textMetodaPlata);
 
@@ -351,6 +361,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
                         conditiiArticolLayout.setVisibility(View.INVISIBLE);
                         textPondereArtB.setVisibility(View.INVISIBLE);
                         textCastigBrut.setVisibility(View.INVISIBLE);
+                        textCastigBrutTotal.setVisibility(View.INVISIBLE);
                         textPondereB_30.setVisibility(View.INVISIBLE);
                         textTipTransport.setVisibility(View.INVISIBLE);
                         textMetodaPlata.setVisibility(View.INVISIBLE);
@@ -380,6 +391,11 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
 
                         textValMarjaT1.setVisibility(View.INVISIBLE);
                         textProcMarjaT1.setVisibility(View.INVISIBLE);
+
+                        textMarjaCmdTotal.setVisibility(View.INVISIBLE);
+
+                        textValMarjaT1Total.setVisibility(View.INVISIBLE);
+                        textProcMarjaT1Total.setVisibility(View.INVISIBLE);
 
                         if (!textAdrLivrNoua.getText().equals("")) {
                             textAdrLivrNoua.setVisibility(View.INVISIBLE);
@@ -800,6 +816,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
         textMetodaPlata.setVisibility(View.VISIBLE);
         textTipReducere.setVisibility(View.VISIBLE);
         textMarjaCmd.setVisibility(View.VISIBLE);
+        textMarjaCmdTotal.setVisibility(View.VISIBLE);
         setCheckEliminaTranspVisibility();
 
         if (!UserInfo.getInstance().getTipAcces().equals("18")) {
@@ -808,6 +825,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
         }
 
         textCastigBrut.setVisibility(View.VISIBLE);
+        textCastigBrutTotal.setVisibility(View.VISIBLE);
         if (isSDorSM()) {
             if (tipAgentComanda.equals("KA")) {
                 textPondereArtB.setVisibility(View.INVISIBLE);
@@ -815,6 +833,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
             }
 
             textCastigBrut.setVisibility(View.INVISIBLE);
+            textCastigBrutTotal.setVisibility(View.INVISIBLE);
         }
 
         StringBuilder strAdresaLivrare = new StringBuilder();
@@ -849,6 +868,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
         textTipReducere.setText(strTipReducere);
 
         textMarjaCmd.setText("Marja comanda: " + String.format("%.02f", dateLivrare.getProcMarjaBruta()).toString() + "%");
+        textMarjaCmdTotal.setText("Marja comanda total: " + String.format("%.02f", dateLivrare.getProcMarjaBrutaTot()).toString() + "%");
 
         if (textPondereArtB.getVisibility() == View.VISIBLE) {
             textPondereArtB.setText("Pondere art. B comanda: " + String.format("%.02f", (valoriComanda.getPondereB() / valoriComanda.getTotal()) * 100) + "%");
@@ -857,6 +877,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
 
         if (textCastigBrut.getVisibility() == View.VISIBLE) {
             textCastigBrut.setText("Marja bruta comanda" + ": " + String.format("%.02f", dateLivrare.getMarjaBruta()) + " " + valoriComanda.getMoneda());
+            textCastigBrutTotal.setText("Marja bruta comanda total" + ": " + String.format("%.02f", dateLivrare.getMarjaBrutaTot()) + " " + valoriComanda.getMoneda());
         }
 
         String unitLogAlt = listArticoleComanda.get(0).getUnitLogAlt();
@@ -871,11 +892,22 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
             textValMarjaT1.setVisibility(View.VISIBLE);
             textProcMarjaT1.setVisibility(View.VISIBLE);
 
+            textValMarjaT1Total.setVisibility(View.VISIBLE);
+            textProcMarjaT1Total.setVisibility(View.VISIBLE);
+
             textValMarjaT1.setText("Marja T1 comanda: " + String.format("%.02f", dateLivrare.getMarjaT1()) + " RON");
             textProcMarjaT1.setText("Marja T1 : " + String.format("%.02f", (dateLivrare.getProcentT1() * 100)) + "%");
+
+            textValMarjaT1Total.setText("Marja T1 comanda total: " + String.format("%.02f", dateLivrare.getMarjaT1Tot()) + " RON");
+            textProcMarjaT1Total.setText("Marja T1 total: " + String.format("%.02f", (dateLivrare.getProcentT1Tot() * 100)) + "%");
+
+
         } else {
             textValMarjaT1.setVisibility(View.INVISIBLE);
             textProcMarjaT1.setVisibility(View.INVISIBLE);
+
+            textValMarjaT1Total.setVisibility(View.INVISIBLE);
+            textProcMarjaT1Total.setVisibility(View.INVISIBLE);
 
         }
 
@@ -1045,7 +1077,9 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
             textMetodaPlata.setText("");
             textTipReducere.setText("");
             textMarjaCmd.setText("");
+            textMarjaCmdTotal.setText("");
             textCastigBrut.setText("");
+            textCastigBrutTotal.setText("");
             textPondereArtB.setText("");
             textPondereB_30.setText("");
             textComandaBV90.setVisibility(View.INVISIBLE);
@@ -1058,6 +1092,9 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
             listViewArticoleComanda.setVisibility(View.INVISIBLE);
             textValMarjaT1.setVisibility(View.INVISIBLE);
             textProcMarjaT1.setVisibility(View.INVISIBLE);
+
+            textValMarjaT1Total.setVisibility(View.INVISIBLE);
+            textProcMarjaT1Total.setVisibility(View.INVISIBLE);
         }
 
     }
@@ -1139,6 +1176,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
                 textPondereArtB.setVisibility(View.INVISIBLE);
                 textPondereB_30.setVisibility(View.INVISIBLE);
                 textCastigBrut.setVisibility(View.INVISIBLE);
+                textCastigBrutTotal.setVisibility(View.INVISIBLE);
                 textTipTransport.setVisibility(View.INVISIBLE);
                 textMetodaPlata.setVisibility(View.INVISIBLE);
                 checkEliminaTransp.setVisibility(View.INVISIBLE);
@@ -1176,6 +1214,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
                 textPondereArtB.setVisibility(View.VISIBLE);
                 textPondereB_30.setVisibility(View.VISIBLE);
                 textCastigBrut.setVisibility(View.VISIBLE);
+                textCastigBrutTotal.setVisibility(View.VISIBLE);
                 textTipTransport.setVisibility(View.VISIBLE);
                 textMetodaPlata.setVisibility(View.VISIBLE);
                 textTipReducere.setVisibility(View.VISIBLE);
@@ -1311,6 +1350,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
         textMetodaPlata.setText("");
         textTipReducere.setText("");
         textMarjaCmd.setText("");
+        textMarjaCmdTotal.setText("");
         textPondereArtB.setText("");
         textPondereB_30.setText("");
         setCheckEliminaTranspVisibility();
@@ -1319,6 +1359,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
         textPondereArtB.setVisibility(View.INVISIBLE);
         textPondereB_30.setVisibility(View.INVISIBLE);
         textCastigBrut.setVisibility(View.INVISIBLE);
+        textCastigBrutTotal.setVisibility(View.INVISIBLE);
         textComandaBV90.setVisibility(View.INVISIBLE);
 
         tipAgentComanda = "AV";

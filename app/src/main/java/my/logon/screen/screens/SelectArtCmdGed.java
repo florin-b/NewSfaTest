@@ -528,14 +528,14 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
         List<String> departamenteComanda = DepartamentAgent.getDepartamenteAgentGED();
 
         if (isComandaDL() || tipComanda.equals("S"))
-            departamenteComanda.remove("Mathaus");
+            departamenteComanda.remove("Catalog site");
 
         else if (DateLivrare.getInstance().getTipComandaGed() == TipCmdGed.COMANDA_VANZARE) {
 
 
             if (!UtilsGeneral.isInFilialaArondate(CreareComandaGed.filialeArondateMathaus, UserInfo.getInstance().getUnitLog())){
                 departamenteComanda.clear();
-                departamenteComanda.add("Mathaus");
+                departamenteComanda.add("Catalog site");
                 DateLivrare.getInstance().setTipComandaGed(TipCmdGed.COMANDA_LIVRARE);
                 DateLivrare.getInstance().setCodFilialaCLP(CreareComandaGed.filialaLivrareMathaus);
             } else {
@@ -555,18 +555,14 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
         spinnerDepart.setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
-                if (spinnerDepart.getSelectedItem().toString().equalsIgnoreCase("mathaus")) {
+                if (spinnerDepart.getSelectedItem().toString().equalsIgnoreCase("catalog site")) {
                     selectedDepartamentAgent = "11";
                     isDepartMathaus = true;
-                    //am adaugat aici
                     spinnerDepoz.setVisibility(View.INVISIBLE);
-                    //
                 } else {
                     selectedDepartamentAgent = EnumDepartExtra.getCodDepart(spinnerDepart.getSelectedItem().toString());
                     isDepartMathaus = false;
-                    //am adaugat aici
                     spinnerDepoz.setVisibility(View.VISIBLE);
-                    //
                 }
 
                 populateListViewArticol(new ArrayList<ArticolDB>());
