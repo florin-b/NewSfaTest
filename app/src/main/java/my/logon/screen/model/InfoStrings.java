@@ -681,6 +681,10 @@ public class InfoStrings {
 		else if (filiala.equals("BU12")) // Otopeni
 			codClient = "4119000392";
 
+		else if (filiala.equals("SV10"))
+			codClient = "4119001376";
+
+
 		return codClient;
 
 	}
@@ -910,6 +914,8 @@ public class InfoStrings {
 
 			else if (filiala.equals("SB10"))
 				codClient = "4119000360";
+			else if (filiala.equals("SV10"))
+				codClient = "4119001377";
 
 		}
 
@@ -981,6 +987,9 @@ public class InfoStrings {
 
 			else if (filiala.equals("SB10"))
 				codClient = "4119000410";
+
+			else if (filiala.equals("SV10"))
+				codClient = "4119001377";
 
 		}
 
@@ -1060,6 +1069,9 @@ public class InfoStrings {
 
 		else if (filiala.equals("SB10"))
 			codClient = "4119000411";
+
+		else if (filiala.equals("SV10"))
+			codClient = "4119001383";
 
 		return codClient;
 
