@@ -817,10 +817,12 @@
                 android:id="@+id/layoutOptiuniAdrLivrare"
                 android:layout_width="match_parent"
                 android:layout_height="60dip"
-                android:orientation="horizontal" >
+                android:orientation="horizontal"
+                android:visibility="gone"
+                >
 
                 <TextView
-                    android:id="@+id/labelAdresa2"
+                    android:id="@+id/labelAdresa22"
                     android:layout_width="170dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left|center"
@@ -835,7 +837,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="45dip"
                     android:layout_gravity="bottom"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal"
+                    >
 
                     <RadioButton
                         android:id="@+id/radioAdresaSediu"
@@ -880,7 +883,7 @@
                 android:orientation="horizontal" >
 
                 <TextView
-
+                    android:id="@+id/labelAdresa2"
                     android:layout_width="170dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left|center"

@@ -104,8 +104,6 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
     private static final String METHOD_NAME = "getClientJud";
 
     String[] tipTransport = {"TRAP - Transport Arabesque", "TCLI - Transport client"};
-    String[] tipTransportIP = {"TRAP - Transport Arabesque", "TCLI - Transport client"};
-    String[] tipTransportOnline = {"TRAP - Transport Arabesque", "TCLI - Transport client"};
 
     String[] docInsot = {"Factura", "Aviz de expeditie"};
 
@@ -280,14 +278,15 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
             setTipTransportOptions();
 
-            if (UserInfo.getInstance().getUserSite().equals("X") || UtilsUser.isConsWood() || isComandaClp()) {
-                adapterSpinnerTransp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipTransportOnline);
-
-            } else if (UtilsUser.isUserIP())
-                adapterSpinnerTransp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipTransportIP);
-            else {
-                adapterSpinnerTransp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipTransport);
+            if (DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.DISPOZITIE_LIVRARE)) {
+                List<String> arrlist
+                        = new ArrayList<>(
+                        Arrays.asList(tipTransport));
+                arrlist.add("TFRN - Transport furnizor");
+                tipTransport = arrlist.toArray(tipTransport);
             }
+
+            adapterSpinnerTransp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipTransport);
 
             if (DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.ARTICOLE_COMANDA)) {
                 List<String> itemsTransp = new ArrayList<>();
@@ -953,12 +952,16 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         adapterTonaj.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTonaj.setAdapter(adapterTonaj);
 
-        if (DateLivrare.getInstance().getTonaj() != null)
+        if (DateLivrare.getInstance().getTonaj() != null) {
             for (int i = 0; i < spinnerTonaj.getCount(); i++)
                 if (spinnerTonaj.getItemAtPosition(i).toString().toUpperCase().contains(DateLivrare.getInstance().getTonaj())) {
                     spinnerTonaj.setSelection(i);
                     break;
                 }
+
+            if (DateLivrare.getInstance().getTonaj().equals("20"))
+                spinnerTonaj.setSelection(spinnerTonaj.getCount()-1);
+        }
 
     }
 
@@ -1005,19 +1008,17 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         spinnerJudetLivrare = (Spinner) findViewById(R.id.spinnerJudetLivrare);
         spinnerJudetLivrare.setOnItemSelectedListener(new regionLivrareSelectedListener());
 
+        layoutAdrLivrare1.setVisibility(View.VISIBLE);
+        layoutAdrLivrare2.setVisibility(View.VISIBLE);
+        addJudeteFacturare();
+
         if (!DateLivrare.getInstance().getOrasD().trim().isEmpty()) {
             radioAltaAdresa.setChecked(true);
-            layoutAdrLivrare1.setVisibility(View.VISIBLE);
-            layoutAdrLivrare2.setVisibility(View.VISIBLE);
             DateLivrare.getInstance().setAltaAdresa(true);
-            addJudeteFacturare();
             textLocalitateLivrare.setText(DateLivrare.getInstance().getOrasD());
             textStradaLivrare.setText(DateLivrare.getInstance().getAdresaD());
             setJudetLivrare();
-        }
-        else {
-            layoutAdrLivrare1.setVisibility(View.GONE);
-            layoutAdrLivrare2.setVisibility(View.GONE);
+        } else {
             radioAdresaSediu.setChecked(true);
         }
 
@@ -1180,23 +1181,10 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
         if (isAdresaLivrareTCLI)
             getJudeteFilialaLivrare();
-        else if (UtilsUser.isUserSite() || CreareComandaGed.tipClient.equals("IP") || !DateLivrare.getInstance().getCodJudet().isEmpty() || isComandaClp()
-                || isComandaDl() || UtilsUser.isUserIP()) {
+        else {
             fillJudeteClient(EnumJudete.getRegionCodes());
-
-        } else {
-            String unitLog = UserInfo.getInstance().getUnitLog();
-
-            if (unitLog.equals("NN10"))
-                unitLog = "AG10";
-
-            HashMap<String, String> params = new HashMap<String, String>();
-            params.put("filiala", unitLog);
-
-            AsyncTaskWSCall call = new AsyncTaskWSCall(this, METHOD_NAME, params);
-            call.getCallResultsSyncActivity();
+            addAdresaLivrare();
         }
-
 
     }
 
@@ -1633,6 +1621,10 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
             }
         else
+            locExist = true;
+
+        //nu se mai valideaza
+        if (tipLocalitate.equals("LIVRARE"))
             locExist = true;
 
         if (!locExist && !localitateCurenta.isEmpty()) {
@@ -2244,6 +2236,11 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
     private Address getAddressFromForm() {
         Address address = new Address();
 
+        address.setCity(DateLivrare.getInstance().getOras());
+        address.setStreet(UtilsAddress.getStreetNoNumber(DateLivrare.getInstance().getStrada()));
+        address.setSector(UtilsGeneral.getNumeJudet(DateLivrare.getInstance().getCodJudet()));
+
+        /*
         if (radioAdresaSediu.isChecked()) {
             address.setCity(DateLivrare.getInstance().getOras());
             address.setStreet(UtilsAddress.getStreetNoNumber(DateLivrare.getInstance().getStrada()));
@@ -2253,6 +2250,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
             address.setStreet(UtilsAddress.getStreetNoNumber(DateLivrare.getInstance().getAdresaD()));
             address.setSector(UtilsGeneral.getNumeJudet(DateLivrare.getInstance().getCodJudetD()));
         }
+         */
 
         return address;
     }
@@ -2289,6 +2287,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         String localitate = DateLivrare.getInstance().getOras();
         List<BeanLocalitate> listLocalitati = listAdreseJudet.getListLocalitati();
 
+        /*
         if (radioAltaAdresa.isChecked()) {
             localitate = DateLivrare.getInstance().getOrasD();
 
@@ -2297,6 +2296,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
             listLocalitati = listAlteAdrese.getListLocalitati();
         }
+         */
 
         BeanLocalitate beanLocalitate = HelperAdreseLivrare.getDateLocalitate(listLocalitati, localitate);
 

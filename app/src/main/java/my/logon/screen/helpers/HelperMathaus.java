@@ -10,6 +10,7 @@ import my.logon.screen.beans.CostTransportMathaus;
 import my.logon.screen.beans.RezumatComanda;
 import my.logon.screen.model.ArticolComanda;
 import my.logon.screen.model.Constants;
+import my.logon.screen.model.HelperTranspBuc;
 import my.logon.screen.model.ListaArticoleComanda;
 import my.logon.screen.model.ListaArticoleComandaGed;
 import my.logon.screen.utils.UtilsComenzi;
@@ -38,8 +39,7 @@ public class HelperMathaus {
                         listArticoleComanda.add(genereazaArticolTransport(articol, cost, canalDistrib));
                         break;
                     }
-                }
-                else {
+                } else {
 
                     if (cost.getFiliala().equals(articol.getFilialaSite()) && !cost.getValTransp().equals("0")) {
                         listArticoleComanda.add(genereazaArticolTransport(articol, cost, canalDistrib));
@@ -78,7 +78,7 @@ public class HelperMathaus {
 
         for (CostTransportMathaus cost : costTransport) {
             if (cost.getValTransp() != null)
-                cost.setValTransp(String.format("%.02f",Double.valueOf(cost.getValTransp()) * Constants.TVA));
+                cost.setValTransp(String.format("%.02f", Double.valueOf(cost.getValTransp()) * Constants.TVA));
 
         }
 
@@ -189,5 +189,29 @@ public class HelperMathaus {
         return filiale;
 
     }
+
+    public static void trateazaTaxaBucuresti(List<ArticolComanda> listArticoleComanda) {
+
+        String depozitArt = "";
+        String tipTransp = "";
+
+        for (ArticolComanda articolComanda : listArticoleComanda) {
+            if (articolComanda.getDepozit() != null && !articolComanda.getDepozit().trim().isEmpty() && articolComanda.getTipTransport() != null
+                    && !articolComanda.getTipTransport().trim().isEmpty()) {
+                depozitArt = articolComanda.getDepozit();
+                tipTransp = articolComanda.getTipTransport();
+                break;
+            }
+        }
+
+        for (ArticolComanda articolComanda : listArticoleComanda) {
+            if (HelperTranspBuc.isTranspZonaBuc(articolComanda.getCodArticol())) {
+                articolComanda.setDepozit(depozitArt);
+                articolComanda.setTipTransport(tipTransp);
+            }
+        }
+
+    }
+
 
 }

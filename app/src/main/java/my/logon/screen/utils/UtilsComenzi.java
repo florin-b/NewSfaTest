@@ -63,7 +63,7 @@ public class UtilsComenzi {
 			return false;
 	}
 
-	public static String[] tipPlataGed(boolean isRestrictie) {
+	public static String[] tipPlataGed_obsolete(boolean isRestrictie) {
 		if (isRestrictie)
 			return new String[] { "E - Plata in numerar in filiala", "CB - Card bancar", "E1 - Numerar sofer" };
 		else

@@ -1895,7 +1895,9 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
                     } else {
                         articolComanda.setFilialaSite(articolMathaus.getDeliveryWarehouse());
                     }
-                    articolComanda.setDepozit(articolMathaus.getDepozit());
+
+                    if (!tipComandaDistributie.equals(TipCmdDistrib.DISPOZITIE_LIVRARE))
+                        articolComanda.setDepozit(articolMathaus.getDepozit());
 
                     break;
                 }
@@ -1908,6 +1910,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
                 DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_LIVRARE) ||
                 isComandaDL_TRAP() || DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.ARTICOLE_DETERIORATE))
             HelperMathaus.adaugaArticolTransport(livrareMathaus.getCostTransport(), "10");
+
+        HelperMathaus.trateazaTaxaBucuresti(articoleComandaDistrib);
 
         prepareArtForDelivery();
         articoleFinaleStr = serializedResult;

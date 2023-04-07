@@ -1,20 +1,17 @@
 package my.logon.screen.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import my.logon.screen.listeners.AsyncTaskListener;
-import my.logon.screen.listeners.OperatiiClientListener;
-import my.logon.screen.screens.AsyncTaskWSCall;
+import android.content.Context;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import android.content.Context;
-import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import my.logon.screen.beans.BeanAdresaLivrare;
 import my.logon.screen.beans.BeanClient;
 import my.logon.screen.beans.BeanDatePersonale;
@@ -24,6 +21,9 @@ import my.logon.screen.beans.InfoCredit;
 import my.logon.screen.beans.PlatitorTva;
 import my.logon.screen.enums.EnumClienti;
 import my.logon.screen.enums.EnumTipClientIP;
+import my.logon.screen.listeners.AsyncTaskListener;
+import my.logon.screen.listeners.OperatiiClientListener;
+import my.logon.screen.screens.AsyncTaskWSCall;
 
 public class OperatiiClient implements AsyncTaskListener {
 
@@ -168,6 +168,15 @@ public class OperatiiClient implements AsyncTaskListener {
 					if (object.has("tipPlata") && object.getString("tipPlata") != "null")
 						client.setTipPlata(object.getString("tipPlata"));
 
+					if (object.has("localitate") && object.getString("localitate") != "null")
+						client.setLocalitate(object.getString("localitate"));
+
+					if (object.has("codJudet") && object.getString("codJudet") != "null")
+						client.setCodJudet(object.getString("codJudet"));
+
+					if (object.has("strada") && object.getString("strada") != "null")
+						client.setStrada(object.getString("strada"));
+
 					listClienti.add(client);
 				}
 
@@ -288,6 +297,9 @@ public class OperatiiClient implements AsyncTaskListener {
 				platitorTva.setNumeClient(jsonObject.getString("numeClient"));
 				platitorTva.setNrInreg(jsonObject.getString("nrInreg"));
 				platitorTva.setErrMessage(jsonObject.getString("errMessage") != "null" ? jsonObject.getString("errMessage") : "");
+				platitorTva.setCodJudet(jsonObject.getString("codJudet"));
+				platitorTva.setLocalitate(jsonObject.getString("localitate"));
+				platitorTva.setStrada(jsonObject.getString("strada"));
 
 			}
 
@@ -336,6 +348,9 @@ public class OperatiiClient implements AsyncTaskListener {
 
 					if (dateObject.has("tipPlata") && dateObject.getString("tipPlata") != "null")
 						datePersonale.setTipPlata(dateObject.getString("tipPlata"));
+
+					if (dateObject.has("codClient") && dateObject.getString("codClient") != "null")
+						datePersonale.setCodClient(dateObject.getString("codClient"));
 
 					listDate.add(datePersonale);
 

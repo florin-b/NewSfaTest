@@ -1603,20 +1603,6 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
         stergeComandaBtn.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
 
-                if (isUserCV()) {
-
-                    if (!isConditiiAcceptate()) {
-                        Toast.makeText(getApplicationContext(), "Preluati toate conditiile!", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    if (!isCommandaOkToSave()) {
-                        Toast.makeText(getApplicationContext(), "Comanda nu are toate aprobarile!", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                }
-
                 showConfirmationAlert();
 
             }
@@ -2116,6 +2102,8 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
     }
 
     private void calculValTransport(ArrayList<ArticolComanda> listArticole) {
+
+
 
         if (UtilsUser.isAgentOrSDorKA() || UtilsUser.isConsWood() || comandaSelectata.isCmdInstPublica() || UtilsUser.isOIVPD()) {
             return;

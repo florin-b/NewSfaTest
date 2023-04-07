@@ -2857,6 +2857,14 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
         if (codArticol.length() == 8)
             codArticol = "0000000000" + codArticol;
 
+        if (DateLivrare.getInstance().getTransport().equals("TCLI") && DateLivrare.getInstance().getFilialaLivrareTCLI()!= null && !DateLivrare.getInstance().getFilialaLivrareTCLI().isEmpty()) {
+            if (articolDBSelected.getDepart().equals("11"))
+                globalDepozSel = "MAV1";
+            else
+                globalDepozSel = articolDBSelected.getDepart().substring(0, 2) + "V1";
+        }
+
+
         if (DateLivrare.getInstance().getTransport().equals("TCLI") && UtilsGeneral.isFilMareLivrTCLIGed() && DateLivrare.getInstance().getFilialaLivrareTCLI()!= null && !DateLivrare.getInstance().getFilialaLivrareTCLI().isEmpty()) {
             if (UtilsGeneral.isUlDistrib(DateLivrare.getInstance().getFilialaLivrareTCLI()))
                 globalDepozSel = articolDBSelected.getDepart().substring(0, 2) + "V1";

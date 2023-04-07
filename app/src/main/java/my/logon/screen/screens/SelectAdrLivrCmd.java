@@ -858,6 +858,20 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         adapterTonaj.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTonaj.setAdapter(adapterTonaj);
 
+        if (DateLivrare.getInstance().getTonaj() != null) {
+            for (int i = 0; i < spinnerTonaj.getCount(); i++)
+                if (spinnerTonaj.getItemAtPosition(i).toString().toUpperCase().contains(DateLivrare.getInstance().getTonaj())) {
+                    spinnerTonaj.setSelection(i);
+                    break;
+                }
+
+                if (DateLivrare.getInstance().getTonaj().equals("20"))
+                    spinnerTonaj.setSelection(spinnerTonaj.getCount()-1);
+
+            }
+
+
+
     }
 
     private void setupSpinnerIndoire() {
@@ -888,7 +902,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
                     checkMacara.setChecked(DateLivrare.getInstance().isMasinaMacara());
                     setMacaraVisible();
                     spinnerTonaj.setVisibility(View.VISIBLE);
-                    spinnerTonaj.setSelection(0);
                     setDateDelegatVisibility(false);
                 } else {
 
