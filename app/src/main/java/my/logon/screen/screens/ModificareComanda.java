@@ -1484,6 +1484,9 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
         String aprobariPrimite = comandaSelectata.getAprobariPrimite();
         String conditiiImpuse = comandaSelectata.getConditiiImpuse();
 
+        if (conditiiImpuse.trim().isEmpty())
+            return true;
+
         for (int i = 0; i < listArticoleComanda.size(); i++) {
 
             if (aprobariNecesare.contains(listArticoleComanda.get(i).getDepartSintetic())) {

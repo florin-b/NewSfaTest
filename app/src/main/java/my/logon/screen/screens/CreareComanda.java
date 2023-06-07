@@ -53,7 +53,6 @@ import java.util.TimerTask;
 import my.logon.screen.R;
 import my.logon.screen.adapters.ArticoleCreareAdapter;
 import my.logon.screen.beans.AntetCmdMathaus;
-import my.logon.screen.beans.ArticolCalculDesc;
 import my.logon.screen.beans.ArticolPalet;
 import my.logon.screen.beans.ArticolTaxaVerde;
 import my.logon.screen.beans.BeanArticolStoc;
@@ -192,6 +191,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
     private boolean redirectDateLivrareTCLI = false;
 
     public static String tipComanda = "N"; // N = normala, S = simulata
+
+    private RezumatComandaDialog rezumatComanda;
 
     public void onCreate(Bundle savedInstanceState) {
 
@@ -698,11 +699,16 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
             if (dateLivrareInstance.getZonaBucuresti() != null && tipComandaDistributie != TipCmdDistrib.LIVRARE_CUSTODIE) {
 
+                //aici
                 HelperTranspBuc.eliminaCostTransportZoneBuc(ListaArticoleComanda.getInstance().getListArticoleComanda());
+                HelperTranspBuc.eliminaCostTransportZoneBuc(ListaArticoleComanda.getInstance().getListArticoleLivrare());
 
                 if (HelperTranspBuc.isCondTranspZonaBuc(dateLivrareInstance, dateLivrareInstance.getZonaBucuresti())) {
 
-                    HelperTranspBuc.adaugaTransportBucuresti(ListaArticoleComanda.getInstance().getListArticoleComanda(),
+                    //HelperTranspBuc.adaugaTransportBucuresti(ListaArticoleComanda.getInstance().getListArticoleComanda(),
+                    //        dateLivrareInstance.getZonaBucuresti());
+
+                    HelperTranspBuc.adaugaTransportBucuresti(ListaArticoleComanda.getInstance().getListArticoleLivrare(),
                             dateLivrareInstance.getZonaBucuresti());
 
                     ArticoleCreareAdapter adapterArticole = new ArticoleCreareAdapter(new ArrayList<ArticolComanda>(), this);
@@ -710,6 +716,24 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
                     listArtCmd.setAdapter(adapterArticole);
                     calculTotalComanda();
                 }
+
+            }
+
+        }
+
+    }
+
+
+    private void verificaTaxeBucuresti(){
+
+        if (DateLivrare.getInstance().getZonaBucuresti() != null && tipComandaDistributie != TipCmdDistrib.LIVRARE_CUSTODIE) {
+
+            HelperTranspBuc.eliminaCostTransportZoneBuc(ListaArticoleComanda.getInstance().getListArticoleLivrare());
+
+            if (HelperTranspBuc.isCondTranspZonaBuc(DateLivrare.getInstance(), DateLivrare.getInstance().getZonaBucuresti())) {
+
+                HelperTranspBuc.adaugaTransportBucuresti(ListaArticoleComanda.getInstance().getListArticoleLivrare(),
+                        DateLivrare.getInstance().getZonaBucuresti());
 
             }
 
@@ -1291,9 +1315,12 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
             DateLivrare.getInstance().setMasinaMacara(true);
 
-            List<ArticolComanda> articoleDescarcare = HelperCostDescarcare.getArticoleDescarcareDistrib(costDescarcare, valoarePret, ListaArticoleComanda.getInstance().getListArticoleComanda());
+            //aici
+            //List<ArticolComanda> articoleDescarcare = HelperCostDescarcare.getArticoleDescarcareDistrib(costDescarcare, valoarePret, ListaArticoleComanda.getInstance().getListArticoleComanda());
+            List<ArticolComanda> articoleDescarcare = HelperCostDescarcare.getArticoleDescarcareDistrib(costDescarcare, valoarePret, ListaArticoleComanda.getInstance().getListArticoleLivrare());
 
-            ListaArticoleComanda.getInstance().getListArticoleComanda().addAll(articoleDescarcare);
+            //ListaArticoleComanda.getInstance().getListArticoleComanda().addAll(articoleDescarcare);
+            ListaArticoleComanda.getInstance().getListArticoleLivrare().addAll(articoleDescarcare);
 
             prepareArtForDelivery();
 
@@ -1306,42 +1333,13 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
     }
 
-    private void verificaPretMacara() {
-
-        HelperCostDescarcare.eliminaCostDescarcare(ListaArticoleComanda.getInstance().getListArticoleComanda());
-
-        if (!UtilsUser.isAV_SD_01()) {
-
-            String codFurnizor = " ";
-
-            if (tipComandaDistributie == TipCmdDistrib.DISPOZITIE_LIVRARE || tipComandaDistributie == TipCmdDistrib.ARTICOLE_COMANDA)
-                codFurnizor = DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa();
-            else if (tipComandaDistributie == TipCmdDistrib.COMANDA_LIVRARE)
-                codFurnizor = DateLivrare.getInstance().getCodFilialaCLP();
-
-            List<ArticolCalculDesc> artCalcul = HelperCostDescarcare.getDateCalculDescarcare(ListaArticoleComanda.getInstance().getListArticoleComanda());
-
-            String listArtSer = comandaDAO.serializeArtCalcMacara(artCalcul);
-
-            HashMap<String, String> params = new HashMap<String, String>();
-
-            params.put("unitLog", DateLivrare.getInstance().getUnitLog());
-            params.put("codAgent", DateLivrare.getInstance().getCodAgent());
-            params.put("codClient", comandaFinala.getCodClient());
-            params.put("codFurnizor", codFurnizor);
-            params.put("listArt", listArtSer);
-
-            comandaDAO.getCostMacara(params);
-        } else {
-            trateazaConditiiSuplimentare();
-        }
-
-    }
 
 
     private void verificaPretMacaraRezumat() {
 
+        //aici
         HelperCostDescarcare.eliminaCostDescarcare(ListaArticoleComanda.getInstance().getListArticoleComanda());
+        HelperCostDescarcare.eliminaCostDescarcare(ListaArticoleComanda.getInstance().getListArticoleLivrare());
 
         if (!UtilsUser.isAV_SD_01()) {
 
@@ -1352,7 +1350,9 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             else if (tipComandaDistributie == TipCmdDistrib.COMANDA_LIVRARE)
                 codFurnizor = DateLivrare.getInstance().getCodFilialaCLP();
 
-            List<RezumatComanda> listComenziRezumat = HelperMathaus.getRezumatComanda(ListaArticoleComanda.getInstance().getListArticoleComanda());
+
+            //List<RezumatComanda> listComenziRezumat = HelperMathaus.getRezumatComanda(ListaArticoleComanda.getInstance().getListArticoleComanda());
+            List<RezumatComanda> listComenziRezumat = HelperMathaus.getRezumatComanda(ListaArticoleComanda.getInstance().getListArticoleLivrare());
             List<ComandaCalculDescarcare> listComenziDescarcare = HelperCostDescarcare.getComenziCalculDescarcare(listComenziRezumat);
 
             String comenziSer = comandaDAO.serializeCalcComenziMacara(listComenziDescarcare);
@@ -1445,7 +1445,9 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             String departTaxaVerde = "";
             String tipTranspTaxaVerde = "";
 
-            List<ArticolComanda> listaArticole = ListaArticoleComanda.getInstance().getListArticoleComanda();
+            //aici
+            //List<ArticolComanda> listaArticole = ListaArticoleComanda.getInstance().getListArticoleComanda();
+            List<ArticolComanda> listaArticole = ListaArticoleComanda.getInstance().getListArticoleLivrare();
             List<ArticolTaxaVerde> listArticoleTVerde = new ArrayList<>();
 
             // sortare articole dupa departament
@@ -1870,6 +1872,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
         List<DateArticolMathaus> articoleMathaus = livrareMathaus.getComandaMathaus().getDeliveryEntryDataList();
         List<ArticolComanda> articoleComandaDistrib = ListaArticoleComanda.getInstance().getListArticoleComanda();
+        ListaArticoleComanda.getInstance().reseteazaArticoleLivrare();
+        verificaTaxeBucuresti();
 
         String codArticolComanda;
         for (ArticolComanda articolComanda : articoleComandaDistrib) {
@@ -1891,15 +1895,25 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             for (DateArticolMathaus articolMathaus : articoleMathaus) {
 
                 if (codArticolComanda.equals(articolMathaus.getProductCode())) {
+
+                    ArticolComanda articolLivrare = ListaArticoleComanda.getInstance().genereazaArticolLivrare(articolComanda);
+                    articolLivrare.setCantitate(articolMathaus.getQuantity());
+                    articolLivrare.setCantUmb(articolMathaus.getQuantity());
+                    articolLivrare.setPret( (articolComanda.getPret() / articolComanda.getCantitate()) * articolMathaus.getQuantity());
+
                     if (articolComanda.getFilialaSite().equals("BV90")) {
                     } else {
-                        articolComanda.setFilialaSite(articolMathaus.getDeliveryWarehouse());
+                        //articolComanda.setFilialaSite(articolMathaus.getDeliveryWarehouse());
+                        articolLivrare.setFilialaSite(articolMathaus.getDeliveryWarehouse());
                     }
 
                     if (!tipComandaDistributie.equals(TipCmdDistrib.DISPOZITIE_LIVRARE))
-                        articolComanda.setDepozit(articolMathaus.getDepozit());
+                        //articolComanda.setDepozit(articolMathaus.getDepozit());
+                        articolLivrare.setDepozit(articolMathaus.getDepozit());
 
-                    break;
+                    //aici
+                    ListaArticoleComanda.getInstance().getListArticoleLivrare().add(articolLivrare);
+                    //break;
                 }
 
             }
@@ -1911,7 +1925,10 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
                 isComandaDL_TRAP() || DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.ARTICOLE_DETERIORATE))
             HelperMathaus.adaugaArticolTransport(livrareMathaus.getCostTransport(), "10");
 
-        HelperMathaus.trateazaTaxaBucuresti(articoleComandaDistrib);
+        //aici
+        //HelperMathaus.trateazaTaxaBucuresti(articoleComandaDistrib);
+        HelperMathaus.trateazaTaxaBucuresti(ListaArticoleComanda.getInstance().getListArticoleLivrare());
+
 
         prepareArtForDelivery();
         articoleFinaleStr = serializedResult;
@@ -2116,10 +2133,12 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
         saveComandaMathaus = false;
 
-        int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.7);
-        int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.65);
+        int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.99);
+        int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.95);
 
-        RezumatComandaDialog rezumatComanda = new RezumatComandaDialog(this, ListaArticoleComanda.getInstance().getListArticoleComanda(), "10", costTransport, DateLivrare.getInstance().getTransport(), CreareComanda.filialeArondateMathaus, selectTransp);
+        //aici
+        //RezumatComandaDialog rezumatComanda = new RezumatComandaDialog(this, ListaArticoleComanda.getInstance().getListArticoleComanda(), "10", costTransport, DateLivrare.getInstance().getTransport(), CreareComanda.filialeArondateMathaus, selectTransp);
+        rezumatComanda = new RezumatComandaDialog(this, ListaArticoleComanda.getInstance().getListArticoleLivrare(), "10", costTransport, DateLivrare.getInstance().getTransport(), CreareComanda.filialeArondateMathaus, selectTransp);
         rezumatComanda.setRezumatListener(this);
         rezumatComanda.getWindow().setLayout(width, height);
         rezumatComanda.show();
@@ -2604,6 +2623,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
     private void adaugaPalet(ArticolPalet articolPalet, EnumPaleti status) {
 
+        /*
         String depozitPalet = HelperCostDescarcare.getDepozitPalet(ListaArticoleComanda.getInstance().getListArticoleComanda(), articolPalet.getCodArticol());
         String unitlogPalet = HelperCostDescarcare.getUnitlogPalet(ListaArticoleComanda.getInstance().getListArticoleComanda(), articolPalet.getCodArticol());
 
@@ -2620,6 +2640,22 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         adapterArticole.setListArticole(ListaArticoleComanda.getInstance().getListArticoleComanda());
         listArtCmd.setAdapter(adapterArticole);
         adapterArticole.notifyDataSetChanged();
+        */
+
+        //aici
+
+        String depozitPalet = HelperCostDescarcare.getDepozitPalet(ListaArticoleComanda.getInstance().getListArticoleLivrare(), articolPalet.getCodArticol());
+        String unitlogPalet = HelperCostDescarcare.getUnitlogPalet(ListaArticoleComanda.getInstance().getListArticoleLivrare(), articolPalet.getCodArticol());
+
+        ArticolComanda articol = HelperCostDescarcare.getArticolPalet(articolPalet, depozitPalet, unitlogPalet);
+        ListaArticoleComanda.getInstance().addArticolLivrareComanda(articol);
+
+        for (int ii = 0; ii < costDescarcare.getArticoleDescarcare().size(); ii++) {
+            if (costDescarcare.getArticoleDescarcare().get(ii).getFiliala().equals(articolPalet.getFiliala())) {
+                costDescarcare.getArticoleDescarcare().get(ii).setCantitate(costDescarcare.getArticoleDescarcare().get(ii).getCantitate() + articol.getCantitate());
+            }
+        }
+
 
         prepareArtForDelivery();
 
@@ -2764,6 +2800,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         adapterArticole.setListArticole(ListaArticoleComanda.getInstance().getListArticoleComanda());
         listArtCmd.setAdapter(adapterArticole);
         adapterArticole.notifyDataSetChanged();
+
+        rezumatComanda.setListArticole(ListaArticoleComanda.getInstance().getListArticoleLivrare());
 
         totalComanda = ListaArticoleComanda.getInstance().getTotalComanda();
 

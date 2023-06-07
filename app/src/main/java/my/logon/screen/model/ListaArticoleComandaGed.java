@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 
+import my.logon.screen.beans.ArticolMathaus;
 import my.logon.screen.beans.BeanConditiiArticole;
 import my.logon.screen.beans.BeanParametruPretGed;
 import my.logon.screen.beans.ComandaExtraMathaus;
@@ -30,6 +31,8 @@ public class ListaArticoleComandaGed extends Observable implements OperatiiArtic
 	private OperatiiArticol opArticol;
 	private ArticolComandaGed articolComandaGed;
 	private ComandaExtraMathaus comandaExtraMathaus;
+
+	private ArrayList<ArticolComanda> listArticoleLivrare = new ArrayList<>();
 
 	private ListaArticoleComandaGed() {
 
@@ -229,6 +232,16 @@ public class ListaArticoleComandaGed extends Observable implements OperatiiArtic
 
 	}
 
+	public void addArticolLivrareComanda(ArticolComanda articolComanda) {
+		if (!articolExists(articolComanda))
+			listArticoleLivrare.add(articolComanda);
+		else {
+			listArticoleLivrare.remove(articolIndex);
+			listArticoleLivrare.add(articolIndex, articolComanda);
+		}
+
+	}
+
 	public void addArticolComanda(ArticolComanda articolComanda) {
 		if (!articolExists(articolComanda))
 			listArticoleComanda.add(articolComanda);
@@ -400,6 +413,106 @@ public class ListaArticoleComandaGed extends Observable implements OperatiiArtic
 
 	public void setConditiiArticole(List<BeanConditiiArticole> conditiiComandaArticole) {
 		this.conditiiComandaArticole = conditiiComandaArticole;
+	}
+
+	public ArrayList<ArticolComanda> getListArticoleLivrare() {
+		return listArticoleLivrare;
+	}
+
+	public void reseteazaArticoleLivrare(){
+		this.listArticoleLivrare = new ArrayList<>();
+	}
+
+	public ArticolComandaGed genereazaArticolLivrare(ArticolComandaGed articolComanda){
+
+		ArticolComandaGed articolLivrare = new ArticolComandaGed();
+
+		articolLivrare.setNrCrt(articolComanda.getNrCrt());
+		articolLivrare.setNumeArticol(articolComanda.getNumeArticol());
+		articolLivrare.setCodArticol(articolComanda.getCodArticol());
+		articolLivrare.setDepozit(articolComanda.getDepozit());
+		articolLivrare.setCantitate(articolComanda.getCantitate());
+		articolLivrare.setUm(articolComanda.getUm());
+		articolLivrare.setPret(articolComanda.getPret());
+		articolLivrare.setMoneda(articolComanda.getMoneda());
+		articolLivrare.setProcent(articolComanda.getProcent());
+		articolLivrare.setObservatii(articolComanda.getObservatii());
+		articolLivrare.setConditie(articolComanda.getConditie());
+		articolLivrare.setPromotie(articolComanda.getPromotie());
+		articolLivrare.setProcentFact(articolComanda.getProcentFact());
+		articolLivrare.setPretUnit(articolComanda.getPretUnit());
+		articolLivrare.setDiscClient(articolComanda.getDiscClient());
+		articolLivrare.setTipAlert(articolComanda.getTipAlert());
+		articolLivrare.setProcAprob(articolComanda.getProcAprob());
+		articolLivrare.setMultiplu(articolComanda.getMultiplu());
+		articolLivrare.setInfoArticol(articolComanda.getInfoArticol());
+		articolLivrare.setCantUmb(articolComanda.getCantUmb());
+		articolLivrare.setUmb(articolComanda.getUmb());
+		articolLivrare.setAlteValori(articolComanda.getAlteValori());
+		articolLivrare.setDepart(articolComanda.getDepart());
+		articolLivrare.setTipArt(articolComanda.getTipArt());
+		articolLivrare.setTaxaVerde(articolComanda.getTaxaVerde());
+		articolLivrare.setPretUnitarPonderat(articolComanda.getPretUnitarPonderat());
+		articolLivrare.setPretUnitarClient(articolComanda.getPretUnitarClient());
+		articolLivrare.setUnitLogAlt(articolComanda.getUnitLogAlt());
+		articolLivrare.setStatus(articolComanda.getStatus());
+		articolLivrare.setCmp(articolComanda.getCmp());
+		articolLivrare.setAddCond(articolComanda.getAddCond());
+		articolLivrare.setPretUnitarGed(articolComanda.getPretUnitarGed());
+		articolLivrare.setMarjaClient(articolComanda.getMarjaClient());
+		articolLivrare.setMarjaCorectata(articolComanda.getMarjaCorectata());
+		articolLivrare.setReducerePonderata(articolComanda.getReducerePonderata());
+		articolLivrare.setMarjaGed(articolComanda.getMarjaGed());
+		articolLivrare.setTipAlertPret(articolComanda.getTipAlertPret());
+		articolLivrare.setAdaosMinimArticol(articolComanda.getAdaosMinimArticol());
+		articolLivrare.setAdaosClientCorectat(articolComanda.getAdaosClientCorectat());
+		articolLivrare.setAdaosMinimAcceptat(articolComanda.getAdaosMinimAcceptat());
+		articolLivrare.setPonderare(articolComanda.getPonderare());
+		articolLivrare.setDiscountAg(articolComanda.getDiscountAg());
+		articolLivrare.setDiscountSd(articolComanda.getDiscountSd());
+		articolLivrare.setDiscountDv(articolComanda.getDiscountDv());
+		articolLivrare.setPermitSubCmp(articolComanda.getPermitSubCmp());
+		articolLivrare.setCoefCorectie(articolComanda.getCoefCorectie());
+		articolLivrare.setPretMediu(articolComanda.getPretMediu());
+		articolLivrare.setAdaosMediu(articolComanda.getAdaosMediu());
+		articolLivrare.setUnitMasPretMediu(articolComanda.getUnitMasPretMediu());
+		articolLivrare.setDepartSintetic(articolComanda.getDepartSintetic());
+		articolLivrare.setConditii(articolComanda.hasConditii());
+		articolLivrare.setRespins(articolComanda.isRespins());
+		articolLivrare.setDeficit(articolComanda.getDeficit());
+		articolLivrare.setValTransport(articolComanda.getValTransport());
+		articolLivrare.setProcTransport(articolComanda.getProcTransport());
+		articolLivrare.setDepartAprob(articolComanda.getDepartAprob());
+		articolLivrare.setUmPalet(articolComanda.isUmPalet());
+		articolLivrare.setFilialaSite(articolComanda.getFilialaSite());
+		articolLivrare.setIstoricPret(articolComanda.getIstoricPret());
+		articolLivrare.setVechime(articolComanda.getVechime());
+		articolLivrare.setCategorie(articolComanda.getCategorie());
+		articolLivrare.setLungime(articolComanda.getLungime());
+		articolLivrare.setProcT1(articolComanda.getProcT1());
+		articolLivrare.setValT1(articolComanda.getValT1());
+		articolLivrare.setDataExpPret(articolComanda.getDataExpPret());
+		articolLivrare.setArticolMathaus(new ArticolMathaus(articolComanda.getArticolMathaus()));
+		articolLivrare.setListCabluri(articolComanda.getListCabluri());
+		articolLivrare.setPretFaraTva(articolComanda.getPretFaraTva());
+		articolLivrare.setAczcDeLivrat(articolComanda.getAczcDeLivrat());
+		articolLivrare.setAczcLivrat(articolComanda.getAczcLivrat());
+		articolLivrare.setTipTransport(articolComanda.getTipTransport());
+		articolLivrare.setGreutate(articolComanda.getGreutate());
+
+		articolLivrare.setPretUnitarGed(articolComanda.getPretUnitarGed());
+		articolLivrare.setMarjaClient(articolComanda.getMarjaClient());
+		articolLivrare.setMarjaCorectata(articolComanda.getMarjaCorectata());
+		articolLivrare.setReducerePonderata(articolComanda.getReducerePonderata());
+		articolLivrare.setMarjaGed(articolComanda.getMarjaGed());
+		articolLivrare.setTipAlertPret(articolComanda.getTipAlertPret());
+		articolLivrare.setAdaosMinimArticol(articolComanda.getAdaosMinimArticol());
+		articolLivrare.setAdaosClientCorectat(articolComanda.getAdaosClientCorectat());
+		articolLivrare.setAdaosMinimAcceptat(articolComanda.getAdaosMinimAcceptat());
+		articolLivrare.setPonderare(articolComanda.getPonderare());
+
+		return articolLivrare;
+
 	}
 
 	public List<BeanConditiiArticole> getConditiiArticole() {

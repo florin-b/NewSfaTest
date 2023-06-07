@@ -14,6 +14,25 @@ public class ArticolMathaus extends ArticolDB {
 	private String tip2;
 	private String planificator;
 
+	public ArticolMathaus(){
+
+	}
+
+	public ArticolMathaus(ArticolMathaus articolMathaus){
+		this.cod = articolMathaus.getCod();
+		this.nume = articolMathaus.getNume();
+		this.adresaImg = articolMathaus.getAdresaImg();
+		this.adresaImgMare = articolMathaus.getAdresaImgMare();
+		this.descriere = articolMathaus.getDescriere();
+		this.catMathaus = articolMathaus.getCatMathaus();
+		this.pretUnitar = articolMathaus.getPretUnitar();
+		this.isLocal = articolMathaus.isLocal();
+		this.isArticolSite = articolMathaus.isArticolSite;
+		this.tip1 = articolMathaus.getTip1();
+		this.tip2 = articolMathaus.getTip2();
+		this.planificator = articolMathaus.getPlanificator();
+	}
+
 	public String getCod() {
 		return cod;
 	}

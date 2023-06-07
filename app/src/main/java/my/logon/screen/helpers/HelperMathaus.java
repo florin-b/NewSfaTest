@@ -21,9 +21,11 @@ public class HelperMathaus {
 
         List<ArticolComanda> listArticoleComanda;
         if (canalDistrib.equals("10"))
-            listArticoleComanda = ListaArticoleComanda.getInstance().getListArticoleComanda();
+            //listArticoleComanda = ListaArticoleComanda.getInstance().getListArticoleComanda();
+            listArticoleComanda = ListaArticoleComanda.getInstance().getListArticoleLivrare();
         else
-            listArticoleComanda = ListaArticoleComandaGed.getInstance().getListArticoleComanda();
+            //listArticoleComanda = ListaArticoleComandaGed.getInstance().getListArticoleComanda();
+            listArticoleComanda = ListaArticoleComandaGed.getInstance().getListArticoleLivrare();
 
         eliminaCostTransport(listArticoleComanda, costTransport);
 
