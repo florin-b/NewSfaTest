@@ -60,6 +60,7 @@ import my.logon.screen.beans.BeanAdreseJudet;
 import my.logon.screen.beans.BeanClient;
 import my.logon.screen.beans.BeanDateLivrareClient;
 import my.logon.screen.beans.BeanLocalitate;
+import my.logon.screen.beans.DatePoligonLivrare;
 import my.logon.screen.beans.GeocodeAddress;
 import my.logon.screen.beans.ObiectivConsilier;
 import my.logon.screen.beans.StatusIntervalLivrare;
@@ -960,7 +961,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
                 }
 
             if (DateLivrare.getInstance().getTonaj().equals("20"))
-                spinnerTonaj.setSelection(spinnerTonaj.getCount()-1);
+                spinnerTonaj.setSelection(spinnerTonaj.getCount() - 1);
         }
 
     }
@@ -1900,11 +1901,6 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
             return;
         }
 
-        if (spinnerTransp.getSelectedItem().toString().toLowerCase().contains("arabesque") && spinnerTonaj.getSelectedItemPosition() == 0) {
-            Toast.makeText(getApplicationContext(), "Selectati tonajul!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
 
         if (((LinearLayout) findViewById(R.id.layoutFilialaPlata)).getVisibility() == View.VISIBLE) {
             if (((RadioButton) findViewById(R.id.radioPlataFilialaAg)).isChecked())
@@ -2066,8 +2062,52 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         else
             dateLivrareInstance.setProgramLivrare("0");
 
-        finish();
+        //aici
+        getDatePoligonLivrare();
 
+        //finish();
+
+    }
+
+    private void getDatePoligonLivrare() {
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("coords", DateLivrare.getInstance().getCoordonateAdresa().latitude + "," + DateLivrare.getInstance().getCoordonateAdresa().longitude);
+        operatiiAdresa.getDatePoligonLivrare(params);
+    }
+
+    private void setDatePoligonLivrare(String datePoligonLivrare) {
+        DatePoligonLivrare poligonLivrare = operatiiAdresa.deserializePoligonLivrare(datePoligonLivrare);
+        DateLivrare.getInstance().setDatePoligonLivrare(null);
+
+        if (!poligonLivrare.getFilialaPrincipala().trim().isEmpty()) {
+            CreareComandaGed.filialaLivrareMathaus = poligonLivrare.getFilialaPrincipala();
+            CreareComandaGed.filialeArondateMathaus = poligonLivrare.getFilialaPrincipala();
+            DateLivrare.getInstance().setDatePoligonLivrare(poligonLivrare);
+
+            if (poligonLivrare.getLimitareTonaj().trim().isEmpty())
+                DateLivrare.getInstance().setTonaj("20");
+            else {
+                DateLivrare.getInstance().setTonaj(poligonLivrare.getLimitareTonaj());
+                if (isCondInfoRestrictiiTonaj())
+                    Toast.makeText(getApplicationContext(), "La aceasta adresa exista o limitare de tonaj de " + poligonLivrare.getLimitareTonaj() + " T.", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            if (spinnerTransp.getSelectedItem().toString().toLowerCase().contains("arabesque") && spinnerTonaj.getSelectedItemPosition() == 0 &&
+                    DateLivrare.getInstance().getDatePoligonLivrare() == null) {
+                Toast.makeText(getApplicationContext(), "Selectati tonajul!", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
+        finish();
+    }
+
+    public boolean isCondInfoRestrictiiTonaj() {
+        return !UtilsUser.isUserIP() && DateLivrare.getInstance().getTransport().equals("TRAP") && (
+                DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.COMANDA_VANZARE) ||
+                        DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.COMANDA_LIVRARE) ||
+                        DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.ARTICOLE_DETERIORATE));
     }
 
     private boolean hasCoordinates() {
@@ -2240,18 +2280,6 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         address.setStreet(UtilsAddress.getStreetNoNumber(DateLivrare.getInstance().getStrada()));
         address.setSector(UtilsGeneral.getNumeJudet(DateLivrare.getInstance().getCodJudet()));
 
-        /*
-        if (radioAdresaSediu.isChecked()) {
-            address.setCity(DateLivrare.getInstance().getOras());
-            address.setStreet(UtilsAddress.getStreetNoNumber(DateLivrare.getInstance().getStrada()));
-            address.setSector(UtilsGeneral.getNumeJudet(DateLivrare.getInstance().getCodJudet()));
-        } else if (radioAltaAdresa.isChecked()) {
-            address.setCity(DateLivrare.getInstance().getOrasD());
-            address.setStreet(UtilsAddress.getStreetNoNumber(DateLivrare.getInstance().getAdresaD()));
-            address.setSector(UtilsGeneral.getNumeJudet(DateLivrare.getInstance().getCodJudetD()));
-        }
-         */
-
         return address;
     }
 
@@ -2286,17 +2314,6 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
         String localitate = DateLivrare.getInstance().getOras();
         List<BeanLocalitate> listLocalitati = listAdreseJudet.getListLocalitati();
-
-        /*
-        if (radioAltaAdresa.isChecked()) {
-            localitate = DateLivrare.getInstance().getOrasD();
-
-            if (listAlteAdrese == null)
-                return isAdresaOk;
-
-            listLocalitati = listAlteAdrese.getListLocalitati();
-        }
-         */
 
         BeanLocalitate beanLocalitate = HelperAdreseLivrare.getDateLocalitate(listLocalitati, localitate);
 
@@ -2470,6 +2487,8 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
             CreareComandaGed.filialeArondateMathaus = (String) result;
         } else if (numeComanda == EnumOperatiiAdresa.GET_ADRESA_FILIALA) {
             setAdresalivrareFiliala((String) result);
+        } else if (numeComanda == EnumOperatiiAdresa.GET_DATE_POLIGON_LIVRARE) {
+            setDatePoligonLivrare((String) result);
         } else {
             switch (tipLocalitate) {
                 case LOCALITATE_SEDIU:

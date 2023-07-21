@@ -135,6 +135,9 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 
     SimpleAdapter adapterUmVanz;
     private double varProc = 0, valMultiplu = 0, greutateArt = 0;
+    private String tipMarfa = "";
+    private double greutateBruta = 0;
+    private String lungimeArt = "";
 
     String tipAlert = "", codPromo = "", infoArticol = "", Umb = "", cantUmb = "", selectedUnitMas = "", selectedUnitMasPret = "";
 
@@ -418,8 +421,6 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
                     spinnerDepoz.setVisibility(View.VISIBLE);
                 }
 
-               // if (isDepartExtra() && selectedDepartamentAgent.equals("02"))
-               //     CreareComanda.filialaAlternativa = "BV90";
 
                 populateListViewArticol(new ArrayList<ArticolDB>());
 
@@ -1695,30 +1696,15 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
                         unArticol.setArticolMathaus(articolMathaus);
                         unArticol.setListCabluri(listCabluri);
                         unArticol.setGreutate(greutateArt);
+                        unArticol.setTipMarfa(tipMarfa);
+                        unArticol.setGreutateBruta(greutateBruta);
+                        unArticol.setLungimeArt(lungimeArt);
 
                         if (procRedFin > 0)
                             unArticol.setIstoricPret(istoricPret);
 
                         ListaArticoleComanda listaComanda = ListaArticoleComanda.getInstance();
                         listaComanda.addArticolComanda(unArticol);
-
-                        if (!altDepozit) {
-                            if (CreareComanda.articoleComanda.indexOf(codArticol) == -1) // articolul
-                                // nu
-                                // e
-                                // adaugat
-                                // deja
-                                CreareComanda.articoleComanda += numeArticol + "#" + codArticol + "#" + cantArticol + "#" + String.valueOf(finalPrice) + "#"
-                                        + localUnitMas + "#" + globalDepozSel + "#" + nf.format(procRedFin) + "#" + tipAlert + "#" + codPromo + "#"
-                                        + nf.format(procRedFact) + "#" + nf.format(procDiscClient) + "#" + nf.format(procentAprob) + "#" + valMultiplu + "#"
-                                        + String.valueOf(valArticol) + "#" + infoArticol + "#" + Umb + "#" + cantUmb + "#" + alteValori + "#"
-                                        + globalCodDepartSelectetItem + "#" + tipArticol + "@@";
-
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Comanda contine depozite diferite, articolul nu a fost adaugat! ", Toast.LENGTH_LONG)
-                                    .show();
-
-                        }
 
                         showArticoleCantDialog();
 
@@ -1753,6 +1739,9 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
                         valoareUmren = 1;
 
                         greutateArt = 0;
+                        tipMarfa = "";
+                        greutateBruta = 0;
+                        lungimeArt = "";
 
                         listCabluri = null;
 
@@ -2073,6 +2062,9 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 
                 valMultiplu = Double.parseDouble(tokenPret[13].trim());
                 greutateArt = Double.parseDouble(tokenPret[24].trim());
+                tipMarfa = tokenPret[26];
+                greutateBruta = Double.parseDouble(tokenPret[27].trim());
+                lungimeArt = tokenPret[28];
 
                 globalCantArt = Double.parseDouble(tokenPret[14]);
 
@@ -2329,7 +2321,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 
             } else {
 
-                Toast.makeText(getApplicationContext(), "Nu exista informatii.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), pretResponse, Toast.LENGTH_LONG).show();
 
             }
 

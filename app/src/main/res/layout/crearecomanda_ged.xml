@@ -272,6 +272,17 @@
                     android:typeface="sans" />
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/textGreutateCmd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="40dp"
+                android:gravity="right"
+                android:textColor="@color/discountColor1"
+                android:textSize="16sp"
+                android:typeface="sans" />
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

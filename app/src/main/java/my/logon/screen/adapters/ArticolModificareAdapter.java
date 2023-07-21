@@ -1,16 +1,5 @@
 package my.logon.screen.adapters;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.List;
-
-import my.logon.screen.listeners.ArticolModificareListener;
-import my.logon.screen.listeners.OperatiiArticolListener;
-import my.logon.screen.R;
-import my.logon.screen.model.ArticolComanda;
-import my.logon.screen.model.OperatiiArticolImpl;
-import my.logon.screen.model.UserInfo;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +10,23 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.List;
+
+import my.logon.screen.R;
 import my.logon.screen.beans.ArticolComandaAfis;
 import my.logon.screen.beans.BeanComandaCreata;
 import my.logon.screen.beans.BeanConditiiArticole;
 import my.logon.screen.beans.ValoriComanda;
 import my.logon.screen.enums.EnumArticoleDAO;
+import my.logon.screen.listeners.ArticolModificareListener;
+import my.logon.screen.listeners.OperatiiArticolListener;
+import my.logon.screen.model.ArticolComanda;
+import my.logon.screen.model.OperatiiArticolImpl;
+import my.logon.screen.model.UserInfo;
 
 public class ArticolModificareAdapter extends BaseAdapter implements OperatiiArticolListener {
 
@@ -279,9 +280,11 @@ public class ArticolModificareAdapter extends BaseAdapter implements OperatiiArt
 	private void setStergeArticolListener(ViewHolder viewHolder, final int position) {
 		viewHolder.stergeArticolBtn.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				String codArticol = listArticole.get(position).getCodArticol();
+				String filiala = listArticole.get(position).getFilialaSite();
 				listArticole.remove(position);
 				if (listener != null) {
-					listener.articolSters();
+					listener.articolSters(codArticol, filiala);
 				}
 				notifyDataSetChanged();
 			}

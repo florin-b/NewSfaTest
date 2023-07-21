@@ -7,6 +7,7 @@ public class CostTransportMathaus {
 	private String valTransp;
 	private String codArtTransp;
 	private String depart;
+	private String numeCost;
 
 
 
@@ -50,5 +51,11 @@ public class CostTransportMathaus {
 		this.depart = depart;
 	}
 
+	public String getNumeCost() {
+		return numeCost;
+	}
 
+	public void setNumeCost(String numeCost) {
+		this.numeCost = numeCost;
+	}
 }

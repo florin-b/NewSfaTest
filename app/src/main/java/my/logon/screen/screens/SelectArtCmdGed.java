@@ -1666,18 +1666,7 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
                         if (tipComanda.equalsIgnoreCase("S") && !rezervStoc) {
 
                         }
-                        //am modificat aici
-                        /*
-                        else if (isConditieExtraMathaus()) {
 
-                            cmdExtraMathaus = getArticoleExtraMathaus();
-                            if (!cmdExtraMathaus.isSucces()) {
-                                Toast.makeText(getApplicationContext(), "Stoc insuficient!", Toast.LENGTH_LONG).show();
-                                return;
-                            }
-
-                        }
-                         */
                         else {
 
                             Toast.makeText(getApplicationContext(), "Stoc insuficient!", Toast.LENGTH_LONG).show();
@@ -1845,6 +1834,10 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
                         articol.setListCabluri(listCabluri);
                         articol.setGreutate(selectedArticol.getGreutate());
                         articol.setPretFaraTva(selectedArticol.getPretFaraTva());
+
+                        articol.setTipMarfa(selectedArticol.getTipMarfa());
+                        articol.setGreutateBruta(selectedArticol.getGreutateBruta());
+                        articol.setLungimeArt(selectedArticol.getLungimeArt());
 
                         if (procRedFin > 0)
                             articol.setIstoricPret(selectedArticol.getIstoricPret());

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import my.logon.screen.beans.ArticolTaxaVerde;
+import my.logon.screen.beans.OptiuneCamion;
 import my.logon.screen.model.ArticolComanda;
 import my.logon.screen.model.DateLivrare;
 import my.logon.screen.model.UserInfo;
@@ -133,6 +134,51 @@ public class HelperCreareComanda {
 
         return valNETW;
 
+    }
+
+    public static void setStareOptiuniCamion(List<OptiuneCamion> stareOptiuniCamion, String[] listOptiuni) {
+
+        stareOptiuniCamion.clear();
+
+        OptiuneCamion optiuneCamion = new OptiuneCamion();
+        optiuneCamion.setNume("Camion scurt");
+
+        if (!listOptiuni[0].trim().isEmpty()) {
+            optiuneCamion.setExista(true);
+            optiuneCamion.setSelectat(false);
+        } else {
+            optiuneCamion.setExista(false);
+            optiuneCamion.setSelectat(false);
+        }
+
+        stareOptiuniCamion.add(optiuneCamion);
+
+        optiuneCamion = new OptiuneCamion();
+        optiuneCamion.setNume("Camioneta IVECO");
+
+        if (!listOptiuni[1].trim().isEmpty()) {
+            optiuneCamion.setExista(true);
+            optiuneCamion.setSelectat(false);
+        } else {
+            optiuneCamion.setExista(false);
+            optiuneCamion.setSelectat(false);
+        }
+
+        stareOptiuniCamion.add(optiuneCamion);
+
+    }
+
+    public static void setCamionSelectat(List<OptiuneCamion> stareOptiuniCamion, String camionSelectat){
+
+        if (camionSelectat == null || camionSelectat.trim().isEmpty())
+            return;
+
+        for (OptiuneCamion optCamion :stareOptiuniCamion ){
+            if (optCamion.getNume().toLowerCase().equals(camionSelectat.toLowerCase())) {
+                optCamion.setSelectat(true);
+                break;
+            }
+        }
     }
 
 }

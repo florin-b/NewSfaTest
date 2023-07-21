@@ -206,26 +206,14 @@ public class RezumatComandaDialog extends Dialog implements RezumatListener {
 
         List<ArticolComanda> listArticoleComanda;
         if (canalDistrib.equals("10"))
-            //listArticoleComanda = ListaArticoleComanda.getInstance().getListArticoleComanda();
             listArticoleComanda = ListaArticoleComanda.getInstance().getListArticoleLivrare();
         else
-            //aici
-            //listArticoleComanda = ListaArticoleComandaGed.getInstance().getListArticoleComanda();
             listArticoleComanda = ListaArticoleComandaGed.getInstance().getListArticoleLivrare();
 
         listArticoleComanda.add(articolComanda);
 
-
-       // this.listRezumat = getRezumatComanda();
-
-
-
-        //aici
-
         if (listener != null)
             listener.comandaEliminata();
-
-        //adapterRezumat.setListRezumat(listRezumat);
 
         getTotalComenzi();
 
@@ -237,11 +225,8 @@ public class RezumatComandaDialog extends Dialog implements RezumatListener {
 
         List<ArticolComanda> listArticoleComanda;
         if (canalDistrib.equals("10"))
-            //listArticoleComanda = ListaArticoleComanda.getInstance().getListArticoleComanda();
             listArticoleComanda = ListaArticoleComanda.getInstance().getListArticoleLivrare();
         else
-            //aici
-            //listArticoleComanda = ListaArticoleComandaGed.getInstance().getListArticoleComanda();
             listArticoleComanda = ListaArticoleComandaGed.getInstance().getListArticoleLivrare();
 
         Iterator<ArticolComanda> listIterator = listArticoleComanda.iterator();
@@ -255,16 +240,8 @@ public class RezumatComandaDialog extends Dialog implements RezumatListener {
             }
         }
 
-
-       // this.listRezumat = getRezumatComanda();
-
-
-        //aici
-
         if (listener != null)
             listener.comandaEliminata();
-
-       // adapterRezumat.setListRezumat(listRezumat);
 
         getTotalComenzi();
 
