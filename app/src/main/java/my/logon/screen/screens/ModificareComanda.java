@@ -978,7 +978,6 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
                     ArticolComanda articolLivrare = ListaArticoleComanda.getInstance().genereazaArticolLivrare((ArticolComandaGed) articolComanda);
                     articolLivrare.setCantitate(articolMathaus.getQuantity());
-                    articolLivrare.setCantUmb(articolMathaus.getQuantity());
 
                     if (articolComanda.getFilialaSite().equals("BV90")) {
                     } else {
@@ -1674,6 +1673,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
                 obj.put("listCabluri", new OperatiiArticolImpl(this).serializeCabluri05(artComanda.getListCabluri()));
                 obj.put("greutate", artComanda.getGreutate());
                 obj.put("greutateBruta", artComanda.getGreutateBruta());
+                obj.put("cantitateInit", artComanda.getCantitateInit());
 
                 if (!UtilsUser.isAgentOrSDorKA()) {
                     if ((artComanda.getNumeArticol() != null && artComanda.getPonderare() == 1)
@@ -2483,11 +2483,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
                 afisTotalComenziNumerar((String) result);
                 break;
             case GET_LIVRARI_MATHAUS:
-                //aici
-               // if (isComandaCanal10())
-                    setLivrariMathaus((String) result);
-               // else
-               //     adaugaPretTransport((String) result);
+                setLivrariMathaus((String) result);
                 break;
             case GET_OPTIUNI_MASINI:
                 afisOptiuniMasini((String) result);
@@ -2510,34 +2506,6 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
         if (UtilsUser.isAgentOrSDorKA() || UtilsUser.isConsWood() || comandaSelectata.isCmdInstPublica() || UtilsUser.isOIVPD()) {
             return;
         }
-
-        //aici
-        /*
-        NumberFormat nf3 = NumberFormat.getInstance(new Locale("en", "US"));
-        nf3.setMinimumFractionDigits(2);
-        nf3.setMaximumFractionDigits(2);
-        nf3.setGroupingUsed(false);
-
-        valTransportSAP = Double.valueOf(nf3.format(UtilsComenziGed.getValoareTransportSap(listArticole)));
-        valTransport = Double.valueOf(nf3.format(UtilsComenziGed.getValoareTransportComanda(listArticole)));
-
-        if (valTransport < valTransportSAP)
-            valTransport = valTransportSAP;
-
-        if (!DateLivrare.getInstance().getTransport().equals("TCLI")) {
-            UtilsComenziGed.setValoareArticolTransport(listArticole, valTransport);
-            adapterArticole.notifyDataSetChanged();
-        }
-
-        if (DateLivrare.getInstance().getTransport().equals("TRAP") || DateLivrare.getInstance().getTransport().equals("TERT")) {
-            valTranspBtn.setVisibility(View.VISIBLE);
-            valTranspBtn.setText("Transp: " + nf3.format(valTransport));
-        } else {
-            valTranspBtn.setVisibility(View.INVISIBLE);
-            valTransport = 0;
-        }
-
-         */
 
     }
 
