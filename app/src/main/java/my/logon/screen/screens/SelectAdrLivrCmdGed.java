@@ -2277,7 +2277,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         Address address = new Address();
 
         address.setCity(DateLivrare.getInstance().getOras());
-        address.setStreet(UtilsAddress.getStreetNoNumber(DateLivrare.getInstance().getStrada()));
+        address.setStreet(DateLivrare.getInstance().getStrada());
         address.setSector(UtilsGeneral.getNumeJudet(DateLivrare.getInstance().getCodJudet()));
 
         return address;

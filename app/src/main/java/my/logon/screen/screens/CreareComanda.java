@@ -1791,6 +1791,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             obj.put("idObiectiv", DateLivrare.getInstance().getIdObiectiv());
             obj.put("isAdresaObiectiv", DateLivrare.getInstance().isAdresaObiectiv());
             obj.put("coordonateGps", getCoordAdresa());
+            HelperMathaus.setTonajComanda();
             obj.put("tonaj", DateLivrare.getInstance().getTonaj());
             obj.put("prelucrare", DateLivrare.getInstance().getPrelucrare());
             obj.put("clientRaft", DateLivrare.getInstance().isClientRaft());
@@ -2749,7 +2750,6 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             if (!costDescarcare.getSePermite())
                 DateLivrare.getInstance().setMasinaMacara(false);
 
-            //aici
             if (isConditiiAfisOptiuniMasini())
                 getOptiuniMasini();
             else

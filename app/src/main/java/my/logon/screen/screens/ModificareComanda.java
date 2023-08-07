@@ -779,11 +779,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
                             } else
                                 getTotalComenziNumerar();
                         } else {
-                            //aici
-                            //if (isComandaCanal10())
                                 getLivrariMathaus();
-                            //else
-                                //verificaPretTransport();
                         }
 
                     }
@@ -796,9 +792,6 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
         }
     }
-
-    //aici
-    // de implementat isConditiiCostTransport()
 
 
     private void getOptiuniMasini() {
@@ -1024,8 +1017,6 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
         rezumatComanda.getWindow().setLayout(width, height);
         rezumatComanda.show();
 
-        //aici, de verificat
-        //comandaEliminata();
 
     }
 
@@ -1176,7 +1167,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
             alert.show();
 
         } else
-            verificaPretMacaraRezumat();
+            getLivrariMathaus();
     }
 
     private void verificaPretMacaraRezumat() {
@@ -1295,7 +1286,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
             if (!costDescarcare.getSePermite())
                 DateLivrare.getInstance().setMasinaMacara(false);
 
-            //aici
+
             if (isConditiiAfisOptiuniMasini())
                 getOptiuniMasini();
             else
@@ -1307,9 +1298,6 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
     private void afiseazaPretMacaraDialog(String result) {
 
         costDescarcare = HelperCostDescarcare.deserializeCostMacara(result);
-
-        //verificaPaletiComanda(costDescarcare.getArticolePaleti());
-        //eliminaPaletiComanda();
 
         if (!costDescarcare.getArticolePaleti().isEmpty()) {
             costDescarcare.getArticoleDescarcare().get(0).setCantitate(0);
@@ -1431,7 +1419,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
             DateLivrare.getInstance().setMasinaMacara(false);
         }
 
-        //aici
+
         if (isConditiiAfisOptiuniMasini())
             getOptiuniMasini();
         else
@@ -1773,6 +1761,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
             obj.put("idObiectiv", DateLivrare.getInstance().getIdObiectiv());
             obj.put("isAdresaObiectiv", DateLivrare.getInstance().isAdresaObiectiv());
             obj.put("coordonateGps", getCoordAdresa());
+            HelperMathaus.setTonajComanda();
             obj.put("tonaj", DateLivrare.getInstance().getTonaj());
             obj.put("prelucrare", DateLivrare.getInstance().getPrelucrare());
             obj.put("clientRaft", DateLivrare.getInstance().isClientRaft());
@@ -2562,6 +2551,11 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
         } else {
             if (!costDescarcare.getSePermite())
                 DateLivrare.getInstance().setMasinaMacara(false);
+
+            if (isConditiiAfisOptiuniMasini())
+                getOptiuniMasini();
+            else
+                trateazaFluxComanda();
 
         }
     }
