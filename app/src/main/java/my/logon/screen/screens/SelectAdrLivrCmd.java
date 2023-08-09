@@ -2195,9 +2195,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
         getDatePoligonLivrare();
 
-        //aici
-        //finish();
-
     }
 
     private boolean isAdresaCorecta() {
@@ -2314,9 +2311,10 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
         BeanLocalitate beanLocalitate = new BeanLocalitate();
 
+        GeocodeAddress geoAddress = MapUtils.geocodeAddress(getAddressFromForm(), getApplicationContext());
+        DateLivrare.getInstance().setCoordonateAdresa(geoAddress.getCoordinates());
+
         if (isAdresaText()) {
-            GeocodeAddress geoAddress = MapUtils.geocodeAddress(getAddressFromForm(), getApplicationContext());
-            DateLivrare.getInstance().setCoordonateAdresa(geoAddress.getCoordinates());
             addressCoordinates = geoAddress.getCoordinates();
             beanLocalitate = HelperAdreseLivrare.getDateLocalitate(listAdreseJudet.getListLocalitati(), DateLivrare.getInstance().getOras());
             isAdresaOk = geoAddress.isAdresaValida();
@@ -2325,7 +2323,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
             beanLocalitate.setOras(adresaLivrareSelected.isOras());
             beanLocalitate.setRazaKm(adresaLivrareSelected.getRazaKm());
             beanLocalitate.setCoordonate(adresaLivrareSelected.getCoordsCentru());
-
             addressCoordinates = DateLivrare.getInstance().getCoordonateAdresa();
         }
 
