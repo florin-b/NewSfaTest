@@ -105,6 +105,7 @@ public class ArticolComanda implements Comparable<ArticolComanda> {
 	private double greutateBruta;
 	private String lungimeArt;
 
+
 	private double cantitateInit;
 
 	public int getNrCrt() {

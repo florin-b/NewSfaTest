@@ -1819,8 +1819,7 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
                         articol.setDiscountSd(discMaxSD);
                         articol.setUmPalet(articolDBSelected.isUmPalet());
 
-                        //am modifiat aici
-                        //articol.setFilialaSite(CreareComandaGed.filialaAlternativa);
+
 
                         if (!filialaStocBV90.isEmpty())
                             articol.setFilialaSite(filialaStocBV90);

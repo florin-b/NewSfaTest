@@ -13,7 +13,7 @@ public class ConnectionStrings {
 
 	private ConnectionStrings() {
 
-		myUrl = "http://10.1.0.57/AndroidWebServices/TESTService.asmx";
+		myUrl = "https://10.1.0.57/AndroidWebServices/TESTService.asmx";
 		myNamespace = "http://SFATest.org/";
 
 	}

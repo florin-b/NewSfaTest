@@ -1652,10 +1652,13 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
     private void getLivrariMathaus() {
 
+/*
         if (redirectDateLivrareTCLI) {
             getLivrariMathausCmdTCLI();
             return;
         }
+*/
+
 
         List<ArticolComanda> articoleComanda = ListaArticoleComandaGed.getInstance().getListArticoleComanda();
         ComandaMathaus comandaMathaus = new ComandaMathaus();
@@ -1888,7 +1891,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
         } else if (costDescarcare.getValoareDescarcare() > 0
                 && DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
 
-            CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, false);
+            CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, costDescarcare.getSePermite());
             macaraDialog.setCostMacaraListener(this);
             macaraDialog.show();
 
@@ -2062,10 +2065,10 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
             costPaleti.getWindow().setLayout(width, height);
             costPaleti.show();
 
-        } else if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0
+        } else if (costDescarcare.getValoareDescarcare() > 0
                 && DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
 
-            CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, true);
+            CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, costDescarcare.getSePermite());
             macaraDialog.setCostMacaraListener(this);
             macaraDialog.show();
 
@@ -3071,9 +3074,9 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
     }
 
     private void respingePalet() {
-        if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0 && DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
+        if (costDescarcare.getValoareDescarcare() > 0 && DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
 
-            CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, true);
+            CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, costDescarcare.getSePermite());
             macaraDialog.setCostMacaraListener(this);
             macaraDialog.show();
 

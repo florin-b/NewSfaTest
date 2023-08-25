@@ -1452,6 +1452,9 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
             else
                 tipUser = UserInfo.getInstance().getTipUser();
 
+            if (alertSD || alertDV)
+                comandaFinala.setComandaBlocata("1");
+
             params.put("comanda", " ");
             params.put("tipUser", tipUser);
             params.put("JSONArt", serializeArticole());
@@ -2483,9 +2486,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
     }
 
-    public void articolModificat() {
-        calculPondereB();
-    }
+
 
     private void calculValTransport(ArrayList<ArticolComanda> listArticole) {
 
@@ -2632,6 +2633,11 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
         ListaArticoleComanda.getInstance().eliminaArticolLivrare(codArticol, filiala);
         calculProcente(listArticoleComanda);
 
+    }
+
+
+    public void articolModificat() {
+        calculPondereB();
     }
 
     @Override

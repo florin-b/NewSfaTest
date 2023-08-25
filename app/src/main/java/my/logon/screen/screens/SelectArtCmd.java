@@ -139,6 +139,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
     private double greutateBruta = 0;
     private String lungimeArt = "";
 
+
     String tipAlert = "", codPromo = "", infoArticol = "", Umb = "", cantUmb = "", selectedUnitMas = "", selectedUnitMasPret = "";
 
     private HashMap<String, String> artMap = null;
@@ -1702,6 +1703,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
                         unArticol.setLungimeArt(lungimeArt);
                         unArticol.setCantitateInit(Double.valueOf(cantArticol));
 
+
                         if (procRedFin > 0)
                             unArticol.setIstoricPret(istoricPret);
 
@@ -1744,6 +1746,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
                         tipMarfa = "";
                         greutateBruta = 0;
                         lungimeArt = "";
+
 
                         listCabluri = null;
 
@@ -2067,6 +2070,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
                 tipMarfa = tokenPret[26];
                 greutateBruta = Double.parseDouble(tokenPret[27].trim());
                 lungimeArt = tokenPret[28];
+
 
                 globalCantArt = Double.parseDouble(tokenPret[14]);
 

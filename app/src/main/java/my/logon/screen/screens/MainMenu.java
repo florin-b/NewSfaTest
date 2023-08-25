@@ -51,6 +51,7 @@ import java.util.TimerTask;
 import my.logon.screen.R;
 import my.logon.screen.enums.EnumTipUser;
 import my.logon.screen.model.UserInfo;
+import my.logon.screen.model.WebServiceCall;
 import my.logon.screen.utils.UtilsConn;
 import my.logon.screen.utils.UtilsUser;
 
@@ -182,7 +183,7 @@ public class MainMenu extends Activity {
 	public int[] btnImageOIVPD = new int[] { R.drawable.id_icon, R.drawable.new_icon, R.drawable.modif_icon, R.drawable.preview_icon, R.drawable.data_icon,
 			R.drawable.stoc_icon, R.drawable.dollar_icon, R.drawable.despre_icon, R.drawable.exit_icon };
 
-	private static final String URL = "http://10.1.0.57/androidwebservices/TESTService.asmx";
+	private static final String URL = "https://10.1.0.57/androidwebservices/TESTService.asmx";
 	String name = "", filiala = "";
 	public String cod;
 	public String numeDepart, codDepart, unitLog, tipAcces, parent;
@@ -1132,6 +1133,7 @@ public class MainMenu extends Activity {
 				SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 				envelope.dotNet = true;
 				envelope.setOutputSoapObject(request);
+				WebServiceCall.allowAllSSL();
 				HttpTransportSE androidHttpTransport = new HttpTransportSE(URL, 15000);
 				List<HeaderProperty> headerList = new ArrayList<HeaderProperty>();
 				headerList.add(new HeaderProperty("Authorization", "Basic " + org.kobjects.base64.Base64.encode("bflorin:bflorin".getBytes())));

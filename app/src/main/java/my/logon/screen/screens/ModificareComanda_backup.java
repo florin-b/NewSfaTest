@@ -2272,6 +2272,8 @@ public class ModificareComanda_backup extends Activity implements AsyncTaskListe
 
     }
 
+
+
     @Override
     public void paletiStatus(EnumPaleti status, ArticolPalet palet) {
         switch (status) {
