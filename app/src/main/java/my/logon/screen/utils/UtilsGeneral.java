@@ -90,6 +90,9 @@ public class UtilsGeneral {
             listDepozite.add("MAD1");
         }
 
+        if (UtilsUser.isConsWood())
+            listDepozite.add("WOOD");
+
         listDepozite.add("DSCM");
 
         return listDepozite.toArray(new String[listDepozite.size()]);
@@ -463,7 +466,7 @@ public class UtilsGeneral {
             retVal = "SALAJ";
 
         if (codJudet.equals("30"))
-            retVal = "SATU-MARE";
+            retVal = "SATU MARE";
 
         if (codJudet.equals("32"))
             retVal = "SIBIU";

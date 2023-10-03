@@ -99,7 +99,6 @@ import my.logon.screen.model.Comanda;
 import my.logon.screen.model.ComenziDAO;
 import my.logon.screen.model.Constants;
 import my.logon.screen.model.DateLivrare;
-import my.logon.screen.model.HelperTranspBuc;
 import my.logon.screen.model.InfoStrings;
 import my.logon.screen.model.ListaArticoleComanda;
 import my.logon.screen.model.ListaArticoleComandaGed;
@@ -534,24 +533,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
             textTipPlata.setText(UtilsGeneral.getDescTipPlata(dateLivrareInstance.getTipPlata(), dateLivrareInstance.getTermenPlata()));
             textTransport.setText(UtilsGeneral.getDescTipTransport(dateLivrareInstance.getTransport()));
 
-            if (!isUserCV() && !isComandaGed()) {
 
-                if (dateLivrareInstance.getZonaBucuresti() != null) {
-
-                    HelperTranspBuc.eliminaCostTransportZoneBuc(listArticoleComanda);
-
-                    if (HelperTranspBuc.isCondTranspZonaBuc(dateLivrareInstance, dateLivrareInstance.getZonaBucuresti())) {
-                        HelperTranspBuc.adaugaTransportBucuresti(listArticoleComanda, dateLivrareInstance.getZonaBucuresti());
-
-                    }
-
-                    adapterArticole.setListArticole(listArticoleComanda);
-                    adapterArticole.notifyDataSetChanged();
-                    listViewArticole.setAdapter(adapterArticole);
-
-                }
-
-            }
 
         }
 
@@ -848,6 +830,11 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
         if (isComandaCLP())
             filialaLivrareMathaus = DateLivrare.getInstance().getCodFilialaCLP();
 
+        String livrareFilialaSecundara = HelperMathaus.getFilialaSecundara();
+
+        if (!livrareFilialaSecundara.isEmpty())
+            filialaLivrareMathaus += "," + livrareFilialaSecundara;
+
         comandaMathaus.setSellingPlant(filialaLivrareMathaus);
         List<DateArticolMathaus> listArticoleMat = new ArrayList<DateArticolMathaus>();
 
@@ -863,6 +850,9 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
             dateArticol.setUnit(artCmd.getUm());
             dateArticol.setValPoz(artCmd.getPret());
             dateArticol.setGreutate(artCmd.getGreutateBruta());
+
+            dateArticol.setQuantity50(artCmd.getCantitate50());
+            dateArticol.setUnit50(artCmd.getUm50());
 
             if (UtilsComenzi.isDespozitDeteriorate(artCmd.getDepozit()))
                 dateArticol.setDepozit(artCmd.getDepozit());
@@ -971,6 +961,12 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
                     ArticolComanda articolLivrare = ListaArticoleComanda.getInstance().genereazaArticolLivrare((ArticolComandaGed) articolComanda);
                     articolLivrare.setCantitate(articolMathaus.getQuantity());
+
+                    articolLivrare.setCantitate50(HelperMathaus.getCantitateCanal50(articolMathaus, articolComanda));
+                    articolLivrare.setUm50(articolComanda.getUm50());
+
+                    if (articolMathaus.getCantUmb() > 0)
+                        articolLivrare.setCantUmb(articolMathaus.getCantUmb());
 
                     if (articolComanda.getFilialaSite().equals("BV90")) {
                     } else {
@@ -1665,6 +1661,9 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
                 obj.put("greutate", artComanda.getGreutate());
                 obj.put("greutateBruta", artComanda.getGreutateBruta());
                 obj.put("cantitateInit", artComanda.getCantitateInit());
+
+                obj.put("cantitate50", artComanda.getCantitate50());
+                obj.put("um50", artComanda.getUm50());
 
                 if (!UtilsUser.isAgentOrSDorKA()) {
                     if ((artComanda.getNumeArticol() != null && artComanda.getPonderare() == 1)

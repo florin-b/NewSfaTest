@@ -738,6 +738,8 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 			filialaClp = DateLivrare.getInstance().getCodFilialaCLP();
 		}
 
+		String codFilialaFasonate = DateLivrare.getInstance().getCodFilialaFasonate();
+
 		FurnizorComanda furnizorComanda = null;
 
 		boolean localIsCmdACZC = DateLivrare.getInstance().getTipComandaGed() == TipCmdGed.ARTICOLE_COMANDA;
@@ -753,6 +755,8 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 			DateLivrare.getInstance().setCodFilialaCLP(filialaClp);
 			DateLivrare.getInstance().setTipComandaGed(TipCmdGed.COMANDA_LIVRARE);
 		}
+
+		DateLivrare.getInstance().setCodFilialaFasonate(codFilialaFasonate);
 
 		if (furnizorComanda != null) {
 			DateLivrare.getInstance().setFurnizorComanda(furnizorComanda);

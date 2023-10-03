@@ -49,8 +49,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import enums.EnumZona;
-import main.ZoneBucuresti;
 import my.logon.screen.R;
 import my.logon.screen.adapters.AdapterAdreseLivrare;
 import my.logon.screen.adapters.AdapterObiective;
@@ -1870,7 +1868,8 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
             @SuppressWarnings("unchecked")
             HashMap<String, String> tempMap = (HashMap<String, String>) spinnerJudet.getSelectedItem();
-            numeJudet = tempMap.get("numeJudet");
+            if (tempMap != null)
+                numeJudet = tempMap.get("numeJudet");
 
         }
 
@@ -1929,7 +1928,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
                 if (radioText.isChecked()) {
                     address.setCity(textLocalitate.getText().toString().trim());
-                    address.setStreet(textStrada.getText().toString().trim());
                     address.setSector(UtilsGeneral.getNumeJudet(DateLivrare.getInstance().getCodJudet()));
 
                     if (!isAdresaComplet())
@@ -1945,7 +1943,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
                 } else {
                     address.setCity(DateLivrare.getInstance().getOras());
-                    address.setStreet(DateLivrare.getInstance().getStrada());
                     address.setSector(UtilsGeneral.getNumeJudet(DateLivrare.getInstance().getCodJudet()));
                 }
 
@@ -2154,13 +2151,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         } else
             dateLivrareInstance.setPrelucrareLemn("-1");
 
-        if (dateLivrareInstance.getOras().equalsIgnoreCase("bucuresti") || dateLivrareInstance.getOras().toLowerCase().contains("sector")) {
-            beans.LatLng coordAdresa = new beans.LatLng(dateLivrareInstance.getCoordonateAdresa().latitude, dateLivrareInstance.getCoordonateAdresa().longitude);
-            EnumZona zona = ZoneBucuresti.getZonaBucuresti(coordAdresa);
 
-            dateLivrareInstance.setZonaBucuresti(zona);
-        } else
-            dateLivrareInstance.setZonaBucuresti(EnumZona.NEDEFINIT);
 
         dateLivrareInstance.setFactPaletSeparat(checkFactPaleti.isChecked());
         dateLivrareInstance.setCamionDescoperit(chkCamionDescoperit.isChecked());
