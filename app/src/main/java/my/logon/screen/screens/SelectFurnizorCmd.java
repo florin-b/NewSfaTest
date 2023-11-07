@@ -4,19 +4,6 @@
  */
 package my.logon.screen.screens;
 
-import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-
-import my.logon.screen.listeners.OperatiiFurnizorListener;
-import my.logon.screen.model.DateLivrare;
-import my.logon.screen.model.OperatiiFurnizor;
-import my.logon.screen.model.UserInfo;
-import my.logon.screen.R;
-import my.logon.screen.utils.UtilsGeneral;
-import my.logon.screen.adapters.CautareFurnizoriAdapter;
-import my.logon.screen.adapters.FurnizorProduseAdapter;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ListActivity;
@@ -32,13 +19,28 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+import my.logon.screen.R;
+import my.logon.screen.adapters.CautareFurnizoriAdapter;
+import my.logon.screen.adapters.FurnizorProduseAdapter;
 import my.logon.screen.beans.BeanFurnizor;
 import my.logon.screen.beans.BeanFurnizorProduse;
 import my.logon.screen.beans.FurnizorComanda;
 import my.logon.screen.enums.EnumOperatiiFurnizor;
+import my.logon.screen.listeners.OperatiiFurnizorListener;
+import my.logon.screen.model.DateLivrare;
+import my.logon.screen.model.OperatiiFurnizor;
+import my.logon.screen.model.UserInfo;
+import my.logon.screen.utils.UtilsGeneral;
 
 public class SelectFurnizorCmd extends ListActivity implements OperatiiFurnizorListener {
 
@@ -53,6 +55,12 @@ public class SelectFurnizorCmd extends ListActivity implements OperatiiFurnizorL
 	private OperatiiFurnizor operatiiFurnizor;
 	private FurnizorComanda furnizorComanda;
 	private Spinner spinnerFurnizorProduse;
+	private RadioGroup radioCautare;
+	private enum EnumTipCautareFurnizor {
+		NUME_FURNIZOR, COD_ARTICOL;
+	}
+
+	private EnumTipCautareFurnizor tipCautareFurnizor = EnumTipCautareFurnizor.NUME_FURNIZOR;
 
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -70,6 +78,9 @@ public class SelectFurnizorCmd extends ListActivity implements OperatiiFurnizorL
 
 		this.saveFurnizorButton = (Button) findViewById(R.id.saveClntBtn);
 		addListenerSave();
+
+		radioCautare = (RadioGroup) findViewById(R.id.radioCautare);
+		setListenerRadioCautare();
 
 		ActionBar actionBar = getActionBar();
 		actionBar.setTitle("Selectie furnizor");
@@ -107,6 +118,32 @@ public class SelectFurnizorCmd extends ListActivity implements OperatiiFurnizorL
 			return super.onOptionsItemSelected(item);
 		}
 
+	}
+
+	private void setListenerRadioCautare(){
+		radioCautare.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+				switch (checkedId) {
+
+					case R.id.radioFurnizor:
+						tipCautareFurnizor = EnumTipCautareFurnizor.NUME_FURNIZOR;
+						txtNumeFurnizor.setHint("Nume furnizor");
+						break;
+					case R.id.radioArticol:
+						tipCautareFurnizor = EnumTipCautareFurnizor.COD_ARTICOL;
+						txtNumeFurnizor.setHint("Cod articol");
+						break;
+
+				}
+
+				txtNumeFurnizor.setText("");
+				setListAdapter(null);
+				resLayout.setVisibility(View.INVISIBLE);
+
+			}
+		});
 	}
 
 	private void setSpinnerFurnizorListener() {
@@ -214,6 +251,7 @@ public class SelectFurnizorCmd extends ListActivity implements OperatiiFurnizorL
 		params.put("depart", getExceptiiDepartament());
 		params.put("departAg", UserInfo.getInstance().getCodDepart());
 		params.put("unitLog", UserInfo.getInstance().getUnitLog());
+		params.put("tipCautare", tipCautareFurnizor.toString());
 
 		operatiiFurnizor.getFurnizoriMarfa(params);
 

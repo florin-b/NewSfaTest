@@ -3,6 +3,7 @@ package my.logon.screen.helpers;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -99,6 +100,10 @@ public class HelperMathaus {
 
     public static boolean isArtCostTransp(String numeArticol) {
         return numeArticol != null && numeArticol.toUpperCase().contains("SERV") && numeArticol.toUpperCase().contains("TRANSP");
+    }
+
+    public static boolean isArtTaxaAcces(String numeArticol) {
+        return numeArticol != null && numeArticol.toUpperCase().contains("TAXA") && numeArticol.toUpperCase().contains("ACCES");
     }
 
     public static void eliminaTaxeTransport(List<ArticolComanda> listArticole) {
@@ -302,7 +307,13 @@ public class HelperMathaus {
         if (canal.equals("10") && DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.DISPOZITIE_LIVRARE))
             return false;
 
+        if (canal.equals("10") && DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.ARTICOLE_DETERIORATE))
+            return false;
+
         if (canal.equals("20") && DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.DISPOZITIE_LIVRARE))
+            return false;
+
+        if (canal.equals("20") && DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.ARTICOLE_DETERIORATE))
             return false;
 
         if (!DateLivrare.getInstance().getTransport().equals("TCLI"))
@@ -375,6 +386,11 @@ public class HelperMathaus {
         dateArticol.setQuantity(artCmd.getCantitate());
         dateArticol.setUnit(artCmd.getUm());
 
+        DecimalFormat df = new DecimalFormat("#####0.00");
+        DecimalFormatSymbols dfs = df.getDecimalFormatSymbols();
+        dfs.setDecimalSeparator('.');
+        df.setDecimalFormatSymbols(dfs);
+
         double valPozArt = artCmd.getPret();
 
         if (valPozArt == 0)
@@ -388,10 +404,10 @@ public class HelperMathaus {
             dateArticol.setQuantity(stocTCLI.getCantitate());
 
             double valPozTCLI = (stocTCLI.getCantitate() * valPozArt) / artCmd.getCantitate();
-            dateArticol.setValPoz(Double.parseDouble(nf2.format(valPozTCLI)));
+            dateArticol.setValPoz(Double.parseDouble(df.format(valPozTCLI)));
 
             double greutateTCLI = (stocTCLI.getCantitate() * artCmd.getGreutateBruta()) / artCmd.getCantitate();
-            dateArticol.setGreutate(Double.parseDouble(nf2.format(greutateTCLI)));
+            dateArticol.setGreutate(Double.parseDouble(df.format(greutateTCLI)));
 
             dateArticol.setQuantity50(stocTCLI.getCantitate());
         }
@@ -427,11 +443,14 @@ public class HelperMathaus {
 
     public static List<BeanStocTCLI> getStocTCLIDepozit(String cantitate, String depozit, String um){
 
-        NumberFormat numberFormat = new DecimalFormat("#,##0.00");
+        DecimalFormat df = new DecimalFormat("#####0.00");
+        DecimalFormatSymbols dfs = df.getDecimalFormatSymbols();
+        dfs.setDecimalSeparator('.');
+        df.setDecimalFormatSymbols(dfs);
 
         BeanStocTCLI beanStocTCLI = new BeanStocTCLI();
         try {
-            beanStocTCLI.setCantitate(numberFormat.parse(cantitate).doubleValue());
+            beanStocTCLI.setCantitate(df.parse(cantitate).doubleValue());
         } catch (ParseException e) {
             e.printStackTrace();
         }
