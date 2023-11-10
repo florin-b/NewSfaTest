@@ -103,7 +103,10 @@ public class HelperMathaus {
     }
 
     public static boolean isArtTaxaAcces(String numeArticol) {
-        return numeArticol != null && numeArticol.toUpperCase().contains("TAXA") && numeArticol.toUpperCase().contains("ACCES");
+        boolean taxa1 =  numeArticol != null && numeArticol.toUpperCase().contains("TAXA") && numeArticol.toUpperCase().contains("ACCES");
+        boolean taxa2 =  numeArticol != null && numeArticol.toUpperCase().contains("EXTRA") && numeArticol.toUpperCase().contains("METRO");
+
+        return taxa1 || taxa2;
     }
 
     public static void eliminaTaxeTransport(List<ArticolComanda> listArticole) {

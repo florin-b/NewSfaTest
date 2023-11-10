@@ -924,7 +924,9 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
             ((LinearLayout) findViewById(R.id.layoutBlocScara)).setVisibility(View.GONE);
 
             if (ModificareComanda.selectedCmd.equals(""))
+                //aici
                 ((LinearLayout) findViewById(R.id.layoutFilLivrare)).setVisibility(View.VISIBLE);
+                //operatiiAdresa.getFilialeComenziTCLI();
 
         } else {
             ((LinearLayout) findViewById(R.id.layoutRadioAdrese)).setVisibility(View.VISIBLE);
@@ -2459,6 +2461,9 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
                 break;
             case GET_DATE_POLIGON_LIVRARE:
                 setDatePoligonLivrare((String) result);
+                break;
+            case GET_FILIALE_TCLI:
+                //setFilialeTCLI((String) result);
                 break;
             default:
                 break;

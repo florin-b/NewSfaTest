@@ -162,8 +162,8 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
        //  etUsername.setText("GVISAN");
        //  etPassword.setText("2DqwHP");
 
-         etUsername.setText("ITURIAC");
-         etPassword.setText("FmqZkw");
+       //  etUsername.setText("ITURIAC");
+       //  etPassword.setText("FmqZkw");
 
         //etUsername.setText("EPETRESCU");
         //etPassword.setText("VRf24f");
@@ -639,6 +639,9 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
                     uInfo.setIsMeniuBlocat(Boolean.parseBoolean(UtilsGeneral.getStareMeniu(token[15])[0]));
                     uInfo.setCodPinMeniu(UtilsGeneral.getStareMeniu(token[15])[1]);
                     uInfo.setCodDepart(UtilsGeneral.getDepart(token[1]));
+
+                    uInfo.setMaxNumerarPFizica(Double.valueOf(token[16]));
+                    uInfo.setMaxNumerarPJuridica(Double.valueOf(token[17]));
 
                     if (uInfo.getTipUserSap().equals(Constants.tipSuperAv) || uInfo.getTipUserSap().equals(Constants.tipInfoAv) || UtilsUser.isSMR()
                             || UtilsUser.isCVR() || UtilsUser.isSSCM() || UtilsUser.isCGED() || UtilsUser.isOIVPD())

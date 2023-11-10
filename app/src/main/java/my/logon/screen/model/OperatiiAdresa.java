@@ -40,4 +40,6 @@ public interface OperatiiAdresa {
 
 	public DatePoligonLivrare deserializePoligonLivrare(String result);
 
+	public void getFilialeComenziTCLI();
+
 }

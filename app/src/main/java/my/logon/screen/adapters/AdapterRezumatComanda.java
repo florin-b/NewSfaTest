@@ -363,7 +363,7 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
 
             ArticolComanda artCom = artIterator.next();
 
-            if (isArtTransp(artCom.getNumeArticol())) {
+            if (isArtTransp(artCom.getNumeArticol()) || isArtTaxa(artCom.getNumeArticol())) {
 
                 articolTransport = artCom;
                 adaugaTransportLista(articolTransport);
@@ -395,10 +395,15 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
         if (numeArticol == null)
             return  false;
 
-        boolean isTaxaAcces = HelperMathaus.isArtTaxaAcces(numeArticol);
-        boolean isTaxaTransp = numeArticol != null && numeArticol.toUpperCase().contains("SERV") && numeArticol.toUpperCase().contains("TRANSP");
+        return numeArticol != null && numeArticol.toUpperCase().contains("SERV") && numeArticol.toUpperCase().contains("TRANSP");
+    }
 
-        return isTaxaTransp || isTaxaAcces;
+
+    private boolean isArtTaxa(String numeArticol){
+        if (numeArticol == null)
+            return  false;
+
+        return HelperMathaus.isArtTaxaAcces(numeArticol);
 
     }
 

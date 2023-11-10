@@ -111,6 +111,11 @@ public class OperatiiAdresaImpl implements OperatiiAdresa, AsyncTaskListener {
 		performOperation();
 	}
 
+	public void getFilialeComenziTCLI(){
+		numeComanda = EnumOperatiiAdresa.GET_FILIALE_TCLI;
+		performOperation();
+	}
+
 	public List<String> deserializeListLocalitati(Object resultList) {
 
 		List<String> listLocalitati = new ArrayList<String>();

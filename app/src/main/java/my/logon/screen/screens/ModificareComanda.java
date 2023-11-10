@@ -750,14 +750,16 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
                         comandaFinala.setNecesarAprobariCV(comandaSelectata.getAprobariNecesare());
 
                         if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("N") || dateLivrareInstance.getTipPlata().equals("E1") || dateLivrareInstance.getTipPlata().equals("R")) && tipClientVar.equals("PJ")) {
-                            if (totalComanda > 1000) {
-                                Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 1000 RON!", Toast.LENGTH_SHORT).show();
+                            if (totalComanda > UserInfo.getInstance().getMaxNumerarPJuridica()) {
+                                Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de " +
+                                        UserInfo.getInstance().getMaxNumerarPJuridica() + " RON!", Toast.LENGTH_SHORT).show();
                                 return;
                             } else
                                 getTotalComenziNumerar();
                         } else if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("N") || dateLivrareInstance.getTipPlata().equals("E1") || dateLivrareInstance.getTipPlata().equals("R")) && tipClientVar.equals("PF")) {
-                            if (totalComanda > 5000) {
-                                Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT).show();
+                            if (totalComanda > UserInfo.getInstance().getMaxNumerarPFizica()) {
+                                Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de " +
+                                        UserInfo.getInstance().getMaxNumerarPFizica() + " RON!", Toast.LENGTH_SHORT).show();
                                 return;
                             } else
                                 getTotalComenziNumerar();
@@ -1134,10 +1136,10 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
     private void afisTotalComenziNumerar(String totalNumerar) {
 
-        double valPragNumerar = 1000;
+        double valPragNumerar = UserInfo.getInstance().getMaxNumerarPJuridica();
 
         if (tipClientVar.equals("PF"))
-            valPragNumerar = 5000;
+            valPragNumerar = UserInfo.getInstance().getMaxNumerarPFizica();
 
         if (totalComanda + Double.valueOf(totalNumerar) > valPragNumerar) {
 

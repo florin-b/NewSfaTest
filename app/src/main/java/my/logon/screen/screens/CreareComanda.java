@@ -1102,8 +1102,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
 
                         if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("N") || dateLivrareInstance.getTipPlata().equals("R")) && CreareComanda.tipClientVar.equals("PJ")) {
-                            if (totalComanda > 1000) {
-                                Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 1000 RON!", Toast.LENGTH_SHORT).show();
+                            if (totalComanda > UserInfo.getInstance().getMaxNumerarPJuridica()) {
+                                Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de " + UserInfo.getInstance().getMaxNumerarPJuridica() + " RON!", Toast.LENGTH_SHORT).show();
                                 return;
                             } else
                                 getTotalComenziNumerar();
@@ -1146,11 +1146,12 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
     private void afisTotalComenziNumerar(String totalNumerar) {
 
-        if (totalComanda + Double.valueOf(totalNumerar) > 1000) {
+        if (totalComanda + Double.valueOf(totalNumerar) > UserInfo.getInstance().getMaxNumerarPJuridica()) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(
-                    "\nLa acest client valoarea comenzilor cu plata in numerar livrate in data de " + DateLivrare.getInstance().getDataLivrare() + " depaseste 1000 de lei.\n\n" +
+                    "\nLa acest client valoarea comenzilor cu plata in numerar livrate in data de " + DateLivrare.getInstance().getDataLivrare() + " depaseste " +
+                            UserInfo.getInstance().getMaxNumerarPJuridica() + " de lei.\n\n" +
                             "Pentru a salva comanda trebuie sa schimbati metoda de plata sau data de livrare.\n").setCancelable(false)
                     .setPositiveButton("Inchide", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
