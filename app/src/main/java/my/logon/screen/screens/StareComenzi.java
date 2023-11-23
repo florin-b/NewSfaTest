@@ -366,7 +366,7 @@ public class StareComenzi extends AppCompatActivity implements ComenziDAOListene
 
 			LatLng coordMasina = new LatLng(Double.valueOf(localCoords[0]), Double.valueOf(localCoords[1]));
 
-			if (coordClient.latitude > 0) {
+			if (coordClient != null && coordClient.latitude > 0) {
 				MarkerOptions markerClient = new MarkerOptions();
 				markerClient.position(coordClient);
 				markerClient.icon(BitmapDescriptorFactory.fromResource(R.drawable.customer));

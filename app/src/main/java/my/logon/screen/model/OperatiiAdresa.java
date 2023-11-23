@@ -5,6 +5,7 @@ import java.util.List;
 
 import my.logon.screen.beans.BeanAdreseJudet;
 import my.logon.screen.beans.BeanDateLivrareClient;
+import my.logon.screen.beans.BeanFilialaLivrare;
 import my.logon.screen.beans.DatePoligonLivrare;
 import my.logon.screen.enums.EnumLocalitate;
 import my.logon.screen.listeners.OperatiiAdresaListener;
@@ -41,5 +42,7 @@ public interface OperatiiAdresa {
 	public DatePoligonLivrare deserializePoligonLivrare(String result);
 
 	public void getFilialeComenziTCLI();
+
+	public List<BeanFilialaLivrare> deserializeFilialeLivrare(String result);
 
 }

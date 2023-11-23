@@ -1024,6 +1024,7 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 						unArticol.setCantitate50(Double.valueOf(cantitate50));
 						unArticol.setUm50(um50);
 
+						unArticol.setSintetic(articolDBSelected.getSintetic());
 
 						unArticol.setCantitateInit(Double.valueOf(cantArticol));
 

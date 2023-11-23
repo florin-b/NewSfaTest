@@ -1107,7 +1107,11 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
                                 return;
                             } else
                                 getTotalComenziNumerar();
-                        } else
+                        } else if (isGreutateMaximaComanda()) {
+                            Toast.makeText(getApplicationContext(),Constants.MSG_MASA_MAXIMA_CMD, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        else
                             valideazaFinal();
 
                     }
@@ -1120,6 +1124,18 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
         }
     }
+
+    private boolean isGreutateMaximaComanda(){
+
+        double greutateComanda = ListaArticoleComanda.getInstance().getGreutateKgArticole();
+
+        if (greutateComanda > Constants.MAX_GREUTATE_CMD_KG && DateLivrare.getInstance().getTransport().equals("TRAP")){
+            return true;
+        }
+
+        return false;
+    }
+
 
     private void valideazaFinal() {
 
@@ -2115,7 +2131,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             List<BeanStocTCLI> listStocTCLI;
 
             if (HelperMathaus.isConditiiDepozitTCLI(artCmd, "10")) {
-                listStocTCLI = HelperMathaus.genereazaStocArticolTCLI(artCmd);
+                listStocTCLI = HelperMathaus.genereazaStocUnitLog(artCmd);
 
                 for (BeanStocTCLI stocTCLI : listStocTCLI) {
                     DateArticolMathaus dateArticol = HelperMathaus.genereazaStocArticolTCLI(artCmd, stocTCLI);
