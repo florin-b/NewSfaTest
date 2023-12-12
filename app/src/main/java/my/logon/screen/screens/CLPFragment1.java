@@ -110,7 +110,7 @@ public class CLPFragment1 extends Fragment implements OperatiiClientListener, Op
 	String[] tipTransport = { "TRAP - Transport Arabesque", "TCLI - Transport client", "TERT - Transport curier" };
 
 	String[] depozite = { "V1 - vanzare", "V2 - vanzare", "V3 - vanzare", "G1 - gratuite", "G2 - gratuite", "G3 - gratuite", "D1 - deteriorate",
-			"D2 - deteriorate", "D3 - deteriorate", "DESC", "01RZ", "TAMP" };
+			"D2 - deteriorate", "D3 - deteriorate", "DESC", "01RZ", "TAMP", "BRICO" };
 
 	String[] tipCamion = { "Prelata", "Perdea", "Platforma", "Descoperita", "Macara" };
 	String[] tipIncarcare = { "Complet", "Partial" };
@@ -784,12 +784,10 @@ public class CLPFragment1 extends Fragment implements OperatiiClientListener, Op
 		listFiliale.add(temp);
 
 		for (i = 0; i < numeFiliala.length; i++) {
-			if (!codFiliala[i].equals(UserInfo.getInstance().getUnitLog())) {
 				temp = new HashMap<String, String>();
 				temp.put("numeJudet", numeFiliala[i]);
 				temp.put("codJudet", codFiliala[i]);
 				listFiliale.add(temp);
-			}
 
 		}
 

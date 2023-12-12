@@ -111,7 +111,7 @@ import my.logon.screen.model.Comanda;
 import my.logon.screen.model.ComenziDAO;
 import my.logon.screen.model.Constants;
 import my.logon.screen.model.DateLivrare;
-import my.logon.screen.model.InfoStrings;
+import my.logon.screen.model.ClientiGenericiGedInfoStrings;
 import my.logon.screen.model.ListaArticoleComandaGed;
 import my.logon.screen.model.OperatiiArticol;
 import my.logon.screen.model.OperatiiArticolFactory;
@@ -2443,7 +2443,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
                 nrCmdGED = varResp[2];
                 displayDlgPretTransp(saveResponse);
             } else {
-                Toast.makeText(getApplicationContext(), InfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), ClientiGenericiGedInfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_SHORT).show();
                 clearAllData();
 
                 ActionBar actionBar = getActionBar();
@@ -2740,7 +2740,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
         if (!saveResponse.equals("-1")) {
 
             clearAllData();
-            Toast.makeText(getApplicationContext(), InfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), ClientiGenericiGedInfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_SHORT).show();
 
         } else {
             Toast.makeText(getApplicationContext(), "Comanda NU a fost salvata!", Toast.LENGTH_LONG).show();

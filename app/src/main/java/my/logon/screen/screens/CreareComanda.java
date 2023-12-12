@@ -102,7 +102,7 @@ import my.logon.screen.model.Comanda;
 import my.logon.screen.model.ComenziDAO;
 import my.logon.screen.model.Constants;
 import my.logon.screen.model.DateLivrare;
-import my.logon.screen.model.InfoStrings;
+import my.logon.screen.model.ClientiGenericiGedInfoStrings;
 import my.logon.screen.model.ListaArticoleComanda;
 import my.logon.screen.model.OperatiiArticol;
 import my.logon.screen.model.OperatiiArticolImpl;
@@ -2240,7 +2240,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
                         clearAllData();
                     }
 
-                    Toast.makeText(getApplicationContext(), InfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), ClientiGenericiGedInfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_SHORT).show();
 
                 } else {
                     // instiintare pret transport client (daca e cazul) si apoi
@@ -2253,7 +2253,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
                     } else
                     // comanda ged fara transport client
                     {
-                        Toast.makeText(getApplicationContext(), InfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), ClientiGenericiGedInfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_SHORT).show();
 
                         clearAllData();
                     }
@@ -2442,7 +2442,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         if (!saveResponse.equals("-1")) {
 
             clearAllData();
-            Toast.makeText(getApplicationContext(), InfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), ClientiGenericiGedInfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_SHORT).show();
 
         } else {
             Toast.makeText(getApplicationContext(), "Comanda NU a fost salvata!", Toast.LENGTH_LONG).show();
@@ -2576,7 +2576,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         while (iterator.hasNext()) {
             ArticolComanda articolComanda = iterator.next();
 
-            if (!InfoStrings.isMatTransport(articolComanda.getCodArticol()) && !InfoStrings.isMatTransportNume(articolComanda.getNumeArticol())) {
+            if (!ClientiGenericiGedInfoStrings.isMatTransport(articolComanda.getCodArticol()) && !ClientiGenericiGedInfoStrings.isMatTransportNume(articolComanda.getNumeArticol())) {
                 BeanArticolStoc articolStoc = new BeanArticolStoc();
 
                 if (articolComanda.getCodArticol().length() == 8)

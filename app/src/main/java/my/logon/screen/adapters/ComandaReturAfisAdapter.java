@@ -5,7 +5,7 @@ import java.text.NumberFormat;
 import java.util.List;
 
 import my.logon.screen.R;
-import my.logon.screen.model.InfoStrings;
+import my.logon.screen.model.ClientiGenericiGedInfoStrings;
 import my.logon.screen.utils.UtilsFormatting;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -55,7 +55,7 @@ public class ComandaReturAfisAdapter extends BaseAdapter {
 		viewHolder.textIdCmd.setText(comanda.getId());
 		viewHolder.textClient.setText(comanda.getNumeClient());
 		viewHolder.textData.setText(UtilsFormatting.formatDate(comanda.getDataCreare()));
-		viewHolder.textStare.setText(InfoStrings.statusAprobCmd(Integer.parseInt(comanda.getStatus())));
+		viewHolder.textStare.setText(ClientiGenericiGedInfoStrings.statusAprobCmd(Integer.parseInt(comanda.getStatus())));
 		viewHolder.textNrDocument.setText(comanda.getNrDocument());
 		viewHolder.textNumeAgent.setText(comanda.getNumeAgent());
 
