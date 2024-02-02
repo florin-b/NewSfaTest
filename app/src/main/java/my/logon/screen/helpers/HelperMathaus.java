@@ -431,7 +431,7 @@ public class HelperMathaus {
 
         dateArticol.setUnit50(artCmd.getUm50());
 
-        if (UtilsComenzi.isDespozitDeteriorate(artCmd.getDepozit()) || isDepozitExceptie(artCmd.getDepozit()))
+        if (UtilsComenzi.isDespozitDeteriorate(artCmd.getDepozit()) || isDepozitExceptie(artCmd.getDepozit()) || UtilsComenzi.isLivrareCustodie())
             dateArticol.setDepozit(artCmd.getDepozit());
         else if (stocTCLI != null && !stocTCLI.getDepozit().trim().isEmpty())
             dateArticol.setDepozit(stocTCLI.getDepozit());

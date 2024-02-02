@@ -784,6 +784,9 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
     private boolean isGreutateMaximaComanda(){
 
+        if (1==1)
+            return false;
+
         double greutateComanda = UtilsComenzi.getGreutateKgArticole(listArticoleComanda);
 
         if (greutateComanda > Constants.MAX_GREUTATE_CMD_KG && DateLivrare.getInstance().getTransport().equals("TRAP")){

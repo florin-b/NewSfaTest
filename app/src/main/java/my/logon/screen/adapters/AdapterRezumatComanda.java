@@ -31,6 +31,7 @@ import my.logon.screen.model.ArticolComanda;
 import my.logon.screen.model.ArticolComandaGed;
 import my.logon.screen.model.DateLivrare;
 import my.logon.screen.model.UserInfo;
+import my.logon.screen.utils.UtilsComenzi;
 import my.logon.screen.utils.UtilsGeneral;
 
 public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTransportListener {
@@ -754,15 +755,21 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
         StringBuilder str = new StringBuilder();
 
         valoareTotal = 0;
+        double valoarePozitie = 0;
 
         for (ArticolComanda art : rezumat.getListArticole()) {
             str.append(art.getNumeArticol());
             str.append("\n");
 
             if (art instanceof ArticolComandaGed)
-                valoareTotal += canalDistrib.equals("10") ? art.getPret() : art.getPretUnitarClient() * art.getCantUmb();
+                valoarePozitie = canalDistrib.equals("10") ? art.getPret() : art.getPretUnitarClient() * art.getCantUmb();
             else
-                valoareTotal += art.getPret();
+                valoarePozitie = art.getPret();
+
+            if (UtilsComenzi.isArticolCustodieDistrib(art))
+                valoarePozitie = 0;
+
+            valoareTotal += valoarePozitie;
         }
 
         return str.toString();
@@ -796,6 +803,9 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
                 valoareArticol = canalDistrib.equals("10") ? art.getPret() : art.getPretUnitarClient() * art.getCantUmb();
             else
                 valoareArticol = art.getPret();
+
+            if (UtilsComenzi.isArticolCustodieDistrib(art))
+                valoareArticol = 0;
 
             str.append(nf.format(valoareArticol));
             str.append(" ");

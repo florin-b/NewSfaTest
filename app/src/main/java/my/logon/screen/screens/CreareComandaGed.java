@@ -1360,10 +1360,9 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
                             } else
                                 getTotalComenziNumerar();
                         } else if (isGreutateMaximaComanda()) {
-                            Toast.makeText(getApplicationContext(),Constants.MSG_MASA_MAXIMA_CMD, Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), Constants.MSG_MASA_MAXIMA_CMD, Toast.LENGTH_LONG).show();
                             return;
-                        }
-                        else
+                        } else
                             valideazaFinal();
 
                     }
@@ -1377,11 +1376,14 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
         }
     }
 
-    private boolean isGreutateMaximaComanda(){
+    private boolean isGreutateMaximaComanda() {
+
+        if (1 == 1)
+            return false;
 
         double greutateComanda = ListaArticoleComandaGed.getInstance().getGreutateKgArticole();
 
-        if (greutateComanda > Constants.MAX_GREUTATE_CMD_KG && DateLivrare.getInstance().getTransport().equals("TRAP")){
+        if (greutateComanda > Constants.MAX_GREUTATE_CMD_KG && DateLivrare.getInstance().getTransport().equals("TRAP")) {
             return true;
         }
 
@@ -1462,12 +1464,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
         } else if (HelperCreareComanda.isConditiiAlertaIndoire(ListaArticoleComandaGed.getInstance().getListArticoleComanda())) {
             HelperDialog.showInfoDialog(CreareComandaGed.this, "Atentie!", "Selectati tipul de prelucrare (indoire sau debitare).");
         } else {
-
-            if (tipComandaGed.equals(TipCmdGed.COMANDA_AMOB))
-                verificaPretMacara();
-            else
-                getLivrariMathaus();
-
+            getLivrariMathaus();
         }
 
     }
@@ -1557,7 +1554,8 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
     private boolean isConditiiCostTransport() {
         return DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.COMANDA_VANZARE) ||
                 DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.COMANDA_LIVRARE) || isComandaDL_TRAP() ||
-                DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.ARTICOLE_DETERIORATE);
+                DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.ARTICOLE_DETERIORATE) ||
+                DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.COMANDA_AMOB);
     }
 
     private void getLivrariMathaus() {
@@ -2438,17 +2436,11 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
     private void saveCmdStatus(String saveResponse) {
         if (!saveResponse.equals("-1")) {
 
-            if (tipComandaGed == TipCmdGed.COMANDA_AMOB) {
-                String[] varResp = saveResponse.split("#");
-                nrCmdGED = varResp[2];
-                displayDlgPretTransp(saveResponse);
-            } else {
-                Toast.makeText(getApplicationContext(), ClientiGenericiGedInfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_SHORT).show();
-                clearAllData();
+            Toast.makeText(getApplicationContext(), ClientiGenericiGedInfoStrings.statusSAPMsg(Integer.parseInt(saveResponse)), Toast.LENGTH_SHORT).show();
+            clearAllData();
 
-                ActionBar actionBar = getActionBar();
-                actionBar.setTitle("Comanda GED");
-            }
+            ActionBar actionBar = getActionBar();
+            actionBar.setTitle("Comanda GED");
 
         } else {
             saveComandaMathaus = false;
@@ -2950,7 +2942,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
         if (btnSaveCmd) {
 
             //comanda simulata
-            if (tipComandaGed == TipCmdGed.ARTICOLE_COMANDA || tipComandaGed == TipCmdGed.DISPOZITIE_LIVRARE || tipComandaGed == TipCmdGed.COMANDA_AMOB) {
+            if (tipComandaGed == TipCmdGed.ARTICOLE_COMANDA || tipComandaGed == TipCmdGed.DISPOZITIE_LIVRARE) {
                 performSaveCmd();
             } else {
                 afisRezumatComandaDialog(livrareMathaus.getCostTransport(), true);
@@ -3025,14 +3017,8 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
         calculProcente();
 
-        // transport
-        if (DateLivrare.getInstance().getTransport().equals("TRAP") || DateLivrare.getInstance().getTransport().equals("TERT")) {
-            // valTranspBtn.setVisibility(View.VISIBLE);
-            //valTranspBtn.setText("Transp: " + String.valueOf(DateLivrare.getInstance().getValTransport()));
-        } else {
-            valTranspBtn.setVisibility(View.INVISIBLE);
-            valTransport = 0;
-        }
+        valTranspBtn.setVisibility(View.INVISIBLE);
+        valTransport = 0;
 
     }
 

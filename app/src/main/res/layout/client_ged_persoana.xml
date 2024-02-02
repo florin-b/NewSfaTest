@@ -429,6 +429,7 @@
                 android:textColor="@color/detColor4"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:visibility="gone"
                 android:typeface="serif" />
 
             <RadioButton

@@ -820,11 +820,13 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 			else
 				tipArticol = "A";
 
+			String departCautare = DepartamentAgent.getDepartArticole(selectedDepartamentAgent);
+
 			HashMap<String, String> params = UtilsGeneral.newHashMapInstance();
 			params.put("searchString", numeArticol);
 			params.put("tipArticol", tipArticol);
 			params.put("tipCautare", tipCautare);
-			params.put("departament", selectedDepartamentAgent);
+			params.put("departament", departCautare);
 			params.put("filiala", UserInfo.getInstance().getUnitLog());
 			params.put("codUser", UserInfo.getInstance().getCod());
 

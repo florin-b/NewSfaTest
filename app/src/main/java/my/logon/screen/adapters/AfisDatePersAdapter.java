@@ -20,7 +20,7 @@ public class AfisDatePersAdapter extends BaseAdapter {
 	private int[] colors = new int[] { 0x3098BED9, 0x30E8E8E8 };
 
 	static class ViewHolder {
-		TextView textNume, textCnp, textAdresa;
+		TextView textNume, textCnp, textAdresa, textDiviziiClient;
 	}
 
 	public AfisDatePersAdapter(Context context, List<BeanDatePersonale> listDatePers) {
@@ -40,6 +40,7 @@ public class AfisDatePersAdapter extends BaseAdapter {
 			viewHolder.textNume = (TextView) convertView.findViewById(R.id.textNume);
 			viewHolder.textCnp = (TextView) convertView.findViewById(R.id.textCnp);
 			viewHolder.textAdresa = (TextView) convertView.findViewById(R.id.textAdresa);
+			viewHolder.textDiviziiClient = (TextView) convertView.findViewById(R.id.textDiviziiClient);
 
 			convertView.setTag(viewHolder);
 
@@ -58,6 +59,7 @@ public class AfisDatePersAdapter extends BaseAdapter {
 			adresa += ", " + datePers.getStrada();
 
 		viewHolder.textAdresa.setText(adresa);
+		viewHolder.textDiviziiClient.setText(!datePers.getDivizii().isEmpty() ? "Divizii:" + datePers.getDivizii() : "");
 
 		convertView.setBackgroundColor(colors[colorPos]);
 		return convertView;

@@ -432,6 +432,7 @@ public class ArticolModificareAdapter extends BaseAdapter implements OperatiiArt
 		double pretInit = articolComanda.getPretUnit() / (1 - articolComanda.getProcent() / 100);
 
 		listArticole.get(pozitieArticolSelectat).setPretUnit(articolConditie.getValoare());
+		listArticole.get(pozitieArticolSelectat).setPretUnitarClient(articolConditie.getValoare());
 
 		double valoareArticol = listArticole.get(pozitieArticolSelectat).getCantitate() * articolConditie.getValoare();
 

@@ -13,6 +13,7 @@ public class BeanDatePersonale {
 	private boolean clientBlocat;
 	private String tipPlata;
 	private String codClient;
+	private String divizii;
 
 	public String getCnp() {
 		return cnp;
@@ -86,6 +87,14 @@ public class BeanDatePersonale {
 
 	public void setCodClient(String codClient) {
 		this.codClient = codClient;
+	}
+
+	public String getDivizii() {
+		return divizii;
+	}
+
+	public void setDivizii(String divizii) {
+		this.divizii = divizii;
 	}
 
 	@Override

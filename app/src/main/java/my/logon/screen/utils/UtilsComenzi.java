@@ -14,11 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import my.logon.screen.beans.BeanStocTCLI;
+import my.logon.screen.beans.DatePoligonLivrare;
 import my.logon.screen.enums.TipCmdDistrib;
 import my.logon.screen.model.ArticolComanda;
+import my.logon.screen.model.ClientiGenericiGedInfoStrings;
 import my.logon.screen.model.Constants;
 import my.logon.screen.model.DateLivrare;
-import my.logon.screen.model.ClientiGenericiGedInfoStrings;
 
 public class UtilsComenzi {
 
@@ -322,6 +323,15 @@ public class UtilsComenzi {
 
 	}
 
+	public static void showFilialaLivrareDialog(Context context, String filiala){
+		StringBuilder infoMsg = new StringBuilder();
+		infoMsg.append("\n");
+		infoMsg.append("Completati o adresa de livrare arondata filialei " + filiala + ".");
+		infoMsg.append("\n");
+
+		UtilsComenzi.showAlertDialog(context, infoMsg.toString());
+	}
+
 
 
 	public static void showAlertDialog(Context context, String message){
@@ -339,6 +349,24 @@ public class UtilsComenzi {
 		dlgAlert.create().show();
 	}
 
+	public static boolean isArticolCustodieDistrib(ArticolComanda articolComanda){
 
+		if (!DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.LIVRARE_CUSTODIE))
+			return false;
+
+		if (!articolComanda.isUmPalet() && !articolComanda.getCodArticol().replaceFirst("^0*", "").startsWith("30"))
+			return true;
+
+		return false;
+
+
+
+	}
+
+	public static boolean isModifTCLIinTRAP(DatePoligonLivrare poligonLivrare){
+		return DateLivrare.getInstance().getTransport().equals("TRAP") && DateLivrare.getInstance().getFilialaLivrareTCLI() != null &&
+				!DateLivrare.getInstance().getFilialaLivrareTCLI().getUnitLog().equals(poligonLivrare.getFilialaPrincipala());
+
+	}
 
 }

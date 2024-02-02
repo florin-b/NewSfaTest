@@ -162,6 +162,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
     private boolean isAdresaLivrareTCLI;
     private String ulLivrareModifCmd;
     private EditText textMail;
+    private CheckBox checkCustodie;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -354,7 +355,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         spinnerJudet = (Spinner) findViewById(R.id.spinnerJudet);
         spinnerJudet.setOnItemSelectedListener(new regionSelectedListener());
 
-        spinnerJudet.setOnTouchListener(new SpinnerTouchListener());
+
 
         listJudete = new ArrayList<HashMap<String, String>>();
         adapterJudete = new SimpleAdapter(this, listJudete, R.layout.rowlayoutjudete, new String[]{"numeJudet", "codJudet"}, new int[]{R.id.textNumeJudet,
@@ -366,7 +367,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         spinnerTermenPlata.setAdapter(adapterTermenPlata);
 
         spinnerAdreseLivrare = (Spinner) findViewById(R.id.spinnerAdreseLivrare);
-        spinnerAdreseLivrare.setOnTouchListener(new SpinnerTouchListener());
+
 
         setListenerSpinnerAdreseLivrare();
 
@@ -572,6 +573,14 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
             textStrada.setText(DateLivrare.getInstance().getStrada());
         }
 
+        checkCustodie = (CheckBox) findViewById(R.id.checkCustodie);
+        checkCustodie.setVisibility(View.INVISIBLE);
+        setListenerCustodie();
+        if (isConditiiCustodie()){
+            checkCustodie.setVisibility(View.INVISIBLE);
+            checkCustodie.setChecked(DateLivrare.getInstance().isComandaCustodie());
+        }
+
         isAdresaLivrareTCLI = false;
         if (bundle != null && bundle.getString("parrentClass") != null && bundle.getString("parrentClass").equals("CreareComanda")) {
             if (bundle.getString("adrLivrareTCLI").equals(("true"))) {
@@ -580,6 +589,30 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
             }
         }
 
+    }
+
+    private boolean isConditiiCustodie(){
+        return ModificareComanda.selectedCmd.equals("") || DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_VANZARE)
+                || DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_LIVRARE);
+    }
+
+    private void setListenerCustodie(){
+        checkCustodie.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) {
+                    spinnerTransp.setSelection(1,true);
+                    spinnerTransp.setEnabled(false);
+                } else {
+                    spinnerTransp.setSelection(0, true);
+                    spinnerTransp.setEnabled(true);
+                }
+
+                DateLivrare.getInstance().setComandaCustodie(isChecked);
+
+            }
+        });
     }
 
     private void afisAdreseLivrareTCLI(String judeteTCLI) {
@@ -1323,15 +1356,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
     public void addListenerRadioLista() {
 
-        radioLista.setOnTouchListener(new OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                if (existaArticole()) {
-                    Toast.makeText(getApplicationContext(), "Stergeti mai intai toate articolele", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                return false;
-            }
-        });
+
 
         radioLista.setOnClickListener(new OnClickListener() {
             @Override
@@ -1365,15 +1390,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
     public void addListenerRadioText() {
 
-        radioText.setOnTouchListener(new OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                if (existaArticole()) {
-                    Toast.makeText(getApplicationContext(), "Stergeti mai intai toate articolele", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                return false;
-            }
-        });
 
         radioText.setOnClickListener(new OnClickListener() {
             @Override
@@ -1656,24 +1672,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
     }
 
 
-    public class SpinnerTouchListener implements OnTouchListener {
 
-        public boolean onTouch(View v, MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (existaArticole()) {
-                    Toast.makeText(getApplicationContext(), "Stergeti mai intai toate articolele.", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-    }
-
-    private boolean existaArticole() {
-        return ListaArticoleComanda.getInstance().getListArticoleComanda() != null && ListaArticoleComanda.getInstance().getListArticoleComanda().size() > 0 && !DateLivrare.getInstance().getTransport().equals("TCLI");
-    }
 
     public class regionSelectedListener implements OnItemSelectedListener {
         @SuppressWarnings("unchecked")
@@ -2150,16 +2149,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         return radioText != null && radioText.isChecked();
     }
 
-    private boolean hasCoordinates() {
-        if (DateLivrare.getInstance().getCoordonateAdresa() == null)
-            return false;
-        else if (DateLivrare.getInstance().getCoordonateAdresa().latitude == 0)
-            return false;
-
-        return true;
-    }
-
-
     private void getDatePoligonLivrare() {
 
         HashMap<String, String> params = new HashMap<String, String>();
@@ -2171,7 +2160,15 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         DatePoligonLivrare poligonLivrare = operatiiAdresa.deserializePoligonLivrare(datePoligonLivrare);
         DateLivrare.getInstance().setDatePoligonLivrare(null);
 
-        if (!UtilsComenzi.isAdresaUnitLogModifCmd(this, ulLivrareModifCmd, poligonLivrare.getFilialaPrincipala())) {
+        if (UtilsComenzi.isModifTCLIinTRAP(poligonLivrare)){
+            UtilsComenzi.showFilialaLivrareDialog(this, DateLivrare.getInstance().getFilialaLivrareTCLI().getUnitLog());
+            return;
+        }
+        else if (DateLivrare.getInstance().getTransport().equals("TRAP") && UtilsComenzi.isComandaClp() && !UtilsComenzi.getFilialaDistrib(DateLivrare.getInstance().getCodFilialaCLP()).equals(poligonLivrare.getFilialaPrincipala())){
+            UtilsComenzi.showFilialaLivrareDialog(this, DateLivrare.getInstance().getCodFilialaCLP());
+            return;
+        }
+        else if (!UtilsComenzi.isAdresaUnitLogModifCmd(this, ulLivrareModifCmd, poligonLivrare.getFilialaPrincipala())) {
             return;
         } else {
             if (!poligonLivrare.getFilialaPrincipala().trim().isEmpty()) {
@@ -2183,9 +2180,13 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
                     DateLivrare.getInstance().setTonaj("20");
                 else {
                     DateLivrare.getInstance().setTonaj(poligonLivrare.getLimitareTonaj());
-                    if (isCondInfoRestrictiiTonaj())
+                    if (isCondInfoRestrictiiTonaj() && !poligonLivrare.isRestrictionat())
                         Toast.makeText(getApplicationContext(), "La aceasta adresa exista o limitare de tonaj de " + poligonLivrare.getLimitareTonaj() + " T.", Toast.LENGTH_LONG).show();
                 }
+            }
+
+            if (DateLivrare.getInstance().getTransport().equals("TRAP") && poligonLivrare.isRestrictionat()) {
+                Toast.makeText(this, Constants.ADRESA_ZONA_RESTRICTIONATA, Toast.LENGTH_LONG).show();
             }
 
             finish();

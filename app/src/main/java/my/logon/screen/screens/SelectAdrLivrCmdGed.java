@@ -13,11 +13,9 @@ import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -376,7 +374,6 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
             spinnerJudet = (Spinner) findViewById(R.id.spinnerJudet);
             spinnerJudet.setOnItemSelectedListener(new regionSelectedListener());
 
-            spinnerJudet.setOnTouchListener(new regioClickListener());
 
             operatiiAdresa = new OperatiiAdresaImpl(this);
             operatiiAdresa.setOperatiiAdresaListener(this);
@@ -863,7 +860,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         getAdreseLivrareClient();
         setSpinnerAdreseItemSelectedListener();
 
-        spinnerAdreseLivrare.setOnTouchListener(new SpinnerAdreseTouchListener());
+
 
     }
 
@@ -879,19 +876,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
 
 
-    public class SpinnerAdreseTouchListener implements OnTouchListener {
 
-        public boolean onTouch(View v, MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (existaArticole()) {
-                    Toast.makeText(getApplicationContext(), "Stergeti mai intai toate articolele.", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-            }
-            return false;
-        }
-
-    }
 
     private void setSpinnerAdreseItemSelectedListener() {
         spinnerAdreseLivrare.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -1077,16 +1062,6 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
     private void addListenerRadioAltaAdresa() {
 
-        radioAltaAdresa.setOnTouchListener(new OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                if (existaArticole()) {
-                    Toast.makeText(getApplicationContext(), "Stergeti mai intai toate articolele.", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                return false;
-            }
-        });
-
         radioAltaAdresa.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
                 if (arg1) {
@@ -1104,16 +1079,6 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
     }
 
     private void addListenerRadioAdresaSediu() {
-
-        radioAdresaSediu.setOnTouchListener(new OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                if (existaArticole()) {
-                    Toast.makeText(getApplicationContext(), "Stergeti toate articolele", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                return false;
-            }
-        });
 
         radioAdresaSediu.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -1725,20 +1690,6 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
     }
 
-    public class regioClickListener implements OnTouchListener {
-
-        public boolean onTouch(View v, MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (existaArticole()) {
-                    Toast.makeText(getApplicationContext(), "Stergeti mai intai toate articolele.", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-    }
 
     public class regionLivrareSelectedListener implements OnItemSelectedListener {
         @SuppressWarnings("unchecked")
@@ -2055,7 +2006,19 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         DatePoligonLivrare poligonLivrare = operatiiAdresa.deserializePoligonLivrare(datePoligonLivrare);
         DateLivrare.getInstance().setDatePoligonLivrare(null);
 
-        if (!UtilsComenzi.isAdresaUnitLogModifCmd(this, ulLivrareModifCmd, poligonLivrare.getFilialaPrincipala())) {
+        if (UtilsComenzi.isModifTCLIinTRAP(poligonLivrare)){
+            UtilsComenzi.showFilialaLivrareDialog(this, DateLivrare.getInstance().getFilialaLivrareTCLI().getUnitLog());
+            return;
+        }
+        else if (DateLivrare.getInstance().getTransport().equals("TRAP") && UtilsComenzi.isComandaClp() && !UtilsComenzi.getFilialaDistrib(DateLivrare.getInstance().getCodFilialaCLP()).equals(poligonLivrare.getFilialaPrincipala())){
+            UtilsComenzi.showFilialaLivrareDialog(this, DateLivrare.getInstance().getCodFilialaCLP());
+            return;
+        }
+        else if (!UtilsComenzi.isAdresaUnitLogModifCmd(this, ulLivrareModifCmd, poligonLivrare.getFilialaPrincipala())) {
+            return;
+        }
+        else if (DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.COMANDA_AMOB) && !CreareComandaGed.filialaAlternativa.equals(poligonLivrare.getFilialaPrincipala())) {
+            UtilsComenzi.showFilialaLivrareDialog(this, CreareComandaGed.filialaAlternativa);
             return;
         }
         else {
@@ -2068,9 +2031,13 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
                     DateLivrare.getInstance().setTonaj("20");
                 else {
                     DateLivrare.getInstance().setTonaj(poligonLivrare.getLimitareTonaj());
-                    if (isCondInfoRestrictiiTonaj())
+                    if (isCondInfoRestrictiiTonaj() && !poligonLivrare.isRestrictionat())
                         Toast.makeText(getApplicationContext(), "La aceasta adresa exista o limitare de tonaj de " + poligonLivrare.getLimitareTonaj() + " T.", Toast.LENGTH_LONG).show();
                 }
+            }
+
+            if (DateLivrare.getInstance().getTransport().equals("TRAP") && poligonLivrare.isRestrictionat()) {
+                Toast.makeText(this, Constants.ADRESA_ZONA_RESTRICTIONATA, Toast.LENGTH_LONG).show();
             }
 
             finish();

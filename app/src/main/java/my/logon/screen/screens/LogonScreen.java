@@ -150,8 +150,14 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 
         globalMyIP = getDeviceId();
 
-        //etUsername.setText("androsd");
-        //etPassword.setText("112");
+        //etUsername.setText("IDOROBANTU");
+        //etPassword.setText("4tKqmL");
+
+        //etUsername.setText("CGONTESCU");
+        //etPassword.setText("Tk9hry");
+
+        //etUsername.setText("CGONTESCU");
+        //etPassword.setText("Tk9hry");
 
         // etUsername.setText("CBARLA");
         // etPassword.setText("BJvtx3");
