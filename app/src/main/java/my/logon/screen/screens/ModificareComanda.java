@@ -839,7 +839,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
     }
 
     private boolean isConditiiAfisOptiuniMasini() {
-        return !isComandaDL() && DateLivrare.getInstance().getTransport().equals("TRAP") && DateLivrare.getInstance().getDatePoligonLivrare() != null;
+        return DateLivrare.getInstance().getTransport().equals("TRAP") && DateLivrare.getInstance().getDatePoligonLivrare() != null;
     }
 
     private void getLivrariMathaus() {
@@ -1673,7 +1673,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
                 obj.put("greutate", artComanda.getGreutate());
                 obj.put("greutateBruta", artComanda.getGreutateBruta());
                 obj.put("cantitateInit", artComanda.getCantitateInit());
-
+                obj.put("tipTransport", artComanda.getTipTransport());
                 obj.put("cantitate50", artComanda.getCantitate50());
                 obj.put("um50", artComanda.getUm50());
 

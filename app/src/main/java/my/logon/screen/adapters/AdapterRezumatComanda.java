@@ -44,6 +44,7 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
     private RezumatListener listener;
     private List<CostTransportMathaus> costTransport;
     private String[] tipTransportArray = {"TRAP", "TCLI"};
+    private String[] tipTransportDL = {"TRAP", "TFRN"};
     private String[] tipTransportTertArray = {"TERT", "TCLI"};
     private String tipTransportCmd;
     private String filialeArondate;
@@ -133,7 +134,10 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
             viewHolder.textTotal.setText("Total: " + nf.format(valoareTotal));
 
 
-            if (filialeArondate.contains(UtilsGeneral.getUnitLogDistrib(rezumat.getFilialaLivrare())) || isCondTranspTrapBV90(rezumat.getFilialaLivrare(), tipTranspArt)) {
+            if (UtilsComenzi.isComandaDl() || filialeArondate.contains(UtilsGeneral.getUnitLogDistrib(rezumat.getFilialaLivrare())) || isCondTranspTrapBV90(rezumat.getFilialaLivrare(), tipTranspArt)) {
+
+                if (UtilsComenzi.isComandaDl())
+                    tipTransportArray = tipTransportDL;
 
                 ArrayAdapter<String> adapterSpinnerTransp = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, tipTransportArray);
                 adapterSpinnerTransp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -182,11 +186,6 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
                 } else if (tipTransportCmd.equals("TCLI")) {
 
                     String[] tipTransportTCLIArray;
-                    if (!tipTranspArt.isEmpty()) {
-                        tipTransportTCLIArray = new String[]{tipTranspArt, "TCLI"};
-                    } else
-                        tipTransportTCLIArray = new String[]{"TCLI"};
-
 
                     tipTransportTCLIArray = new String[]{"TRAP", "TCLI"};
 
@@ -266,23 +265,9 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
 
     }
 
-    private boolean isExceptieTransportBV90(String filialaLivrare) {
-        return UserInfo.getInstance().getUnitLog().equals("BV10") && filialaLivrare.equals("BV90") && isLivrareBV10();
-    }
 
-    private boolean isLivrareBV10() {
 
-        if (!UserInfo.getInstance().getUnitLog().equals("BV10"))
-            return false;
 
-        for (int ii = 0; ii < listComenzi.size(); ii++) {
-            for (int jj = 0; jj < listComenzi.get(ii).getListArticole().size(); jj++) {
-                if (listComenzi.get(ii).getFilialaLivrare().equals("BV10"))
-                    return true;
-            }
-        }
-        return false;
-    }
 
     private void setListenerSpinnerTransport(Spinner spinnerTransport, RezumatComanda rezumat, ViewHolder viewHolder) {
 
@@ -292,7 +277,7 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
                 String tipTransportSelected = (String) parent.getAdapter().getItem(position);
                 setTransportArticole(rezumat, tipTransportSelected);
 
-                if (tipTransportSelected.equals("TCLI")) {
+                if (tipTransportSelected.equals("TCLI") || tipTransportSelected.equals("TFRN")) {
                     eliminaArticoleServicii(rezumat, viewHolder);
                     viewHolder.textTransport.setVisibility(View.INVISIBLE);
                     viewHolder.btnPretTransport.setVisibility(View.INVISIBLE);

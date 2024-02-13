@@ -825,7 +825,7 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 		saveClntBtn.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 
-				if (radioClPJ.isChecked() && !pressedTVAButton && !UtilsUser.isCGED() && !UtilsUser.isSSCM()) {
+				if (radioClPJ.isChecked() && !UtilsUser.isCGED() && !UtilsUser.isSSCM()) {
 					performVerificareTVA();
 				} else
 					valideazaDateClient();

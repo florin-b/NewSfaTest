@@ -3,8 +3,6 @@ package my.logon.screen.beans;
 import java.util.ArrayList;
 import java.util.List;
 
-import my.logon.screen.beans.PozaArticol;
-
 public class BeanArticolRetur {
 	private String nume;
 	private String cod;
@@ -15,6 +13,7 @@ public class BeanArticolRetur {
 	private String motivRespingere;
 	private boolean inlocuire;
 	private List<PozaArticol> pozeArticol;
+	private String nrDocument;
 
 	public BeanArticolRetur() {
 
@@ -93,6 +92,14 @@ public class BeanArticolRetur {
 
 	public void setPozeArticol(List<PozaArticol> pozeArticol) {
 		this.pozeArticol = pozeArticol;
+	}
+
+	public String getNrDocument() {
+		return nrDocument;
+	}
+
+	public void setNrDocument(String nrDocument) {
+		this.nrDocument = nrDocument;
 	}
 
 	@Override

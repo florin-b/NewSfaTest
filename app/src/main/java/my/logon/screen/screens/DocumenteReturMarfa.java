@@ -19,8 +19,11 @@ import java.util.List;
 
 import my.logon.screen.R;
 import my.logon.screen.adapters.DocumenteReturAdapter;
+import my.logon.screen.beans.BeanArticolRetur;
 import my.logon.screen.beans.BeanDocumentRetur;
+import my.logon.screen.enums.EnumTipOp;
 import my.logon.screen.listeners.DocumentReturListener;
+import my.logon.screen.listeners.ListaArtReturListener;
 import my.logon.screen.listeners.ListaDocReturListener;
 import my.logon.screen.model.CriteriuNrDocRetur;
 
@@ -118,6 +121,12 @@ public class DocumenteReturMarfa extends Fragment implements ListaDocReturListen
 
 		this.listDocumente = (List<BeanDocumentRetur>) listDocumente;
 		updateListDocumente(this.listDocumente);
+
+	}
+
+	@Override
+	public void setListArtDocRetur(String nrDocument, List<BeanArticolRetur> listaArticole, EnumTipOp tipOp, String codClient, String numeClient, ListaArtReturListener artReturListener) {
+
 
 	}
 

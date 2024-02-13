@@ -750,6 +750,11 @@ public class ArticoleReturComanda extends Fragment implements ListaArtReturListe
         populateListArticole(listArticole);
     }
 
+    @Override
+    public void setDocumentReturPaletiInstance(DocumenteReturPaleti instance) {
+
+    }
+
     private void populateListArticole(List<BeanArticolRetur> listArticole) {
         ArticoleReturComandaAdapter adapter = new ArticoleReturComandaAdapter(getActivity(), listArticole);
         listArticoleRetur.setAdapter(adapter);

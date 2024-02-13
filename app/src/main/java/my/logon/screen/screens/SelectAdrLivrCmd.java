@@ -66,7 +66,6 @@ import my.logon.screen.beans.StatusIntervalLivrare;
 import my.logon.screen.dialogs.MapAddressDialog;
 import my.logon.screen.dialogs.SelectDateDialog;
 import my.logon.screen.enums.EnumFiliale;
-import my.logon.screen.enums.EnumFilialeLivrare;
 import my.logon.screen.enums.EnumJudete;
 import my.logon.screen.enums.EnumLocalitate;
 import my.logon.screen.enums.EnumOperatiiAdresa;
@@ -93,7 +92,7 @@ import my.logon.screen.utils.UtilsDates;
 import my.logon.screen.utils.UtilsGeneral;
 import my.logon.screen.utils.UtilsUser;
 
-public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListener, OnItemClickListener, OperatiiAdresaListener, ObiectiveListener, MapListener,
+public class SelectAdrLivrCmd<tipTransport> extends AppCompatActivity implements OnTouchListener, OnItemClickListener, OperatiiAdresaListener, ObiectiveListener, MapListener,
         AutocompleteDialogListener, AsyncTaskListener {
 
     private Button saveAdrLivrBtn;
@@ -107,7 +106,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
     private String[] tipPlataClBlocat = {"OPA - OP avans", "R - ramburs", "N - Numerar in filiala", "C - Card bancar"};
     private String[] tipPlataRest = {"OPA - OP avans", "R - ramburs", "N - Numerar in filiala", "C - Card bancar"};
 
-    private String[] tipTransport = {"TRAP - Transport Arabesque", "TCLI - Transport client", "TFRN - Transport furnizor"};
+    private String[] tipTransport = {"CU LIVRARE", "CU RIDICARE"};
 
     String[] tipResponsabil = {"AV - Agent vanzari", "SO - Sofer", "OF - Operator facturare"};
 
@@ -328,17 +327,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         spinnerPlata.setAdapter(adapterSpinnerPlata);
         addListenerTipPlata();
 
-        if (HelperAdreseLivrare.isConditiiCurierRapid()) {
-
-            if (HelperAdreseLivrare.getLocalitatiAcceptate() == null) {
-                OperatiiAdresaImpl opAdr = new OperatiiAdresaImpl(this);
-                opAdr.setOperatiiAdresaListener(this);
-                opAdr.getLocalitatiLivrareRapida();
-            }
-
-            tipTransport = HelperAdreseLivrare.adaugaTransportCurierRapid(tipTransport);
-        }
-
         if (isComandaACZC())
             tipTransport = HelperAdreseLivrare.eliminaElement(tipTransport, "TFRN");
 
@@ -350,11 +338,11 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         setSpinnerFilialeTCLIListener();
         addSpinnerTranspListener();
         setTipTranspInfoAgent();
-        setFilialaLivrareTCLI();
+        //de verificat
+        //setFilialaLivrareTCLI();
 
         spinnerJudet = (Spinner) findViewById(R.id.spinnerJudet);
         spinnerJudet.setOnItemSelectedListener(new regionSelectedListener());
-
 
 
         listJudete = new ArrayList<HashMap<String, String>>();
@@ -469,7 +457,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
         // tip transport
         for (i = 0; i < adapterSpinnerTransp.getCount(); i++) {
-            if (adapterSpinnerTransp.getItem(i).toString().substring(0, 4).equals(DateLivrare.getInstance().getTransport())) {
+            if (UtilsComenzi.getSpinnerTipTransp(adapterSpinnerTransp.getItem(i)).equals(DateLivrare.getInstance().getTransport())) {
                 spinnerTransp.setSelection(i);
                 break;
             }
@@ -576,7 +564,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         checkCustodie = (CheckBox) findViewById(R.id.checkCustodie);
         checkCustodie.setVisibility(View.INVISIBLE);
         setListenerCustodie();
-        if (isConditiiCustodie()){
+        if (isConditiiCustodie()) {
             checkCustodie.setVisibility(View.INVISIBLE);
             checkCustodie.setChecked(DateLivrare.getInstance().isComandaCustodie());
         }
@@ -591,18 +579,18 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
 
     }
 
-    private boolean isConditiiCustodie(){
+    private boolean isConditiiCustodie() {
         return ModificareComanda.selectedCmd.equals("") || DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_VANZARE)
                 || DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_LIVRARE);
     }
 
-    private void setListenerCustodie(){
+    private void setListenerCustodie() {
         checkCustodie.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (isChecked) {
-                    spinnerTransp.setSelection(1,true);
+                    spinnerTransp.setSelection(1, true);
                     spinnerTransp.setEnabled(false);
                 } else {
                     spinnerTransp.setSelection(0, true);
@@ -694,14 +682,12 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         if (UtilsComenzi.isLivrareCustodie()) {
             ((LinearLayout) findViewById(R.id.layoutTipReducere)).setVisibility(View.GONE);
             ((LinearLayout) findViewById(R.id.layoutDocInsot)).setVisibility(View.GONE);
-            ((LinearLayout) findViewById(R.id.layoutPlata)).setVisibility(View.GONE);
             ((LinearLayout) findViewById(R.id.layoutResponsabil)).setVisibility(View.GONE);
             ((LinearLayout) findViewById(R.id.layoutClientRaft)).setVisibility(View.GONE);
             ((LinearLayout) findViewById(R.id.layoutFactPaleti)).setVisibility(View.GONE);
         } else {
             ((LinearLayout) findViewById(R.id.layoutTipReducere)).setVisibility(View.VISIBLE);
             ((LinearLayout) findViewById(R.id.layoutDocInsot)).setVisibility(View.VISIBLE);
-            ((LinearLayout) findViewById(R.id.layoutPlata)).setVisibility(View.VISIBLE);
             ((LinearLayout) findViewById(R.id.layoutResponsabil)).setVisibility(View.VISIBLE);
             ((LinearLayout) findViewById(R.id.layoutClientRaft)).setVisibility(View.VISIBLE);
             ((LinearLayout) findViewById(R.id.layoutFactPaleti)).setVisibility(View.VISIBLE);
@@ -750,7 +736,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
                 int dayLivrare = calendar.get(Calendar.DAY_OF_WEEK);
                 int dayNow = calendarNow.get(Calendar.DAY_OF_WEEK);
 
-                String tipTransp = spinnerTransp.getSelectedItem().toString();
+                String tipTransp = UtilsComenzi.getSpinnerTipTransp(spinnerTransp.getSelectedItem().toString());
 
                 if (tipTransp.toLowerCase().contains("trap")) {
                     if ((dayNow == 5 || dayNow == 6) && dayLivrare == 6) {
@@ -909,8 +895,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
                 if (arg2 == 0) {
-
-
                     setDateDelegatVisibility(false);
                 } else {
 
@@ -919,10 +903,9 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
                     else
                         setDateDelegatVisibility(false);
 
-
                 }
 
-                String tipTranspSel = spinnerTransp.getSelectedItem().toString().split("-")[0].trim();
+                String tipTranspSel = UtilsComenzi.getSpinnerTipTransp(spinnerTransp.getSelectedItem().toString());
                 setTipTranspOpt(tipTranspSel);
 
                 setFilialaPlataVisibility();
@@ -1014,34 +997,28 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         if (spinnerFilialeTCLI.getAdapter() == null)
             return;
 
-        if (DateLivrare.getInstance().getCodFilialaCLP() != null && !DateLivrare.getInstance().getCodFilialaCLP().isEmpty()) {
+        if (DateLivrare.getInstance().getFilialaLivrareTCLI() == null)
+            return;
 
-            for (int ii = 0; ii < spinnerFilialeTCLI.getAdapter().getCount(); ii++) {
-                if (EnumFilialeLivrare.getCodFiliala(spinnerFilialeTCLI.getItemAtPosition(ii).toString()).equals(DateLivrare.getInstance().getCodFilialaCLP())) {
-                    spinnerFilialeTCLI.setSelection(ii);
-                    break;
-                }
-            }
-            spinnerFilialeTCLI.setEnabled(false);
-        } else if (DateLivrare.getInstance().getFilialaLivrareTCLI() != null && !DateLivrare.getInstance().getFilialaLivrareTCLI().getUnitLog().isEmpty()) {
-            for (int ii = 0; ii < spinnerFilialeTCLI.getAdapter().getCount(); ii++) {
-                if (EnumFilialeLivrare.getCodFiliala(spinnerFilialeTCLI.getItemAtPosition(ii).toString()).equals(DateLivrare.getInstance().getFilialaLivrareTCLI())) {
-                    spinnerFilialeTCLI.setSelection(ii);
-                    break;
-                }
-            }
+        String numeLivrareTCLI = DateLivrare.getInstance().getFilialaLivrareTCLI().getNumeFiliala();
 
-            if (ListaArticoleComanda.getInstance().getListArticoleComanda() != null && ListaArticoleComanda.getInstance().getListArticoleComanda().size() > 0) {
-                spinnerTransp.setEnabled(false);
-                spinnerFilialeTCLI.setEnabled(false);
+        for (int ii = 0; ii < spinnerFilialeTCLI.getAdapter().getCount(); ii++) {
+            if (spinnerFilialeTCLI.getItemAtPosition(ii).toString().equals(numeLivrareTCLI)) {
+                spinnerFilialeTCLI.setSelection(ii);
+                break;
             }
-
         }
+
+        if (UtilsComenzi.comandaAreArticole("10")) {
+            spinnerTransp.setEnabled(false);
+            spinnerFilialeTCLI.setEnabled(false);
+        }
+
     }
 
     private void setFilialaPlataVisibility() {
 
-        String tipTranspSel = spinnerTransp.getSelectedItem().toString().split("-")[0].trim();
+        String tipTranspSel = UtilsComenzi.getSpinnerTipTransp(spinnerTransp.getSelectedItem().toString());
         String tipPlata = spinnerPlata.getSelectedItem().toString().split("-")[0].trim();
 
         if ((DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_LIVRARE) || isComandaClp()) && tipTranspSel.equals("TCLI") && tipPlata.equals("N")) {
@@ -1153,7 +1130,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         fillJudeteClient(EnumJudete.getRegionCodes());
 
 
-
     }
 
     private void getJudeteFilialaLivrare() {
@@ -1174,9 +1150,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
                 && DateLivrare.getInstance().getFurnizorComanda().getCodFurnizorMarfa().length() > 4;
     }
 
-    private boolean isLivrareCustodie() {
-        return DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.LIVRARE_CUSTODIE);
-    }
+
 
     private boolean isComandaACZC() {
         return DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.ARTICOLE_COMANDA);
@@ -1355,7 +1329,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
     }
 
     public void addListenerRadioLista() {
-
 
 
         radioLista.setOnClickListener(new OnClickListener() {
@@ -1616,7 +1589,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
             }
 
             for (int ii = 0; ii < spinnerTransp.getAdapter().getCount(); ii++) {
-                if (spinnerTransp.getAdapter().getItem(ii).toString().toUpperCase().contains(tokLivrare[5])) {
+                if (UtilsComenzi.getSpinnerTipTransp(spinnerTransp.getAdapter().getItem(ii).toString()).contains(tokLivrare[5])) {
                     spinnerTransp.setSelection(ii);
                     break;
                 }
@@ -1670,8 +1643,6 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         }
 
     }
-
-
 
 
     public class regionSelectedListener implements OnItemSelectedListener {
@@ -2006,7 +1977,7 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
             DateLivrare.getInstance().setFilialaPlata("");
 
         dateLivrareInstance.setTipPlata(spinnerPlata.getSelectedItem().toString().split("-")[0].trim());
-        dateLivrareInstance.setTransport(spinnerTransp.getSelectedItem().toString().substring(0, 4));
+        dateLivrareInstance.setTransport(UtilsComenzi.getSpinnerTipTransp(spinnerTransp.getSelectedItem().toString()));
 
         if (dateLivrareInstance.getTransport().equalsIgnoreCase("TERR") && !HelperAdreseLivrare.isAdresaLivrareRapida()) {
             Toast.makeText(getApplicationContext(), "In aceasta localitate nu se face livrare rapida.", Toast.LENGTH_LONG).show();
@@ -2160,15 +2131,13 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         DatePoligonLivrare poligonLivrare = operatiiAdresa.deserializePoligonLivrare(datePoligonLivrare);
         DateLivrare.getInstance().setDatePoligonLivrare(null);
 
-        if (UtilsComenzi.isModifTCLIinTRAP(poligonLivrare)){
+        if (UtilsComenzi.isModifTCLIinTRAP(poligonLivrare)) {
             UtilsComenzi.showFilialaLivrareDialog(this, DateLivrare.getInstance().getFilialaLivrareTCLI().getUnitLog());
             return;
-        }
-        else if (DateLivrare.getInstance().getTransport().equals("TRAP") && UtilsComenzi.isComandaClp() && !UtilsComenzi.getFilialaDistrib(DateLivrare.getInstance().getCodFilialaCLP()).equals(poligonLivrare.getFilialaPrincipala())){
+        } else if (UtilsComenzi.comandaAreArticole("10") && DateLivrare.getInstance().getTransport().equals("TRAP") && UtilsComenzi.isComandaClp() && !UtilsComenzi.getFilialaDistrib(DateLivrare.getInstance().getCodFilialaCLP()).equals(poligonLivrare.getFilialaPrincipala())) {
             UtilsComenzi.showFilialaLivrareDialog(this, DateLivrare.getInstance().getCodFilialaCLP());
             return;
-        }
-        else if (!UtilsComenzi.isAdresaUnitLogModifCmd(this, ulLivrareModifCmd, poligonLivrare.getFilialaPrincipala())) {
+        } else if (!UtilsComenzi.isAdresaUnitLogModifCmd(this, ulLivrareModifCmd, poligonLivrare.getFilialaPrincipala())) {
             return;
         } else {
             if (!poligonLivrare.getFilialaPrincipala().trim().isEmpty()) {
@@ -2193,298 +2162,300 @@ public class SelectAdrLivrCmd extends AppCompatActivity implements OnTouchListen
         }
     }
 
-        private void setFilialeTCLI (String strFilialeTCLI){
-            List<BeanFilialaLivrare> listFilialeLivrare = operatiiAdresa.deserializeFilialeLivrare(strFilialeTCLI);
+    private void setFilialeTCLI(String strFilialeTCLI) {
+        List<BeanFilialaLivrare> listFilialeLivrare = operatiiAdresa.deserializeFilialeLivrare(strFilialeTCLI);
 
-            BeanFilialaLivrare beanFilialaLivrare = new BeanFilialaLivrare();
-            beanFilialaLivrare.setNumeFiliala("Selectati filiala");
-            listFilialeLivrare.add(0,beanFilialaLivrare);
-            AdapterFilialeLivrare adapterLivrare = new AdapterFilialeLivrare(getApplicationContext(), listFilialeLivrare);
-            spinnerFilialeTCLI.setAdapter(adapterLivrare);
+        BeanFilialaLivrare beanFilialaLivrare = new BeanFilialaLivrare();
+        beanFilialaLivrare.setNumeFiliala("Selectati filiala");
+        listFilialeLivrare.add(0, beanFilialaLivrare);
+        AdapterFilialeLivrare adapterLivrare = new AdapterFilialeLivrare(getApplicationContext(), listFilialeLivrare);
+        spinnerFilialeTCLI.setAdapter(adapterLivrare);
+
+        setFilialaLivrareTCLI();
+
+    }
+
+    public boolean isCondInfoRestrictiiTonaj() {
+        return DateLivrare.getInstance().getTransport().equals("TRAP") && (
+                DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_VANZARE) ||
+                        DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_LIVRARE) ||
+                        DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.ARTICOLE_DETERIORATE));
+    }
+
+    private boolean isAdresaGoogleOk() {
+
+        LatLng addressCoordinates = null;
+        boolean isAdresaOk = true;
+
+        BeanLocalitate beanLocalitate = new BeanLocalitate();
+
+        GeocodeAddress geoAddress = MapUtils.geocodeAddress(getAddressFromForm(), getApplicationContext());
+        isAdresaOk = geoAddress.isAdresaValida();
+
+        if (!isAdresaOk)
+            return false;
+
+        DateLivrare.getInstance().setCoordonateAdresa(geoAddress.getCoordinates());
+
+        if (isAdresaText()) {
+            addressCoordinates = geoAddress.getCoordinates();
+            beanLocalitate = HelperAdreseLivrare.getDateLocalitate(listAdreseJudet.getListLocalitati(), DateLivrare.getInstance().getOras());
+        } else {
+            beanLocalitate.setOras(adresaLivrareSelected.isOras());
+            beanLocalitate.setRazaKm(adresaLivrareSelected.getRazaKm());
+            beanLocalitate.setCoordonate(adresaLivrareSelected.getCoordsCentru());
+            addressCoordinates = DateLivrare.getInstance().getCoordonateAdresa();
+        }
+
+        if (beanLocalitate.isOras()) {
+            isAdresaOk = HelperAdreseLivrare.isDistantaCentruOk(getApplicationContext(), beanLocalitate, addressCoordinates);
 
         }
 
-        public boolean isCondInfoRestrictiiTonaj () {
-            return DateLivrare.getInstance().getTransport().equals("TRAP") && (
-                    DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_VANZARE) ||
-                            DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.COMANDA_LIVRARE) ||
-                            DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.ARTICOLE_DETERIORATE));
+        return isAdresaOk;
+
+    }
+
+    private Address getAddressFromForm() {
+        Address address = new Address();
+
+        address.setCity(DateLivrare.getInstance().getOras());
+        address.setStreet(DateLivrare.getInstance().getStrada());
+        address.setSector(UtilsGeneral.getNumeJudet(DateLivrare.getInstance().getCodJudet()));
+
+        return address;
+    }
+
+
+    private void setAdresalivrareFiliala(String adresaFiliala) {
+        String[] tokenAdresa = adresaFiliala.split("#");
+
+        DateLivrare.getInstance().setNumeJudet(tokenAdresa[3]);
+        DateLivrare.getInstance().setCodJudet(tokenAdresa[2]);
+        DateLivrare.getInstance().setOras(tokenAdresa[1]);
+        DateLivrare.getInstance().setStrada(tokenAdresa[0]);
+        DateLivrare.getInstance().setCoordonateAdresa(new LatLng(Double.valueOf(tokenAdresa[4]), Double.valueOf(tokenAdresa[5])));
+
+    }
+
+    private void setAdresaLivrareFromList(BeanAdresaLivrare adresaLivrare) {
+
+        adresaLivrareSelected = adresaLivrare;
+
+        DateLivrare.getInstance().setAddrNumber(adresaLivrare.getCodAdresa());
+        DateLivrare.getInstance().setNumeJudet(UtilsGeneral.getNumeJudet(adresaLivrare.getCodJudet()));
+
+        if (!adresaLivrare.getOras().trim().equals(""))
+            DateLivrare.getInstance().setOras(adresaLivrare.getOras());
+        else
+            DateLivrare.getInstance().setOras("-");
+
+        if (!adresaLivrare.getStrada().trim().equals("")) {
+            DateLivrare.getInstance().setStrada(adresaLivrare.getStrada() + " " + adresaLivrare.getNrStrada());
+
+        } else {
+            DateLivrare.getInstance().setStrada("-");
+
         }
 
-        private boolean isAdresaGoogleOk () {
+        DateLivrare.getInstance().setCodJudet(adresaLivrare.getCodJudet());
+        DateLivrare.getInstance().setAdrLivrNoua(false);
 
-            LatLng addressCoordinates = null;
-            boolean isAdresaOk = true;
+        String[] tokenCoords = adresaLivrare.getCoords().split(",");
 
-            BeanLocalitate beanLocalitate = new BeanLocalitate();
+        DateLivrare.getInstance().setCoordonateAdresa(new LatLng(Double.valueOf(tokenCoords[0]), Double.valueOf(tokenCoords[1])));
 
-            GeocodeAddress geoAddress = MapUtils.geocodeAddress(getAddressFromForm(), getApplicationContext());
-            isAdresaOk = geoAddress.isAdresaValida();
 
-            if (!isAdresaOk)
-                return false;
+        getFilialaLivrareMathaus();
 
-            DateLivrare.getInstance().setCoordonateAdresa(geoAddress.getCoordinates());
+    }
 
-            if (isAdresaText()) {
-                addressCoordinates = geoAddress.getCoordinates();
-                beanLocalitate = HelperAdreseLivrare.getDateLocalitate(listAdreseJudet.getListLocalitati(), DateLivrare.getInstance().getOras());
+    private void setAdresaLivrare(Address address) {
+
+        textLocalitate.getText().clear();
+        textStrada.getText().clear();
+        textNrStr.getText().clear();
+
+        int nrJudete = spinnerJudet.getAdapter().getCount();
+
+        for (int j = 0; j < nrJudete; j++) {
+            HashMap<String, String> artMapLivr = (HashMap<String, String>) this.adapterJudete.getItem(j);
+            String numeJudet = artMapLivr.get("numeJudet").toString();
+
+            if (address.getSector().equals(numeJudet)) {
+                spinnerJudet.setSelection(j);
+                break;
+            }
+
+        }
+
+        if (address.getCity() != null && !address.getCity().isEmpty())
+            textLocalitate.setText(address.getCity());
+
+        if (address.getStreet() != null && !address.getStreet().isEmpty() && !address.getStreet().toUpperCase().contains("UNNAMED"))
+            textStrada.setText(address.getStreet().trim());
+
+        if (address.getNumber() != null && address.getNumber().length() > 0)
+            textNrStr.setText(address.getNumber());
+
+    }
+
+    private void valideazaAdresaLivrare() {
+
+        HashMap<String, String> params = UtilsGeneral.newHashMapInstance();
+        params.put("codJudet", DateLivrare.getInstance().getCodJudet());
+        params.put("localitate", DateLivrare.getInstance().getOras());
+
+        operatiiAdresa.isAdresaValida(params, EnumLocalitate.LOCALITATE_SEDIU);
+
+    }
+
+    private void setListenerSpinnerAdreseLivrare() {
+        spinnerAdreseLivrare.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                BeanAdresaLivrare adresaLivrare = (BeanAdresaLivrare) spinnerAdreseLivrare.getAdapter().getItem(position);
+                setAdresaLivrareFromList(adresaLivrare);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+
+            }
+        });
+    }
+
+    private void clearAdresaLivrare() {
+        DateLivrare.getInstance().setOras("");
+        DateLivrare.getInstance().setStrada("");
+        DateLivrare.getInstance().setCodJudet("");
+        DateLivrare.getInstance().setCoordonateAdresa(null);
+
+        spinnerJudet.setSelection(0);
+        textLocalitate.setText("");
+        textNrStr.setText("");
+        textStrada.setText("");
+
+    }
+
+    private void setAdresaLivrareFromObiectiv() {
+
+        if (radioObiectiv.getVisibility() == View.VISIBLE)
+            if (radioObiectiv.isChecked()) {
+                DateLivrare.getInstance().setAdresaObiectiv(true);
             } else {
-                beanLocalitate.setOras(adresaLivrareSelected.isOras());
-                beanLocalitate.setRazaKm(adresaLivrareSelected.getRazaKm());
-                beanLocalitate.setCoordonate(adresaLivrareSelected.getCoordsCentru());
-                addressCoordinates = DateLivrare.getInstance().getCoordonateAdresa();
+                DateLivrare.getInstance().setAdresaObiectiv(false);
             }
 
-            if (beanLocalitate.isOras()) {
-                isAdresaOk = HelperAdreseLivrare.isDistantaCentruOk(getApplicationContext(), beanLocalitate, addressCoordinates);
-
-            }
-
-            return isAdresaOk;
-
-        }
-
-        private Address getAddressFromForm () {
-            Address address = new Address();
-
-            address.setCity(DateLivrare.getInstance().getOras());
-            address.setStreet(DateLivrare.getInstance().getStrada());
-            address.setSector(UtilsGeneral.getNumeJudet(DateLivrare.getInstance().getCodJudet()));
-
-            return address;
-        }
-
-
-        private void setAdresalivrareFiliala (String adresaFiliala){
-            String[] tokenAdresa = adresaFiliala.split("#");
-
-            DateLivrare.getInstance().setNumeJudet(tokenAdresa[3]);
-            DateLivrare.getInstance().setCodJudet(tokenAdresa[2]);
-            DateLivrare.getInstance().setOras(tokenAdresa[1]);
-            DateLivrare.getInstance().setStrada(tokenAdresa[0]);
-            DateLivrare.getInstance().setCoordonateAdresa(new LatLng(Double.valueOf(tokenAdresa[4]), Double.valueOf(tokenAdresa[5])));
-
-        }
-
-        private void setAdresaLivrareFromList (BeanAdresaLivrare adresaLivrare){
-
-            adresaLivrareSelected = adresaLivrare;
-
-            DateLivrare.getInstance().setAddrNumber(adresaLivrare.getCodAdresa());
-            DateLivrare.getInstance().setNumeJudet(UtilsGeneral.getNumeJudet(adresaLivrare.getCodJudet()));
-
-            if (!adresaLivrare.getOras().trim().equals(""))
-                DateLivrare.getInstance().setOras(adresaLivrare.getOras());
-            else
-                DateLivrare.getInstance().setOras("-");
-
-            if (!adresaLivrare.getStrada().trim().equals("")) {
-                DateLivrare.getInstance().setStrada(adresaLivrare.getStrada() + " " + adresaLivrare.getNrStrada());
-
-            } else {
-                DateLivrare.getInstance().setStrada("-");
-
-            }
-
-            DateLivrare.getInstance().setCodJudet(adresaLivrare.getCodJudet());
-            DateLivrare.getInstance().setAdrLivrNoua(false);
-
-            String[] tokenCoords = adresaLivrare.getCoords().split(",");
-
-            DateLivrare.getInstance().setCoordonateAdresa(new LatLng(Double.valueOf(tokenCoords[0]), Double.valueOf(tokenCoords[1])));
-
-
-            getFilialaLivrareMathaus();
-
-        }
-
-        private void setAdresaLivrare (Address address){
-
-            textLocalitate.getText().clear();
-            textStrada.getText().clear();
-            textNrStr.getText().clear();
-
-            int nrJudete = spinnerJudet.getAdapter().getCount();
-
-            for (int j = 0; j < nrJudete; j++) {
-                HashMap<String, String> artMapLivr = (HashMap<String, String>) this.adapterJudete.getItem(j);
-                String numeJudet = artMapLivr.get("numeJudet").toString();
-
-                if (address.getSector().equals(numeJudet)) {
-                    spinnerJudet.setSelection(j);
-                    break;
-                }
-
-            }
-
-            if (address.getCity() != null && !address.getCity().isEmpty())
-                textLocalitate.setText(address.getCity());
-
-            if (address.getStreet() != null && !address.getStreet().isEmpty() && !address.getStreet().toUpperCase().contains("UNNAMED"))
-                textStrada.setText(address.getStreet().trim());
-
-            if (address.getNumber() != null && address.getNumber().length() > 0)
-                textNrStr.setText(address.getNumber());
-
-        }
-
-        private void valideazaAdresaLivrare () {
-
-            HashMap<String, String> params = UtilsGeneral.newHashMapInstance();
-            params.put("codJudet", DateLivrare.getInstance().getCodJudet());
-            params.put("localitate", DateLivrare.getInstance().getOras());
-
-            operatiiAdresa.isAdresaValida(params, EnumLocalitate.LOCALITATE_SEDIU);
-
-        }
-
-        private void setListenerSpinnerAdreseLivrare () {
-            spinnerAdreseLivrare.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    BeanAdresaLivrare adresaLivrare = (BeanAdresaLivrare) spinnerAdreseLivrare.getAdapter().getItem(position);
-                    setAdresaLivrareFromList(adresaLivrare);
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> arg0) {
-
-                }
-            });
-        }
-
-        private void clearAdresaLivrare () {
-            DateLivrare.getInstance().setOras("");
-            DateLivrare.getInstance().setStrada("");
-            DateLivrare.getInstance().setCodJudet("");
-            DateLivrare.getInstance().setCoordonateAdresa(null);
-
-            spinnerJudet.setSelection(0);
-            textLocalitate.setText("");
-            textNrStr.setText("");
-            textStrada.setText("");
-
-        }
-
-        private void setAdresaLivrareFromObiectiv () {
-
-            if (radioObiectiv.getVisibility() == View.VISIBLE)
-                if (radioObiectiv.isChecked()) {
-                    DateLivrare.getInstance().setAdresaObiectiv(true);
-                } else {
-                    DateLivrare.getInstance().setAdresaObiectiv(false);
-                }
-
-            if (spinnerObiective.getSelectedItemPosition() > 0) {
-                String[] arrObiectiv = obiectivSelectat.getAdresa().split("/");
-
-                DateLivrare.getInstance().setIdObiectiv(obiectivSelectat.getId());
-
-                if (radioObiectiv.isChecked()) {
-                    DateLivrare.getInstance().setCodJudet(arrObiectiv[0]);
-                    DateLivrare.getInstance().setNumeJudet(UtilsGeneral.getNumeJudet(arrObiectiv[0]));
-                    DateLivrare.getInstance().setOras(arrObiectiv[1]);
-                    if (arrObiectiv.length == 3)
-                        DateLivrare.getInstance().setStrada(arrObiectiv[2]);
-                    else
-                        DateLivrare.getInstance().setStrada("-");
-                }
-
-            }
-
-        }
-
-        @Override
-        public void onBackPressed () {
-            finish();
-            return;
-        }
-
-        private void valideazaAdresaResponse (String result){
-            valideazaDateLivrare();
-
-        }
-
-        public void onTaskComplete (String methodName, Object result){
-            if (methodName.equals(METHOD_NAME)) {
-                afisAdreseLivrareTCLI((String) result);
-            }
-
-        }
-
-        public void operatiiAdresaComplete (EnumOperatiiAdresa numeComanda, Object
-        result, EnumLocalitate tipLocalitate){
-
-            switch (numeComanda) {
-                case GET_ADRESE_JUDET:
-                    populateListLocalitati(operatiiAdresa.deserializeListAdrese(result));
-                    break;
-                case IS_ADRESA_VALIDA:
-                    valideazaAdresaResponse((String) result);
-                    break;
-                case GET_DATE_LIVRARE:
-                    fillDateLivrare((String) result);
-                    break;
-                case GET_ADRESE_LIVR_CLIENT:
-                    fillListAdrese((String) result);
-                    break;
-                case GET_LOCALITATI_LIVRARE_RAPIDA:
-                    HelperAdreseLivrare.setLocalitatiAcceptate((String) result);
-                    break;
-                case GET_FILIALA_MATHAUS:
-                    CreareComanda.filialaLivrareMathaus = ((String) result).split(",")[0];
-                    CreareComanda.filialeArondateMathaus = (String) result;
-                    break;
-                case GET_ADRESA_FILIALA:
-                    setAdresalivrareFiliala((String) result);
-                    break;
-                case GET_DATE_POLIGON_LIVRARE:
-                    setDatePoligonLivrare((String) result);
-                    break;
-                case GET_FILIALE_TCLI:
-                    setFilialeTCLI((String) result);
-                    break;
-                default:
-                    break;
-            }
-
-        }
-
-        public void operationObiectivComplete (EnumOperatiiObiective numeComanda, Object result){
-            switch (numeComanda) {
-                case GET_OBIECTIVE_DEPARTAMENT:
-                    displayObiectiveDepartament(operatiiObiective.deserializeObiectiveDepart((String) result));
-                    break;
-                default:
-                    break;
-            }
-
-        }
-
-        @Override
-        public void addressSelected (LatLng coord, android.location.Address address){
-            DateLivrare.getInstance().setCoordonateAdresa(coord);
-            setAdresaLivrare(MapUtils.getAddress(address));
-
-        }
-
-        @Override
-        public void selectionComplete (String selectedItem,int actionId){
-
-            switch (actionId) {
-                case LIST_LOCALITATI:
-                    textLocalitate.setText(selectedItem);
-                    break;
-                case LIST_ADRESE:
-                    textStrada.setText(selectedItem);
-                    break;
-                default:
-                    break;
+        if (spinnerObiective.getSelectedItemPosition() > 0) {
+            String[] arrObiectiv = obiectivSelectat.getAdresa().split("/");
+
+            DateLivrare.getInstance().setIdObiectiv(obiectivSelectat.getId());
+
+            if (radioObiectiv.isChecked()) {
+                DateLivrare.getInstance().setCodJudet(arrObiectiv[0]);
+                DateLivrare.getInstance().setNumeJudet(UtilsGeneral.getNumeJudet(arrObiectiv[0]));
+                DateLivrare.getInstance().setOras(arrObiectiv[1]);
+                if (arrObiectiv.length == 3)
+                    DateLivrare.getInstance().setStrada(arrObiectiv[2]);
+                else
+                    DateLivrare.getInstance().setStrada("-");
             }
 
         }
 
     }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        return;
+    }
+
+    private void valideazaAdresaResponse(String result) {
+        valideazaDateLivrare();
+
+    }
+
+    public void onTaskComplete(String methodName, Object result) {
+        if (methodName.equals(METHOD_NAME)) {
+            afisAdreseLivrareTCLI((String) result);
+        }
+
+    }
+
+    public void operatiiAdresaComplete(EnumOperatiiAdresa numeComanda, Object
+            result, EnumLocalitate tipLocalitate) {
+
+        switch (numeComanda) {
+            case GET_ADRESE_JUDET:
+                populateListLocalitati(operatiiAdresa.deserializeListAdrese(result));
+                break;
+            case IS_ADRESA_VALIDA:
+                valideazaAdresaResponse((String) result);
+                break;
+            case GET_DATE_LIVRARE:
+                fillDateLivrare((String) result);
+                break;
+            case GET_ADRESE_LIVR_CLIENT:
+                fillListAdrese((String) result);
+                break;
+            case GET_LOCALITATI_LIVRARE_RAPIDA:
+                HelperAdreseLivrare.setLocalitatiAcceptate((String) result);
+                break;
+            case GET_FILIALA_MATHAUS:
+                CreareComanda.filialaLivrareMathaus = ((String) result).split(",")[0];
+                CreareComanda.filialeArondateMathaus = (String) result;
+                break;
+            case GET_ADRESA_FILIALA:
+                setAdresalivrareFiliala((String) result);
+                break;
+            case GET_DATE_POLIGON_LIVRARE:
+                setDatePoligonLivrare((String) result);
+                break;
+            case GET_FILIALE_TCLI:
+                setFilialeTCLI((String) result);
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    public void operationObiectivComplete(EnumOperatiiObiective numeComanda, Object result) {
+        switch (numeComanda) {
+            case GET_OBIECTIVE_DEPARTAMENT:
+                displayObiectiveDepartament(operatiiObiective.deserializeObiectiveDepart((String) result));
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    @Override
+    public void addressSelected(LatLng coord, android.location.Address address) {
+        DateLivrare.getInstance().setCoordonateAdresa(coord);
+        setAdresaLivrare(MapUtils.getAddress(address));
+
+    }
+
+    @Override
+    public void selectionComplete(String selectedItem, int actionId) {
+
+        switch (actionId) {
+            case LIST_LOCALITATI:
+                textLocalitate.setText(selectedItem);
+                break;
+            case LIST_ADRESE:
+                textStrada.setText(selectedItem);
+                break;
+            default:
+                break;
+        }
+
+    }
+
+}

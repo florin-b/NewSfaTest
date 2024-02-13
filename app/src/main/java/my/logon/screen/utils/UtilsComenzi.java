@@ -20,6 +20,9 @@ import my.logon.screen.model.ArticolComanda;
 import my.logon.screen.model.ClientiGenericiGedInfoStrings;
 import my.logon.screen.model.Constants;
 import my.logon.screen.model.DateLivrare;
+import my.logon.screen.model.ListaArticoleComanda;
+import my.logon.screen.model.ListaArticoleComandaGed;
+import my.logon.screen.model.ListaArticoleModificareComanda;
 
 public class UtilsComenzi {
 
@@ -307,6 +310,12 @@ public class UtilsComenzi {
 		if (UtilsUser.isUserSite() || UtilsUser.isUserCVO())
 			return true;
 
+		if (!DateLivrare.getInstance().getTransport().equals("TRAP"))
+			return true;
+
+		if (isComandaModifBV90())
+			return true;
+
 		if (!UtilsComenzi.getFilialaDistrib(filialaModifComanda).equals(filialaPoligon)) {
 
 			StringBuilder infoMsg = new StringBuilder();
@@ -322,6 +331,35 @@ public class UtilsComenzi {
 		return true;
 
 	}
+
+	private static boolean isComandaModifBV90() {
+
+		List<ArticolComanda> listArtCmdModif = null;
+
+		if (ListaArticoleComandaGed.getInstance() != null && ListaArticoleComandaGed.getInstance().getListArticoleComanda()!= null &&
+				ListaArticoleComandaGed.getInstance().getListArticoleComanda().size() > 0)
+			listArtCmdModif = ListaArticoleComandaGed.getInstance().getListArticoleComanda();
+		else
+		if (ListaArticoleModificareComanda.getInstance() != null && ListaArticoleModificareComanda.getInstance().getListArticoleComanda()!= null &&
+				ListaArticoleModificareComanda.getInstance().getListArticoleComanda().size() > 0)
+			listArtCmdModif = ListaArticoleModificareComanda.getInstance().getListArticoleComanda();
+
+		if (listArtCmdModif == null)
+			return false;
+
+		boolean isBV90 = false;
+
+		for (ArticolComanda articol : listArtCmdModif) {
+			if (articol.getFilialaSite().equals("BV90")) {
+				isBV90 = true;
+				break;
+			}
+		}
+
+		return isBV90;
+	}
+
+
 
 	public static void showFilialaLivrareDialog(Context context, String filiala){
 		StringBuilder infoMsg = new StringBuilder();
@@ -367,6 +405,20 @@ public class UtilsComenzi {
 		return DateLivrare.getInstance().getTransport().equals("TRAP") && DateLivrare.getInstance().getFilialaLivrareTCLI() != null &&
 				!DateLivrare.getInstance().getFilialaLivrareTCLI().getUnitLog().equals(poligonLivrare.getFilialaPrincipala());
 
+	}
+
+	public static String getSpinnerTipTransp(String tipTransport){
+		if (tipTransport.toLowerCase().contains("livrare"))
+			return "TRAP";
+
+		return "TCLI";
+	}
+
+	public static boolean comandaAreArticole(String canal){
+		if (canal.equals("10"))
+			return ListaArticoleComanda.getInstance().getListArticoleComanda() != null && ListaArticoleComanda.getInstance().getListArticoleComanda().size() > 0;
+		else
+			return ListaArticoleComandaGed.getInstance().getListArticoleComanda() != null && ListaArticoleComandaGed.getInstance().getListArticoleComanda().size() > 0;
 	}
 
 }

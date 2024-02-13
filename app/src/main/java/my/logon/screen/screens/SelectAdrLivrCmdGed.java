@@ -44,7 +44,6 @@ import com.google.android.gms.maps.model.LatLng;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -69,7 +68,6 @@ import my.logon.screen.dialogs.MapAddressDialog;
 import my.logon.screen.dialogs.SelectDateDialog;
 import my.logon.screen.enums.EnumClienti;
 import my.logon.screen.enums.EnumFiliale;
-import my.logon.screen.enums.EnumFilialeLivrare;
 import my.logon.screen.enums.EnumJudete;
 import my.logon.screen.enums.EnumLocalitate;
 import my.logon.screen.enums.EnumOperatiiAdresa;
@@ -104,7 +102,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
     private static final String METHOD_NAME = "getClientJud";
 
-    String[] tipTransport = {"TRAP - Transport Arabesque", "TCLI - Transport client"};
+    private String[] tipTransport = {"CU LIVRARE", "CU RIDICARE"};
 
     String[] docInsot = {"Factura", "Aviz de expeditie"};
 
@@ -284,16 +282,6 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
             layoutMail.setVisibility(View.VISIBLE);
             textMail.setText(dateLivrareInstance.getMail().trim().replace("~", "@"));
 
-            setTipTransportOptions();
-
-            if (DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.DISPOZITIE_LIVRARE)) {
-                List<String> arrlist
-                        = new ArrayList<>(
-                        Arrays.asList(tipTransport));
-                arrlist.add("TFRN - Transport furnizor");
-                tipTransport = arrlist.toArray(tipTransport);
-            }
-
             adapterSpinnerTransp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipTransport);
 
             if (DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.ARTICOLE_COMANDA)) {
@@ -369,7 +357,8 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
             spinnerFilialeTCLI = (Spinner) findViewById(R.id.spinnerFiliale);
             setSpinnerFilialeTCLIListener();
             addListenerTipTransport();
-            setFilialaLivrareTCLI();
+            //aici
+            // setFilialaLivrareTCLI();
 
             spinnerJudet = (Spinner) findViewById(R.id.spinnerJudet);
             spinnerJudet.setOnItemSelectedListener(new regionSelectedListener());
@@ -443,7 +432,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
             // tip transport
             for (i = 0; i < adapterSpinnerTransp.getCount(); i++) {
-                if (adapterSpinnerTransp.getItem(i).toString().substring(0, 4).equals(dateLivrareInstance.getTransport())) {
+                if (UtilsComenzi.getSpinnerTipTransp(adapterSpinnerTransp.getItem(i)).equals(dateLivrareInstance.getTransport())) {
                     spinnerTransp.setSelection(i);
                     break;
                 }
@@ -720,7 +709,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
                 int dayNow = calendarNow.get(Calendar.DAY_OF_WEEK);
 
-                String tipTransp = spinnerTransp.getSelectedItem().toString();
+                String tipTransp = UtilsComenzi.getSpinnerTipTransp(spinnerTransp.getSelectedItem().toString());
 
                 if (tipTransp.toLowerCase().contains("trap")) {
                     if ((dayNow == 5 || dayNow == 6) && dayLivrare == 6) {
@@ -864,15 +853,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
     }
 
-    private void setTipTransportOptions() {
-        if (UtilsUser.isUserExceptieBV90Ged()) {
-            List<String> tempArray = new ArrayList<String>(Arrays.asList(tipTransport));
-            tempArray.add("TERT - Transport tert");
-            tipTransport = tempArray.toArray(new String[tempArray.size()]);
 
-        }
-
-    }
 
 
 
@@ -1263,7 +1244,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
                 }
 
-                String tipTranspSel = spinnerTransp.getSelectedItem().toString().split("-")[0].trim();
+                String tipTranspSel = UtilsComenzi.getSpinnerTipTransp(spinnerTransp.getSelectedItem().toString());
                 setTipTranspOpt(tipTranspSel);
 
                 setFilialaPlataVisibility();
@@ -1348,28 +1329,21 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         if (spinnerFilialeTCLI.getAdapter() == null)
             return;
 
-        if (DateLivrare.getInstance().getCodFilialaCLP() != null && !DateLivrare.getInstance().getCodFilialaCLP().isEmpty()) {
+        if (DateLivrare.getInstance().getFilialaLivrareTCLI() == null)
+            return;
 
-            for (int ii = 0; ii < spinnerFilialeTCLI.getAdapter().getCount(); ii++) {
-                if (EnumFilialeLivrare.getCodFiliala(spinnerFilialeTCLI.getItemAtPosition(ii).toString()).equals(DateLivrare.getInstance().getCodFilialaCLP())) {
-                    spinnerFilialeTCLI.setSelection(ii);
-                    break;
-                }
+        String numeLivrareTCLI = DateLivrare.getInstance().getFilialaLivrareTCLI().getNumeFiliala();
+
+        for (int ii = 0; ii < spinnerFilialeTCLI.getAdapter().getCount(); ii++) {
+            if (spinnerFilialeTCLI.getItemAtPosition(ii).toString().equals(numeLivrareTCLI)) {
+                spinnerFilialeTCLI.setSelection(ii);
+                break;
             }
+        }
+
+        if (UtilsComenzi.comandaAreArticole("20")) {
+            spinnerTransp.setEnabled(false);
             spinnerFilialeTCLI.setEnabled(false);
-        } else if (DateLivrare.getInstance().getFilialaLivrareTCLI() != null && !DateLivrare.getInstance().getFilialaLivrareTCLI().getUnitLog().isEmpty()) {
-            for (int ii = 0; ii < spinnerFilialeTCLI.getAdapter().getCount(); ii++) {
-                if (EnumFilialeLivrare.getCodFiliala(spinnerFilialeTCLI.getItemAtPosition(ii).toString()).equals(DateLivrare.getInstance().getFilialaLivrareTCLI())) {
-                    spinnerFilialeTCLI.setSelection(ii);
-                    break;
-                }
-            }
-
-            if (ListaArticoleComandaGed.getInstance().getListArticoleComanda() != null && ListaArticoleComandaGed.getInstance().getListArticoleComanda().size() > 0) {
-                spinnerTransp.setEnabled(false);
-                spinnerFilialeTCLI.setEnabled(false);
-            }
-
         }
     }
 
@@ -1387,7 +1361,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
     private void setFilialaPlataVisibility() {
 
-        String tipTranspSel = spinnerTransp.getSelectedItem().toString().split("-")[0].trim();
+        String tipTranspSel = UtilsComenzi.getSpinnerTipTransp(spinnerTransp.getSelectedItem().toString());
         String tipPlata = spinnerPlata.getSelectedItem().toString().split("-")[0].trim();
 
         if ((DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.COMANDA_LIVRARE) || isComandaClp()) && tipTranspSel.equals("TCLI") && tipPlata.equals("N")) {
@@ -1800,7 +1774,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
         }
 
-        if (spinnerTransp.getSelectedItem().toString().toLowerCase().contains("tcli") && DateLivrare.getInstance().getTipPersClient().equals("PF")
+        if (UtilsComenzi.getSpinnerTipTransp(spinnerTransp.getSelectedItem().toString()).toLowerCase().contains("tcli") && DateLivrare.getInstance().getTipPersClient().equals("PF")
                 && !DateLivrare.getInstance().isFacturaCmd()) {
             if (pers.equals(""))
                 pers = " ";
@@ -1860,7 +1834,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
         }
 
-        if (spinnerProgramLivrare.getSelectedItemPosition() == 0 && spinnerTransp.getSelectedItem().toString().toLowerCase().contains("trap")) {
+        if (spinnerProgramLivrare.getSelectedItemPosition() == 0 && UtilsComenzi.getSpinnerTipTransp(spinnerTransp.getSelectedItem().toString()).toLowerCase().contains("trap")) {
             Toast.makeText(getApplicationContext(), "Selectati perioada de livrare", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -1868,7 +1842,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         dateLivrareInstance.setPersContact(pers);
         dateLivrareInstance.setNrTel(telefon);
 
-        dateLivrareInstance.setTransport(spinnerTransp.getSelectedItem().toString().substring(0, 4));
+        dateLivrareInstance.setTransport(UtilsComenzi.getSpinnerTipTransp(spinnerTransp.getSelectedItem().toString()));
 
         if (dateLivrareInstance.getTransport().equals("TCLI") && dateLivrareInstance.getTipPlata().equals("R")) {
             Toast.makeText(getApplicationContext(), "Pentru transport TCLI nu puteti selecta metoda de plata Ramburs.", Toast.LENGTH_LONG).show();
@@ -1921,7 +1895,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         }
 
         dateLivrareInstance.setDateLivrare(adresa + "#" + pers + "#" + telefon + "#" + cantar + "#" + dateLivrareInstance.getTipPlata() + "#"
-                + spinnerTransp.getSelectedItem().toString() + "#" + factRed + "#");
+                + UtilsComenzi.getSpinnerTipTransp(spinnerTransp.getSelectedItem().toString()) + "#" + factRed + "#");
 
         dateLivrareInstance.setTermenPlata(spinnerTermenPlata.getSelectedItem().toString());
 
@@ -1980,7 +1954,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         dateLivrareInstance.setFactPaletSeparat(checkFactPaleti.isChecked());
         dateLivrareInstance.setCamionDescoperit(chkCamionDescoperit.isChecked());
 
-        if (spinnerTransp.getSelectedItem().toString().toLowerCase().contains("trap"))
+        if (UtilsComenzi.getSpinnerTipTransp(spinnerTransp.getSelectedItem().toString()).toLowerCase().contains("trap"))
             dateLivrareInstance.setProgramLivrare(String.valueOf(spinnerProgramLivrare.getSelectedItemPosition()));
         else
             dateLivrareInstance.setProgramLivrare("0");
@@ -2010,7 +1984,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
             UtilsComenzi.showFilialaLivrareDialog(this, DateLivrare.getInstance().getFilialaLivrareTCLI().getUnitLog());
             return;
         }
-        else if (DateLivrare.getInstance().getTransport().equals("TRAP") && UtilsComenzi.isComandaClp() && !UtilsComenzi.getFilialaDistrib(DateLivrare.getInstance().getCodFilialaCLP()).equals(poligonLivrare.getFilialaPrincipala())){
+        else if (UtilsComenzi.comandaAreArticole("20") &&DateLivrare.getInstance().getTransport().equals("TRAP") && UtilsComenzi.isComandaClp() && !UtilsComenzi.getFilialaDistrib(DateLivrare.getInstance().getCodFilialaCLP()).equals(poligonLivrare.getFilialaPrincipala())){
             UtilsComenzi.showFilialaLivrareDialog(this, DateLivrare.getInstance().getCodFilialaCLP());
             return;
         }
@@ -2052,6 +2026,8 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         listFilialeLivrare.add(0,beanFilialaLivrare);
         AdapterFilialeLivrare adapterLivrare = new AdapterFilialeLivrare(getApplicationContext(), listFilialeLivrare);
         spinnerFilialeTCLI.setAdapter(adapterLivrare);
+
+        setFilialaLivrareTCLI();
 
     }
 
@@ -2113,9 +2089,7 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
 
     }
 
-    private String getTipTransport() {
-        return spinnerTransp.getSelectedItem().toString().substring(0, 4);
-    }
+
 
     private String getAdrLivrareJSON() {
         String jsonData = "";
@@ -2139,33 +2113,14 @@ public class SelectAdrLivrCmdGed extends AppCompatActivity implements AsyncTaskL
         return;
     }
 
-    private void dealTranspCmdSite(String result) {
-        String[] pretResponse = {};
 
-        if (!result.equals("-1")) {
-            pretResponse = result.split("#");
-
-            if (!spinnerTransp.getSelectedItem().toString().substring(0, 4).equals(pretResponse[1].toUpperCase(Locale.getDefault()))) {
-                Toast.makeText(getApplicationContext(), "Tipul de transport recomandat este " + pretResponse[1], Toast.LENGTH_LONG).show();
-            }
-        } else {
-            pretResponse[0] = "0.0";
-        }
-
-    }
 
     public void onTaskComplete(String methodName, Object result) {
         if (methodName.equals(METHOD_NAME)) {
             fillJudeteClient((String) result);
         }
 
-        if (methodName.equals("getValTransportComandaSite")) {
-            dealTranspCmdSite((String) result);
-        }
 
-        if (methodName.equals("getValTransportConsilieri")) {
-
-        }
 
     }
 
