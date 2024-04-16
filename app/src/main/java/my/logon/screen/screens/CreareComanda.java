@@ -1367,6 +1367,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             params.put("codFurnizor", codFurnizor);
             params.put("listComenzi", comenziSer);
             params.put("canal", "10");
+            params.put("isCustodie",String.valueOf(tipComandaDistributie == TipCmdDistrib.LIVRARE_CUSTODIE));
 
             comandaDAO.getCostMacaraComenzi(params);
         } else {
@@ -1807,6 +1808,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             obj.put("isComandaACZC", isComandaACZC());
             obj.put("prelucrareLemn", DateLivrare.getInstance().getPrelucrareLemn());
             obj.put("filialaPlata", DateLivrare.getInstance().getFilialaPlata());
+            obj.put("codPostal", DateLivrare.getInstance().getCodPostal());
+            obj.put("isComandaCustodie", DateLivrare.getInstance().isComandaCustodie());
 
         } catch (JSONException ex) {
             Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
@@ -2156,6 +2159,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         antetComanda.setOptiuniCamion(stareOptiuniCamion);
         antetComanda.setGreutateComanda(ListaArticoleComanda.getInstance().getGreutateKgArticole());
         antetComanda.setTipComandaCamion(ListaArticoleComanda.getInstance().isComandaEnergofaga() ? "ENERGOFAGA" : "NORMALA");
+        antetComanda.setComandaDL(DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.DISPOZITIE_LIVRARE) ||
+                DateLivrare.getInstance().getTipComandaDistrib().equals(TipCmdDistrib.ARTICOLE_COMANDA));
 
         copyLivrareMathaus(antetComanda, comandaMathaus);
 
@@ -2177,7 +2182,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.99);
         int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.95);
 
-        rezumatComanda = new RezumatComandaDialog(this, ListaArticoleComanda.getInstance().getListArticoleLivrare(), "10", costTransport, DateLivrare.getInstance().getTransport(), CreareComanda.filialeArondateMathaus, selectTransp);
+        rezumatComanda = new RezumatComandaDialog(this, ListaArticoleComanda.getInstance().getListArticoleLivrare(), "10", costTransport, DateLivrare.getInstance().getTransport(),
+                CreareComanda.filialeArondateMathaus, selectTransp);
         rezumatComanda.setRezumatListener(this);
         rezumatComanda.getWindow().setLayout(width, height);
         rezumatComanda.show();
@@ -2675,7 +2681,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         ListaArticoleComanda.getInstance().addArticolLivrareComanda(articol);
 
         for (int ii = 0; ii < costDescarcare.getArticoleDescarcare().size(); ii++) {
-            if (costDescarcare.getArticoleDescarcare().get(ii).getFiliala().equals(articolPalet.getFiliala())) {
+            if (costDescarcare.getArticoleDescarcare().get(ii).getFiliala().equals(articolPalet.getFiliala()) &&
+                    costDescarcare.getArticoleDescarcare().get(ii).getDepart().equals(articolPalet.getDepart())) {
                 costDescarcare.getArticoleDescarcare().get(ii).setCantitate(costDescarcare.getArticoleDescarcare().get(ii).getCantitate() + articol.getCantitate());
             }
         }

@@ -95,7 +95,7 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 	private TextView labelCant, labelStoc, textPretMinKA, textPretMediuKA;
 	private Spinner spinnerDepoz, spinnerUnitMas;
 
-	private TextView textPromo;
+	private TextView textPromo, textCondPret;
 	private boolean pretMod = false;
 	private double initPrice = 0, cmpArt = 0;
 	private double finalPrice = 0, minimKAPrice = 0, greutateArt = 0;
@@ -209,6 +209,7 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 		labelStoc = (TextView) findViewById(R.id.labelStoc);
 		textPretTVA = (TextView) findViewById(R.id.textPretTVA);
 		txtImpachetare = (TextView) findViewById(R.id.txtImpachetare);
+		textCondPret = (TextView) findViewById(R.id.textCondPret);
 
 		textPromo = (TextView) findViewById(R.id.textPromo);
 		addListenerTextPromo();
@@ -249,6 +250,7 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 		textProcRed.setVisibility(View.INVISIBLE);
 		pretBtn.setVisibility(View.INVISIBLE);
 		textPromo.setVisibility(View.INVISIBLE);
+		textCondPret.setVisibility(View.INVISIBLE);
 		textPretTVA.setVisibility(View.INVISIBLE);
 		textMultipluArt.setVisibility(View.INVISIBLE);
 
@@ -1312,6 +1314,25 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 
 				initPrice = Double.parseDouble(tokenPret[1]);
 				listPrice = Double.parseDouble(tokenPret[8]);
+
+				String[] condPret = tokenPret[9].split(";");
+				int ii = 0;
+				String[] tokPret;
+				String stringCondPret = "";
+				Double valCondPret = 0.0;
+
+				for (ii = 0; ii < condPret.length; ii++) {
+					tokPret = condPret[ii].split(":");
+					valCondPret = Double.valueOf(tokPret[1].replace(',', '.').trim());
+					if (valCondPret != 0) {
+						stringCondPret += tokPret[0] + UtilsFormatting.addSpace(20 - tokPret[0].length()) + ":"
+								+ UtilsFormatting.addSpace(10 - String.valueOf(nf2.format(valCondPret)).length()) + nf2.format(valCondPret)
+								+ System.getProperty("line.separator");
+					}
+				}
+
+				textCondPret.setVisibility(View.VISIBLE);
+				textCondPret.setText(stringCondPret);
 
 				txtImpachetare.setText(tokenPret[19]);
 

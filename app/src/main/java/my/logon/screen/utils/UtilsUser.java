@@ -42,7 +42,7 @@ public class UtilsUser {
 	}
 
 	public static boolean isCVA() {
-		return UserInfo.getInstance().getTipUserSap().equals("CVA");
+		return UserInfo.getInstance().getTipUserSap().equals("CVA") || UserInfo.getInstance().getTipUserSap().equals("SDCVA");
 	}
 
 	public static boolean hasObiective() {

@@ -671,9 +671,6 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 		textTransport.setText(UtilsGeneral.getDescTipTransport(dateLivrare.getTransport()));
 		textDataLivrare.setText(dateLivrare.getDataLivrare());
 		textCantar.setText(dateLivrare.getCantar().equals("1") ? "Cu cantarire" : "Fara cantarire");
-		//textOras.setText(dateLivrare.getOras());
-		//textJudet.setText(InfoStrings.numeJudet(dateLivrare.getCodJudet()));
-		//textAdrLivr.setText(dateLivrare.getDateLivrare());
 		textPersContact.setText(dateLivrare.getPersContact());
 		textTelefon.setText(dateLivrare.getNrTel());
 		textObsLivrare.setText(dateLivrare.getObsLivrare());

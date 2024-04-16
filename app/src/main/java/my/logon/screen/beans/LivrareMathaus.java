@@ -2,9 +2,6 @@ package my.logon.screen.beans;
 
 import java.util.List;
 
-import my.logon.screen.beans.ComandaMathaus;
-import my.logon.screen.beans.CostTransportMathaus;
-
 public class LivrareMathaus {
 
 	private ComandaMathaus comandaMathaus;

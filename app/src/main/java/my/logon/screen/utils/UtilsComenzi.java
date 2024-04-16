@@ -296,12 +296,12 @@ public class UtilsComenzi {
 	}
 
 
-	public static boolean isAdresaUnitLogModifCmd(Context context, String filialaModifComanda, String filialaPoligon){
+	public static boolean isAdresaUnitLogModifCmd(Context context, String filialaModifComanda, DatePoligonLivrare poligonLivrareon){
 
 		if (filialaModifComanda == null || filialaModifComanda.trim().isEmpty())
 			return true;
 
-		if (filialaPoligon == null)
+		if (poligonLivrareon == null)
 			return true;
 
 		if (isComandaDl())
@@ -316,7 +316,8 @@ public class UtilsComenzi {
 		if (isComandaModifBV90())
 			return true;
 
-		if (!UtilsComenzi.getFilialaDistrib(filialaModifComanda).equals(filialaPoligon)) {
+		if (!UtilsComenzi.getFilialaDistrib(filialaModifComanda).equals(poligonLivrareon.getFilialaPrincipala()) &&
+				!UtilsComenzi.getFilialaDistrib(filialaModifComanda).equals(poligonLivrareon.getFilialaSecundara())) {
 
 			StringBuilder infoMsg = new StringBuilder();
 			infoMsg.append("\n");

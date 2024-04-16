@@ -411,7 +411,7 @@ public class HelperMathaus {
         double valPozArt = artCmd.getPret();
 
         if (valPozArt == 0)
-            valPozArt = (artCmd.getPretUnitarClient() / artCmd.getMultiplu()) * artCmd.getCantitate();
+            valPozArt = (artCmd.getPretUnitarClient() / artCmd.getMultiplu()) * artCmd.getCantUmb();
 
         dateArticol.setValPoz(valPozArt);
         dateArticol.setGreutate(artCmd.getGreutateBruta());
@@ -453,6 +453,10 @@ public class HelperMathaus {
         }
         else if (!DateLivrare.getInstance().getCodFilialaFasonate().trim().isEmpty())
             dateArticol.setUlStoc(DateLivrare.getInstance().getCodFilialaFasonate());
+
+        if (artCmd.getArticolMathaus() != null && artCmd.getArticolMathaus().getTipStoc() != null)
+            dateArticol.setTipStoc(artCmd.getArticolMathaus().getTipStoc());
+
 
         return dateArticol;
 

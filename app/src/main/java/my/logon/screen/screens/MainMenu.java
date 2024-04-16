@@ -2,8 +2,10 @@ package my.logon.screen.screens;
 
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
@@ -36,9 +38,9 @@ import org.ksoap2.transport.HttpTransportSE;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -221,27 +223,22 @@ public class MainMenu extends Activity {
         animation.setRepeatCount(Animation.INFINITE);
         animation.setRepeatMode(Animation.REVERSE);
 
-        // verificare update doar la logon
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (Exception e) {
+
+        }
+
+        buildVer = String.valueOf(pInfo.versionCode);
+
         if (UserInfo.getInstance().getParentScreen().equals("logon")) {
-
-            PackageInfo pInfo = null;
             try {
-                pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            } catch (Exception e) {
-
-            }
-
-            buildVer = String.valueOf(pInfo.versionCode);
-
-            try {
-
                 check = new checkUpdate(this);
                 check.execute("dummy");
-
             } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
             }
-
         }
 
 
@@ -634,7 +631,7 @@ public class MainMenu extends Activity {
                 if (selectedBtnName.equalsIgnoreCase("Salarizare")) {
 
                     Intent nextScreen = null;
-                    if (UserInfo.getInstance().getTipUserSap().equals("CVA"))
+                    if (UtilsUser.isCVA())
                         nextScreen = new Intent(MainMenu.this, SalarizareCVA.class);
                     else
                         nextScreen = new Intent(MainMenu.this, Salarizare.class);
@@ -810,6 +807,7 @@ public class MainMenu extends Activity {
     private class checkUpdate extends AsyncTask<String, Void, String> {
         String errMessage = "";
         Context mContext;
+        String updateString = "";
         private ProgressDialog dialog;
 
         private checkUpdate(Context context) {
@@ -844,10 +842,13 @@ public class MainMenu extends Activity {
 
                     String sourceFile = UtilsConn.ftpAccess(getApplicationContext()).getVerFile();
 
-                    FileOutputStream desFile2 = new FileOutputStream(Environment.getExternalStorageDirectory() + "/download/LiteReportsVerTEST.txt");
-                    mFTPClient.retrieveFile(sourceFile, desFile2);
+                    InputStream fileIS = mFTPClient.retrieveFileStream(sourceFile);
+                    BufferedReader buf = new BufferedReader(new InputStreamReader(fileIS));
 
-                    desFile2.close();
+                    updateString = buf.readLine();
+                    fileIS.close();
+                    buf.close();
+
 
                 } else {
                     errMessage = "Probleme la conectare!";
@@ -885,7 +886,7 @@ public class MainMenu extends Activity {
                     Toast toast = Toast.makeText(getApplicationContext(), errMessage, Toast.LENGTH_LONG);
                     toast.show();
                 } else {
-                    validateUpdate();
+                    validateUpdate(updateString);
                 }
 
             } catch (Exception e) {
@@ -895,23 +896,11 @@ public class MainMenu extends Activity {
 
     }
 
-    public void validateUpdate() {
+    public void validateUpdate(String updateString) {
 
         try {
 
-            File fVer = new File(Environment.getExternalStorageDirectory() + "/download/LiteReportsVerTEST.txt");
-            FileInputStream fileIS = new FileInputStream(fVer);
-            BufferedReader buf = new BufferedReader(new InputStreamReader(fileIS));
-
-            String readString = buf.readLine();
-            fileIS.close();
-
-            if (readString == null) {
-                check = null;
-                return;
-            }
-
-            String[] tokenVer = readString.split("#");
+            String[] tokenVer = updateString.split("#");
 
             if (!tokenVer[2].equals("0")) // 1 - fisierul este gata pentru
             // update, 0 - inca nu
@@ -919,13 +908,8 @@ public class MainMenu extends Activity {
 
                 if (Float.parseFloat(buildVer) < Float.parseFloat(tokenVer[3])) {
 
-                    // exista update
-                    try {
-                        downloadUpdate download = new downloadUpdate(this);
-                        download.execute("dummy");
-                    } catch (Exception e) {
-                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                    }
+                    downloadUpdate download = new downloadUpdate(this);
+                    download.execute("dummy");
 
                 } else // nu exista update
                 {
@@ -940,10 +924,7 @@ public class MainMenu extends Activity {
 
                 }
 
-            } else {
-
             }
-
             check = null;
 
         } catch (Exception ex) {
@@ -996,24 +977,17 @@ public class MainMenu extends Activity {
 
                     String sourceFile = UtilsConn.ftpAccess(getApplicationContext()).getApkFile();
 
-                    FileOutputStream desFile1 = new FileOutputStream(Environment.getExternalStorageDirectory() + "/download/LiteSFA.apk");
+                    FileOutputStream desFile1 = new FileOutputStream(Environment.getExternalStorageDirectory() + "/download/LiteSFATest.apk");
                     mFTPClient.retrieveFile(sourceFile, desFile1);
-
-                    sourceFile = "/Update/LiteSFA/LiteReportsVerTEST.txt";
-                    sourceFile = UtilsConn.ftpAccess(getApplicationContext()).getVerFile();
-
-                    FileOutputStream desFile2 = new FileOutputStream(Environment.getExternalStorageDirectory() + "/download/LiteReportsVerTEST.txt");
-                    mFTPClient.retrieveFile(sourceFile, desFile2);
-
                     desFile1.close();
-                    desFile2.close();
 
                 } else {
-                    errMessage = "Probleme la conectare!";
+                    errMessage = "Eroare conectare.";
                 }
             } catch (Exception e) {
-                errMessage = e.getMessage();
+                showAppNotInstalledInfo();
             } finally {
+                this.dialog.cancel();
                 if (mFTPClient.isConnected()) {
                     {
                         try {
@@ -1051,34 +1025,41 @@ public class MainMenu extends Activity {
 
     }
 
+
     public void startInstall() {
 
-        String fileUrl = "/download/LiteSFA.apk";
-        String file = Environment.getExternalStorageDirectory().getPath() + fileUrl;
-        File f = new File(file);
+        File newApkFile = new File(Environment.getExternalStorageDirectory() + "/download/LiteSFATest1.apk");
 
-        if (f.exists()) {
-            // stergere bd veche
+        if (newApkFile.exists()) {
+
             try {
 
-                String fileDB = Environment.getExternalStorageDirectory().getPath() + DATABASE_NAME;
-                this.getApplicationContext().deleteDatabase(fileDB);
-
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(newApkFile), "application/vnd.android.package-archive");
+                intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, false);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getApplicationContext().startActivity(intent);
+                finish();
             } catch (Exception ex) {
-
+                showAppNotInstalledInfo();
             }
-            // sf. bd
-
-            // start install
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/download/" + "LiteSFA.apk")),
-                    "application/vnd.android.package-archive");
-            startActivity(intent);
-            finish();
         } else {
-            Toast toast = Toast.makeText(getApplicationContext(), "Fisier corupt, repetati operatiunea!", Toast.LENGTH_SHORT);
-            toast.show();
+            showAppNotInstalledInfo();
         }
+    }
+
+    private void showAppNotInstalledInfo() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("\nActualizarea aplicatiei a esuat. Contactati departamentul IT pentru a instala noua versiune de aplicatie.\n")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        System.exit(0);
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
     }
 
     // verificare comenzi ce au conditii si comenzi ce necesita aprobare
@@ -1176,7 +1157,28 @@ public class MainMenu extends Activity {
         return UserInfo.getInstance().getTipAcces().equals("18") || UserInfo.getInstance().getTipAcces().equals("17") || UtilsUser.isDV_WOOD();
     }
 
+    private boolean isActualizare(String result) {
+
+        String[] arrayRes = result.split("#");
+
+        for (String token : arrayRes) {
+            if (token.toLowerCase().contains("ver")) {
+                String[] verApp = token.split(":");
+
+                if (Integer.parseInt(buildVer) < Integer.parseInt(verApp[1])) {
+                    check = new checkUpdate(this);
+                    check.execute("dummy");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void startModifCmdBtnAnimation(String result) {
+
+        if (isActualizare(result))
+            return;
 
         if (UserInfo.getInstance().getTipAcces().equals("9") || UserInfo.getInstance().getTipAcces().equals("27")
                 || UserInfo.getInstance().getTipAcces().equals("35") || UserInfo.getInstance().getTipAcces().equals("17")

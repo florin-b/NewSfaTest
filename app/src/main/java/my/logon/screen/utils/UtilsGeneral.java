@@ -202,7 +202,7 @@ public class UtilsGeneral {
         if (codPlata.equals("B")) {
             tipPlata = "Bilet la ordin";
         } else if (codPlata.equals("C")) {
-            tipPlata = "Card bancar";
+            tipPlata = "Cec";
         } else if (codPlata.equals("E")) {
             tipPlata = "Plata in numerar";
         } else if (codPlata.equals("L")) {

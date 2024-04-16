@@ -18,8 +18,11 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import my.logon.screen.R;
+import my.logon.screen.beans.BeanDataLivrare;
 import my.logon.screen.beans.CostTransportMathaus;
 import my.logon.screen.beans.RezumatComanda;
 import my.logon.screen.beans.TranspComenzi;
@@ -55,9 +58,11 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
     private List<ArticolComanda> listAlteTaxe;
     private boolean selectTransp;
     private String canalDistrib;
+    private List<BeanDataLivrare> listDateLivrare;
 
 
-    public AdapterRezumatComanda(Context context, List<RezumatComanda> listComenzi, List<CostTransportMathaus> costTransport, String tipTransportCmd, String filialeArondate, boolean selectTransp, String canalDistrib) {
+    public AdapterRezumatComanda(Context context, List<RezumatComanda> listComenzi, List<CostTransportMathaus> costTransport, String tipTransportCmd,
+                                 String filialeArondate, boolean selectTransp, String canalDistrib) {
         this.context = context;
         this.listComenzi = listComenzi;
         this.costTransport = costTransport;
@@ -106,6 +111,7 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
 
             viewHolder.layoutTransport = (LinearLayout) convertView.findViewById(R.id.layoutTransport);
             viewHolder.spinnerTransport = (Spinner) convertView.findViewById(R.id.spinnerTransport);
+
             convertView.setTag(viewHolder);
 
 
@@ -155,10 +161,12 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
                 if (DateLivrare.getInstance().getTransport().equals("TCLI"))
                     tipTranspArt = "TCLI";
 
-                if (tipTranspArt.equals("TCLI"))
-                    viewHolder.spinnerTransport.setSelection(1);
-                else if (tipTranspArt.equals("TRAP"))
-                    viewHolder.spinnerTransport.setSelection(0);
+                for (int ii = 0; ii < viewHolder.spinnerTransport.getAdapter().getCount(); ii++) {
+                    if (viewHolder.spinnerTransport.getAdapter().getItem(ii).toString().equals(tipTranspArt)) {
+                        viewHolder.spinnerTransport.setSelection(ii);
+                        break;
+                    }
+                }
 
 
             } else {
@@ -268,7 +276,6 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
 
 
 
-
     private void setListenerSpinnerTransport(Spinner spinnerTransport, RezumatComanda rezumat, ViewHolder viewHolder) {
 
         spinnerTransport.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -310,13 +317,13 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
         });
     }
 
-    private void eliminaArticoleServicii(RezumatComanda rezumatComanda, ViewHolder viewHolder){
+    private void eliminaArticoleServicii(RezumatComanda rezumatComanda, ViewHolder viewHolder) {
         eliminaArticolTransport(rezumatComanda, viewHolder);
         eliminaArticolTaxeTransp(rezumatComanda, viewHolder);
         eliminaAlteTaxe(rezumatComanda, viewHolder);
     }
 
-    private void adaugaArticoleServicii(RezumatComanda rezumatComanda, ViewHolder viewHolder){
+    private void adaugaArticoleServicii(RezumatComanda rezumatComanda, ViewHolder viewHolder) {
         adaugaArticolTransport(rezumatComanda, viewHolder);
         adaugaArticolTaxeTransp(rezumatComanda, viewHolder);
         adaugaAlteTaxe(rezumatComanda, viewHolder);
@@ -413,7 +420,7 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
                 }
             }
 
-            if (!isTaxaTransp && HelperMathaus.isCodArticolServiciuTRAP(artCom)){
+            if (!isTaxaTransp && HelperMathaus.isCodArticolServiciuTRAP(artCom)) {
                 adaugaAlteTaxeLista(artCom);
                 artIterator.remove();
                 calculeazaTotalComanda(rezumatComanda, viewHolder);
@@ -443,14 +450,6 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
         return numeArticol != null && numeArticol.toUpperCase().contains("SERV") && numeArticol.toUpperCase().contains("TRANSP");
     }
 
-
-    private boolean isArtTaxa(String numeArticol) {
-        if (numeArticol == null)
-            return false;
-
-        return HelperMathaus.isArtTaxaAcces(numeArticol);
-
-    }
 
     private void adaugaArticolTransport(RezumatComanda rezumatComanda, ViewHolder viewHolder) {
 
@@ -856,11 +855,11 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
     }
 
 
-    private List<ArticolComanda> getListTaxaTranspFiliala(String filiala){
+    private List<ArticolComanda> getListTaxaTranspFiliala(String filiala) {
 
         List<ArticolComanda> listTaxeFiliala = new ArrayList<>();
 
-        for (ArticolComanda artTaxaTransp : listArticoleTaxaTransp){
+        for (ArticolComanda artTaxaTransp : listArticoleTaxaTransp) {
             if (artTaxaTransp.getFilialaSite().equals(filiala))
                 listTaxeFiliala.add(artTaxaTransp);
         }
@@ -868,11 +867,11 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
         return listTaxeFiliala;
     }
 
-    private List<ArticolComanda> getListAlteTaxeFiliala(String filiala){
+    private List<ArticolComanda> getListAlteTaxeFiliala(String filiala) {
 
         List<ArticolComanda> listTaxeFiliala = new ArrayList<>();
 
-        for (ArticolComanda artTaxaTransp : listAlteTaxe){
+        for (ArticolComanda artTaxaTransp : listAlteTaxe) {
             if (artTaxaTransp.getFilialaSite().equals(filiala))
                 listTaxeFiliala.add(artTaxaTransp);
         }
@@ -940,6 +939,39 @@ public class AdapterRezumatComanda extends BaseAdapter implements ModifPretTrans
             return null;
         }
 
+    }
+
+    private String[] getDateDisponibileLivrare(String filiala) {
+
+        List<String> dateLivrare = new ArrayList<>();
+
+        if (listDateLivrare != null) {
+
+            for (BeanDataLivrare dataL : listDateLivrare) {
+
+                if (dataL.getFiliala().equals(UtilsComenzi.getFilialaDistrib(filiala)))
+                    dateLivrare.add(dataL.getDataLivrare());
+
+            }
+
+        }
+
+        return dateLivrare.toArray(new String[0]);
+    }
+
+    private String[] getDateDisponibileLivrare() {
+
+        SortedSet<String> dateLivrare = new TreeSet<>();
+
+        if (listDateLivrare != null) {
+
+            for (BeanDataLivrare dataL : listDateLivrare) {
+                dateLivrare.add(dataL.getDataLivrare());
+            }
+
+        }
+
+        return dateLivrare.toArray(new String[0]);
     }
 
     public String addSpaces(String um) {

@@ -29,6 +29,7 @@ import my.logon.screen.listeners.IntervalSalarizareListener;
 import my.logon.screen.listeners.OperatiiSalarizareListener;
 import my.logon.screen.model.OperatiiSalarizare;
 import my.logon.screen.model.UserInfo;
+import my.logon.screen.utils.UtilsUser;
 
 public class SalarizareCVA extends Activity implements OperatiiSalarizareListener, IntervalSalarizareListener {
 
@@ -69,7 +70,7 @@ public class SalarizareCVA extends Activity implements OperatiiSalarizareListene
 
     private void checkAccess() {
 
-        if (UserInfo.getInstance().getTipUserSap().equals("CVA") && UserInfo.getInstance().getIsMeniuBlocat()) {
+        if (UtilsUser.isCVA() && UserInfo.getInstance().getIsMeniuBlocat()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Acces blocat. Folositi modulul Utilizator pentru deblocare.").setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {

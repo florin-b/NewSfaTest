@@ -107,11 +107,11 @@ import my.logon.screen.listeners.ValoareNegociataDialogListener;
 import my.logon.screen.model.AlgoritmComandaGed;
 import my.logon.screen.model.ArticolComanda;
 import my.logon.screen.model.ArticolComandaGed;
+import my.logon.screen.model.ClientiGenericiGedInfoStrings;
 import my.logon.screen.model.Comanda;
 import my.logon.screen.model.ComenziDAO;
 import my.logon.screen.model.Constants;
 import my.logon.screen.model.DateLivrare;
-import my.logon.screen.model.ClientiGenericiGedInfoStrings;
 import my.logon.screen.model.ListaArticoleComandaGed;
 import my.logon.screen.model.OperatiiArticol;
 import my.logon.screen.model.OperatiiArticolFactory;
@@ -1621,6 +1621,8 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
         antetComanda.setOptiuniCamion(stareOptiuniCamion);
         antetComanda.setGreutateComanda(ListaArticoleComandaGed.getInstance().getGreutateKgArticole());
         antetComanda.setTipComandaCamion(ListaArticoleComandaGed.getInstance().isComandaEnergofaga() ? "ENERGOFAGA" : "NORMALA");
+        antetComanda.setComandaDL(DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.DISPOZITIE_LIVRARE) ||
+                DateLivrare.getInstance().getTipComandaGed().equals(TipCmdGed.ARTICOLE_COMANDA));
 
         copyLivrareMathaus(antetComanda, comandaMathaus);
 
@@ -1882,7 +1884,8 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
         int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.99);
         int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.95);
 
-        rezumatComanda = new RezumatComandaDialog(this, ListaArticoleComandaGed.getInstance().getListArticoleLivrare(), "20", costTransport, DateLivrare.getInstance().getTransport(), CreareComandaGed.filialeArondateMathaus, selectTransp);
+        rezumatComanda = new RezumatComandaDialog(this, ListaArticoleComandaGed.getInstance().getListArticoleLivrare(), "20", costTransport,
+                DateLivrare.getInstance().getTransport(), CreareComandaGed.filialeArondateMathaus, selectTransp);
         rezumatComanda.setRezumatListener(this);
         rezumatComanda.getWindow().setLayout(width, height);
         rezumatComanda.show();
@@ -2359,6 +2362,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
             obj.put("isComandaACZC", isComandaACZC());
             obj.put("prelucrareLemn", DateLivrare.getInstance().getPrelucrareLemn());
             obj.put("filialaPlata", DateLivrare.getInstance().getFilialaPlata());
+            obj.put("codPostal", DateLivrare.getInstance().getCodPostal());
 
         } catch (Exception ex) {
             Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();

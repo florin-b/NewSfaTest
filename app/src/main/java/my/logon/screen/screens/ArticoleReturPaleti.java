@@ -321,7 +321,17 @@ public class ArticoleReturPaleti extends Fragment implements ListaArtReturListen
 
     }
 
+    private String getUnDocument(List<BeanArticolRetur> listArticole){
+        String unDocument = "";
 
+        for (BeanArticolRetur artRetur : listArticole)
+            if (artRetur.getNrDocument()!= null && !artRetur.getNrDocument().trim().isEmpty()) {
+                unDocument = artRetur.getNrDocument();
+                break;
+            }
+
+        return unDocument;
+    }
 
     private void performSaveRetur() {
 
@@ -507,6 +517,7 @@ public class ArticoleReturPaleti extends Fragment implements ListaArtReturListen
         transpRetur.setCantitate(getNrPaletiRetur());
         transpRetur.setCantitateRetur(getNrPaletiRetur());
         transpRetur.setUm("BUC");
+        transpRetur.setNrDocument(getUnDocument(listArticole));
 
         return transpRetur;
 

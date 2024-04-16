@@ -1,9 +1,10 @@
 package my.logon.screen.utils;
 
-import my.logon.screen.model.UserInfo;
 import android.content.Context;
 import android.net.wifi.WifiManager;
+
 import my.logon.screen.beans.FtpAccess;
+import my.logon.screen.model.UserInfo;
 
 public class UtilsConn {
 
@@ -11,12 +12,12 @@ public class UtilsConn {
 
 	private static final String FTP_CENTRAL_USR = "litesfa";
 	private static final String FTP_CENTRAL_PASS = "egoo4Ur";
-	private static final String FTP_CENTRAL_VER_FILE = "/Update/LiteSFA/LiteReportsVerTest.txt";
+	private static final String FTP_CENTRAL_VER_FILE = "/Update/LiteSFA/LiteReportsVerTEST.txt";
 	private static final String FTP_CENTRAL_APK_FILE = "/Update/LiteSFA/LiteSFATest.apk";
 
 	private static final String FTP_LOCAL_USR = "update";
 	private static final String FTP_LOCAL_PASS = "Umig9eep";
-	private static final String FTP_LOCAL_VER_FILE = "Update/LiteSFA/LiteReportsVerTest.txt";
+	private static final String FTP_LOCAL_VER_FILE = "Update/LiteSFA/LiteReportsVerTEST.txt";
 	private static final String FTP_LOCAL_APK_FILE = "Update/LiteSFA/LiteSFATest.apk";
 
 	private static final String NO_IP = "0.0.0.0";

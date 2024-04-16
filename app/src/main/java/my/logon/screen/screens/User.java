@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.SimpleAdapter;
@@ -37,15 +36,15 @@ import my.logon.screen.enums.EnumOperatiiMeniu;
 import my.logon.screen.listeners.CodPinDialogListener;
 import my.logon.screen.listeners.HelperSiteListener;
 import my.logon.screen.listeners.OperatiiMeniuListener;
-import my.logon.screen.model.HelperUserSite;
 import my.logon.screen.model.ClientiGenericiGedInfoStrings;
+import my.logon.screen.model.HelperUserSite;
 import my.logon.screen.model.OperatiiMeniu;
 import my.logon.screen.model.UserInfo;
 import my.logon.screen.utils.UtilsUser;
 
 public class User extends Activity implements HelperSiteListener, CodPinDialogListener, OperatiiMeniuListener {
 
-	Button buttonUpdate, buttonInstall;
+
 	String filiala = "", nume = "", cod = "";
 	public static String unitLog = "";
 	public static String numeDepart = "";
