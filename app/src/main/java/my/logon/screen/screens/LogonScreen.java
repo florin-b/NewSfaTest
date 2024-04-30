@@ -150,95 +150,9 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 
         globalMyIP = getDeviceId();
 
-        //etUsername.setText("MDINICA");
-        //etPassword.setText("rxtw93");
+      //  etUsername.setText("VURSACHE1");
+      //  etPassword.setText("46DrX3");
 
-        //etUsername.setText("CGONTESCU");
-        //etPassword.setText("Tk9hry");
-
-        //etUsername.setText("CGONTESCU");
-        //etPassword.setText("Tk9hry");
-
-        // etUsername.setText("CBARLA");
-        // etPassword.setText("BJvtx3");
-
-        //etUsername.setText("ABULF");
-        //etPassword.setText("KPfnXx");
-
-       //  etUsername.setText("GVISAN");
-       //  etPassword.setText("2DqwHP");
-
-       //  etUsername.setText("ITURIAC");
-       //  etPassword.setText("FmqZkw");
-
-       // etUsername.setText("DPUISORU");
-       // etPassword.setText("jCTJby");
-
-        // etUsername.setText("DIVANOV1"); //SD 01 BV
-        // etPassword.setText("xzn6Dg");
-
-        // etUsername.setText("IBOANCA"); // cons wood
-        // etPassword.setText("KPRDz2");N
-
-        // etUsername.setText("CCAMARUTA"); //cvr
-        // etPassword.setText("wD8BdG");
-
-        // etUsername.setText("BANDREESCU"); //sd07 BU
-        // etPassword.setText("tVFYqj");
-
-        //etUsername.setText("MVOICU"); //sd07 BU
-        //etPassword.setText("mGbhyN");
-
-        // etUsername.setText("FROTARU"); // KA Gl
-        // etPassword.setText("89mLcn");
-
-        // etUsername.setText("VURSACHE1"); // SDIP IS
-        // etPassword.setText("46DrX3");
-
-        // etUsername.setText("SSTEFAN3"); // AMOB
-        // etPassword.setText("G6CNTy");
-
-        // etUsername.setText("TIMPUSCATU"); //
-        // etPassword.setText("5Pkz53");
-
-        // etUsername.setText("FENE"); //
-        // etPassword.setText("uq94fC");
-
-        // etUsername.setText("PADURARU"); //
-        // etPassword.setText("L9HTLM");
-
-        // etUsername.setText("VURSACHE1"); //SDIP
-        // etPassword.setText("46DrX3");
-
-        // etUsername.setText("VANECULASEI");
-        // etPassword.setText("VfFThR");
-
-        // etUsername.setText("CGRIGORAS1"); //OIVPD
-        // etPassword.setText("267Jvj");
-
-        // etUsername.setText("DAGAPE"); //INFO - CGED
-        // etPassword.setText("ynP6kH");
-
-        // etUsername.setText("pamorar"); //cvw
-        // etPassword.setText("1Pm2Rar");
-
-        // etUsername.setText("ABOT"); //CVIP
-        // etPassword.setText("rMLKTX");
-
-        // etUsername.setText("LPADURARU");
-        // etPassword.setText("tTXHRk");
-
-        // etUsername.setText("APONT");
-        // etPassword.setText("qgQPK7");
-
-        // etUsername.setText("ORAPOTAN");
-        // etPassword.setText("4THzK9");
-
-        // etUsername.setText("androsd");
-        // etPassword.setText("112");
-
-        //etUsername.setText("MDINICA"); //SD04
-        //etPassword.setText("rxtw93");
 
         checkBundleExtra();
 
