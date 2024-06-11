@@ -12,7 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +31,6 @@ import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,9 +56,9 @@ import my.logon.screen.listeners.DivizieDialogListener;
 import my.logon.screen.listeners.IntervalDialogListener;
 import my.logon.screen.listeners.OperatiiAgentListener;
 import my.logon.screen.model.ArticolComanda;
+import my.logon.screen.model.ClientiGenericiGedInfoStrings;
 import my.logon.screen.model.ComandaCreata;
 import my.logon.screen.model.ComenziDAO;
-import my.logon.screen.model.ClientiGenericiGedInfoStrings;
 import my.logon.screen.model.OperatiiAgent;
 import my.logon.screen.model.OperatiiFiliala;
 import my.logon.screen.model.UserInfo;
@@ -397,18 +395,6 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 
 		agent.getListaAgenti(selectedFiliala, selectedCodDepart, this, true, tipAgent);
 
-	}
-
-	boolean isDateValid(String date) {
-		try {
-			SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-			df.setLenient(false);
-			df.parse(date);
-			return true;
-		} catch (Exception e) {
-			Log.e("Error", e.toString());
-			return false;
-		}
 	}
 
 	private void populateSpinnerTipUser() {

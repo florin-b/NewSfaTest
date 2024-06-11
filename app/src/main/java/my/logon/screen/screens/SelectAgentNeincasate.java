@@ -4,16 +4,6 @@
  */
 package my.logon.screen.screens;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import my.logon.screen.listeners.AsyncTaskListener;
-import my.logon.screen.listeners.CustomSpinnerClass;
-import my.logon.screen.listeners.CustomSpinnerListener;
-import my.logon.screen.model.UserInfo;
-import my.logon.screen.R;
-import my.logon.screen.utils.UtilsGeneral;
-import my.logon.screen.utils.UtilsUser;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,6 +13,16 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import my.logon.screen.R;
+import my.logon.screen.listeners.AsyncTaskListener;
+import my.logon.screen.listeners.CustomSpinnerClass;
+import my.logon.screen.listeners.CustomSpinnerListener;
+import my.logon.screen.model.UserInfo;
+import my.logon.screen.utils.UtilsGeneral;
 
 public class SelectAgentNeincasate extends Fragment implements CustomSpinnerListener, AsyncTaskListener {
 
@@ -151,7 +151,8 @@ public class SelectAgentNeincasate extends Fragment implements CustomSpinnerList
 				localDepart = "11";
 			}
 			
-			if (UserInfo.getInstance().getCod().equals("00010281") || UserInfo.getInstance().getCod().equals("00018768"))
+			if (UserInfo.getInstance().getCod().equals("00010281") || UserInfo.getInstance().getCod().equals("00018768")
+					|| UserInfo.getInstance().getCod().equals("00086469"))
 				localDepart = "11";
 			
 			String filialaNeincasate = Neincasate.selectedFiliala;

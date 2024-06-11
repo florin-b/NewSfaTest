@@ -2,10 +2,6 @@ package my.logon.screen.beans;
 
 import java.util.List;
 
-import my.logon.screen.beans.SalarizareDatePrincipale;
-import my.logon.screen.beans.SalarizareDetaliiBaza;
-import my.logon.screen.beans.SalarizareDetaliiInc08;
-
 public class BeanSalarizareAgent {
 	private SalarizareDatePrincipale datePrincipale;
 	private List<SalarizareDetaliiBaza> detaliiBaza;
@@ -13,6 +9,8 @@ public class BeanSalarizareAgent {
 	private SalarizareDetaliiCorectie detaliiCorectie;
 	private List<SalarizareDetaliiInc08> detaliiInc08;
 	private List<SalarizareDetaliiMalus> detaliiMalus;
+	private List<BeanVanzariVS> detaliiVS;
+	private List<BeanVanzariIncr> detaliiVanzariIncr;
 
 	public SalarizareDatePrincipale getDatePrincipale() {
 		return datePrincipale;
@@ -62,4 +60,19 @@ public class BeanSalarizareAgent {
 		this.detaliiMalus = detaliiMalus;
 	}
 
+	public List<BeanVanzariVS> getDetaliiVS() {
+		return detaliiVS;
+	}
+
+	public void setDetaliiVS(List<BeanVanzariVS> detaliiVS) {
+		this.detaliiVS = detaliiVS;
+	}
+
+	public List<BeanVanzariIncr> getDetaliiVanzariIncr() {
+		return detaliiVanzariIncr;
+	}
+
+	public void setDetaliiVanzariIncr(List<BeanVanzariIncr> detaliiVanzariIncr) {
+		this.detaliiVanzariIncr = detaliiVanzariIncr;
+	}
 }

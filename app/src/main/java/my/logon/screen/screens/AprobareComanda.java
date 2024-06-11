@@ -726,7 +726,8 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
 
             String depart = UserInfo.getInstance().getCodDepart();
 
-            if (UtilsUser.isDV_WOOD() || UserInfo.getInstance().getCod().equals("00010281") || UserInfo.getInstance().getCod().equals("00018768"))
+            if (UtilsUser.isDV_WOOD() || UserInfo.getInstance().getCod().equals("00010281") || UserInfo.getInstance().getCod().equals("00018768")
+                    || UserInfo.getInstance().getCod().equals("00086469"))
                 depart = "11";
 
             params.put("filiala", UserInfo.getInstance().getUnitLog());

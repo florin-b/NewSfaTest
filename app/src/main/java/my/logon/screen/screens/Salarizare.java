@@ -32,6 +32,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
+import my.logon.screen.adapters.SalarizareStocNocivAdapter;
+import my.logon.screen.adapters.SalarizareVanzIncrAdapter;
 import my.logon.screen.filters.ClientMalusFilter;
 import my.logon.screen.R;
 import my.logon.screen.adapters.Detalii08Adapter;
@@ -109,9 +111,7 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
         initData();
 
 
-
     }
-
 
 
     private void checkAccess() {
@@ -255,6 +255,23 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
         }
     }
 
+    private void setDetaliiNocivVisibility(boolean isVisible) {
+        if (isVisible) {
+            findViewById(R.id.containerStocNociv).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.containerStocNociv).setVisibility(View.GONE);
+        }
+    }
+
+    private void setDetaliiIncrucisateVisibility(boolean isVisible) {
+        if (isVisible) {
+            findViewById(R.id.containerIncrucisate).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.containerIncrucisate).setVisibility(View.GONE);
+        }
+    }
+
+
     private void setDetaliiMalusClientVisibility(boolean isVisible) {
         if (isVisible) {
             ((LinearLayout) findViewById(R.id.labelDetaliiMalusClient)).setVisibility(View.VISIBLE);
@@ -305,14 +322,22 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
 
     private void setDetaliiSalarizareVisibility(boolean isVisible) {
 
+
         setDetaliiT1Visibility(isVisible);
         setDetaliiTCFVisibility(isVisible);
         setDetaliiCorectieVisibility(isVisible);
         setDetalii08Visibility(isVisible);
         setDetaliiMalusVisibility(isVisible);
+        setDetaliiNocivVisibility(isVisible);
+
+        if (UtilsUser.isKA() || UtilsUser.isUserSDKA() || UtilsUser.isUserKA())
+            setDetaliiIncrucisateVisibility(false);
+        else
+            setDetaliiIncrucisateVisibility(isVisible);
 
         if (UserInfo.getInstance().getTipUserSap().equals("SD"))
             setDetaliiCSVVisibility(isVisible);
+
 
     }
 
@@ -475,11 +500,19 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
 
         if (isDetaliiAgent) {
 
-            ((TextView) findViewById(R.id.textAgentSelectat)).setVisibility(View.VISIBLE);
+            findViewById(R.id.textAgentSelectat).setVisibility(View.VISIBLE);
             ((TextView) findViewById(R.id.textAgentSelectat)).setText(numeAgentSelectat);
 
             setDateGeneraleVisibility(false);
             setDetaliiVisibility(true);
+            setDetaliiNocivVisibility(true);
+
+            if (UtilsUser.isKA() || UtilsUser.isUserSDKA() || UtilsUser.isUserKA())
+                setDetaliiIncrucisateVisibility(false);
+            else
+                setDetaliiIncrucisateVisibility(true);
+
+
         } else {
 
             ((TextView) findViewById(R.id.textAgentSelectat)).setVisibility(View.GONE);
@@ -487,6 +520,8 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
             setSalAgentiVisibility(false);
             setDateGeneraleVisibility(true);
             setDetaliiVisibility(false);
+            setDetaliiNocivVisibility(false);
+            setDetaliiIncrucisateVisibility(false);
         }
 
         setHeaderCVSVisibility(false);
@@ -501,8 +536,28 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
         else
             salarizare = salarizareAgent;
 
+        if (salarizare.getDatePrincipale() == null) {
+            Toast.makeText(getApplicationContext(), "Nu exista informatii.", Toast.LENGTH_LONG).show();
+            setDateGeneraleVisibility(false);
+            setDetaliiVisibility(false);
+            setDetaliiCSVVisibility(false);
+            setDetaliiNocivVisibility(false);
+            setDetaliiIncrucisateVisibility(false);
+            return;
+        }
+
+
         ((TextView) findViewById(R.id.venitT1)).setText(nf.format(salarizare.getDatePrincipale().getVenitMJ_T1()));
         ((TextView) findViewById(R.id.venitTCF)).setText(nf.format(salarizare.getDatePrincipale().getVenitTCF()));
+        ((TextView) findViewById(R.id.venitStocNociv)).setText(nf.format(salarizare.getDatePrincipale().getVenitStocNociv()));
+
+        if (UtilsUser.isKA() || UtilsUser.isUserSDKA() || UtilsUser.isUserKA()) {
+            ((TextView) findViewById(R.id.textVenitIncrucisate)).setVisibility(View.GONE);
+            ((TextView) findViewById(R.id.venitIncrucisate)).setVisibility(View.GONE);
+        }
+
+        ((TextView) findViewById(R.id.venitIncrucisate)).setText(nf.format(salarizare.getDatePrincipale().getVenitIncrucisate()));
+
         ((TextView) findViewById(R.id.corectieInc)).setText(nf.format(salarizare.getDatePrincipale().getCorectieIncasare()));
         ((TextView) findViewById(R.id.venitFinal)).setText(nf.format(salarizare.getDatePrincipale().getVenitFinal()));
 
@@ -580,6 +635,37 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
 
             }
         });
+
+
+        ListView listViewDetaliiStocNociv = findViewById(R.id.listStocNociv);
+
+        SalarizareStocNocivAdapter stocNocivAdapter = new SalarizareStocNocivAdapter(salarizare.getDetaliiVS(), getApplicationContext());
+        listViewDetaliiStocNociv.setAdapter(stocNocivAdapter);
+        listViewDetaliiStocNociv.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+
+
+        if (!UtilsUser.isKA() && !UtilsUser.isUserSDKA() && !UtilsUser.isUserKA()) {
+
+            ListView listViewIncrucisate = findViewById(R.id.listIncrucisate);
+
+            SalarizareVanzIncrAdapter incrucisateAdapter = new SalarizareVanzIncrAdapter(salarizare.getDetaliiVanzariIncr(), getApplicationContext());
+            listViewIncrucisate.setAdapter(incrucisateAdapter);
+            listViewIncrucisate.setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    return false;
+                }
+            });
+
+        }
+
 
     }
 
@@ -723,11 +809,15 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
         setDateGeneraleVisibility(false);
         setDetaliiVisibility(false);
         setDetaliiCSVVisibility(false);
+        setDetaliiNocivVisibility(false);
+        setDetaliiIncrucisateVisibility(false);
+
+        if (UtilsUser.isUserSDKA()) {
+            ((TextView) findViewById(R.id.textVenitIncrucisateHeader)).setVisibility(View.GONE);
+        }
 
         ((TextView) findViewById(R.id.labelDateGenerale)).setText(listLuni[Integer.parseInt(lunaSelect) - 1] + "  " + anSelect);
-
         List<BeanSalarizareAgentAfis> listAgenti = operatiiSalarizare.deserializeSalarizareDepartament(result);
-
         ListView listViewAgenti = (ListView) findViewById(R.id.listAgenti);
 
         ((TextView) findViewById(R.id.textAgentSelectat)).setText("Detalii agent " + numeAgentSelectat);
@@ -774,7 +864,7 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
 
     }
 
-    private void afisSalarizareCVA(String result){
+    private void afisSalarizareCVA(String result) {
         Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
     }
 
