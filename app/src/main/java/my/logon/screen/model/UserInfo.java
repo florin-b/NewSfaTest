@@ -40,6 +40,8 @@ public class UserInfo {
 	private double maxNumerarPFizica = 0;
 	private double maxNumerarPJuridica = 0;
 
+	private String appVer;
+
 	private static UserInfo instance = new UserInfo();
 
 	private UserInfo() {
@@ -281,6 +283,14 @@ public class UserInfo {
 
 	public void setMaxNumerarPJuridica(double maxNumerarPJuridica) {
 		this.maxNumerarPJuridica = maxNumerarPJuridica;
+	}
+
+	public String getAppVer() {
+		return appVer;
+	}
+
+	public void setAppVer(String appVer) {
+		this.appVer = appVer;
 	}
 
 	@Override

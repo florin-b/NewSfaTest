@@ -1,21 +1,19 @@
 package my.logon.screen.adapters;
 
-import java.text.NumberFormat;
-import java.util.List;
-import java.util.Locale;
-
-import my.logon.screen.listeners.OperatiiSalarizareListener;
-import my.logon.screen.R;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-
 import android.widget.TextView;
 
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.Locale;
+
+import my.logon.screen.R;
 import my.logon.screen.beans.SalarizareDetaliiCVS;
+import my.logon.screen.listeners.OperatiiSalarizareListener;
 
 public class SalarizareCvsAdapter extends BaseAdapter {
 
@@ -38,7 +36,7 @@ public class SalarizareCvsAdapter extends BaseAdapter {
 	}
 
 	static class ViewHolder {
-		public TextView agent, marjaT1, valoareStoc, targetRealizat, venitFTVA, procent, CVS, venitCVS;
+		public TextView agent, valNociv, valTotal, prag, procent, venitBaza, venitCVS;
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -52,12 +50,11 @@ public class SalarizareCvsAdapter extends BaseAdapter {
 
 			viewHolder = new ViewHolder();
 			viewHolder.agent = (TextView) convertView.findViewById(R.id.agent);
-			viewHolder.marjaT1 = (TextView) convertView.findViewById(R.id.marjaT1);
-			viewHolder.valoareStoc = (TextView) convertView.findViewById(R.id.valoareStoc);
-			viewHolder.targetRealizat = (TextView) convertView.findViewById(R.id.targetRealizat);
-			viewHolder.venitFTVA = (TextView) convertView.findViewById(R.id.venitFTVA);
+			viewHolder.valNociv = (TextView) convertView.findViewById(R.id.valNociv);
+			viewHolder.valTotal = (TextView) convertView.findViewById(R.id.valTotal);
+			viewHolder.prag = (TextView) convertView.findViewById(R.id.prag);
 			viewHolder.procent = (TextView) convertView.findViewById(R.id.procent);
-			viewHolder.CVS = (TextView) convertView.findViewById(R.id.CVS);
+			viewHolder.venitBaza = (TextView) convertView.findViewById(R.id.venitBaza);
 			viewHolder.venitCVS = (TextView) convertView.findViewById(R.id.venitCVS);
 
 			convertView.setTag(viewHolder);
@@ -68,13 +65,12 @@ public class SalarizareCvsAdapter extends BaseAdapter {
 		final SalarizareDetaliiCVS detaliuCVS = getItem(position);
 
 		viewHolder.agent.setText(detaliuCVS.getAgent());
-		viewHolder.marjaT1.setText(numberFormat.format(detaliuCVS.getVenitBaza()));
-		viewHolder.valoareStoc.setText(numberFormat.format(detaliuCVS.getValoareP6V()));
-		viewHolder.targetRealizat.setText(numberFormat.format(detaliuCVS.getTargetValoric()));
-		viewHolder.venitFTVA.setText(numberFormat.format(detaliuCVS.getValoareFTVA()));
-		viewHolder.procent.setText(numberFormat.format(detaliuCVS.getPondere()));
+		viewHolder.valNociv.setText(numberFormat.format(detaliuCVS.getValNociv()));
+		viewHolder.valTotal.setText(numberFormat.format(detaliuCVS.getValTotal()));
+		viewHolder.prag.setText(numberFormat.format(detaliuCVS.getPrag()));
+		viewHolder.procent.setText(numberFormat.format(detaliuCVS.getProcent()));
 		viewHolder.venitCVS.setText(numberFormat.format(detaliuCVS.getVenitCvs()));
-		viewHolder.CVS.setText(String.valueOf(detaliuCVS.getCvs()));
+		viewHolder.venitBaza.setText(String.valueOf(detaliuCVS.getVenitBaza()));
 
 		if (colorPos % 2 == 0)
 			convertView.setBackgroundColor(colors[0]);

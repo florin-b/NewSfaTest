@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
@@ -41,8 +42,8 @@ import java.util.Timer;
 
 import my.logon.screen.R;
 import my.logon.screen.listeners.AsyncTaskListener;
-import my.logon.screen.model.Constants;
 import my.logon.screen.model.ClientiGenericiGedInfoStrings;
+import my.logon.screen.model.Constants;
 import my.logon.screen.model.OperatiiMeniu;
 import my.logon.screen.model.UserInfo;
 import my.logon.screen.utils.UtilsDevice;
@@ -55,10 +56,7 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
     private EditText etPassword;
     private TextView lblResult;
 
-    private static final String SOAP_ACTION = "http://SFATest.org/userLogon";
     private static final String METHOD_NAME = "userLogon";
-    private static final String NAMESPACE = "http://SFATest.org/";
-    private static final String URL = "http://10.1.0.57/AndroidWebServices/service1.asmx";
 
     public static String codInitDepart = "00";
     public static String numeInitDepart = "NEDE", globalMyIP = "0.0.0.0";
@@ -320,6 +318,8 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
         // start login thread
         try {
 
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+
             HashMap<String, String> params = new HashMap<String, String>();
 
             String userN = etUsername.getText().toString().trim();
@@ -329,6 +329,7 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
             params.put("userPass", passN);
             params.put("ipAdr", globalMyIP);
             params.put("deviceInfo", new OperatiiMeniu(getApplicationContext()).serializeDeviceInfo(new UtilsDevice().getDeviceInfo(getApplicationContext())));
+            params.put("appVer", String.valueOf(pInfo.versionCode));
 
             AsyncTaskWSCall call = new AsyncTaskWSCall(this, METHOD_NAME, params);
             call.getCallResults();

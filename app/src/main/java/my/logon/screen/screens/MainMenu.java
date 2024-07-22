@@ -231,6 +231,7 @@ public class MainMenu extends Activity {
         }
 
         buildVer = String.valueOf(pInfo.versionCode);
+        UserInfo.getInstance().setAppVer(buildVer);
 
         if (UserInfo.getInstance().getParentScreen().equals("logon")) {
             try {

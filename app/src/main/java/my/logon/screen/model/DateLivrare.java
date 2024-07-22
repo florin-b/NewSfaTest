@@ -175,6 +175,7 @@ public class DateLivrare {
 		this.codPostal = dateLivrareAfisare.getCodPostal();
 		this.transpInit = dateLivrareAfisare.getTransport();
 
+
 	}
 
 	public boolean isClientRaft() {
