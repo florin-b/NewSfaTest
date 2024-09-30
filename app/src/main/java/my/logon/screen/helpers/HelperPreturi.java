@@ -18,14 +18,7 @@ public class HelperPreturi {
         String stringCondPret = "";
         Double valCondPret = 0.0;
 
-        /*
-        double pretMinimUnitar = (pretArticol.getPretMinim() / Double.parseDouble(pretArticol.getCantitateUmBaza())) * Double.parseDouble(pretArticol.getMultiplu());
 
-        stringCondPret += "Pret minim" + addSpace(20 - "Pret minim".length()) + ":"
-                + addSpace(10 - nf.format(pretMinimUnitar).length()) + nf.format(pretMinimUnitar)
-                + System.getProperty("line.separator");
-
-         */
 
 
         stringCondPret += "Pret minim" + addSpace(20 - "Pret minim".length()) + ":"
