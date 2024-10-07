@@ -233,6 +233,8 @@ public class MainMenu extends Activity {
         buildVer = String.valueOf(pInfo.versionCode);
         UserInfo.getInstance().setAppVer(buildVer);
 
+        /*
+
         if (UserInfo.getInstance().getParentScreen().equals("logon")) {
             try {
                 check = new checkUpdate(this);
@@ -241,6 +243,8 @@ public class MainMenu extends Activity {
                 Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
             }
         }
+
+         */
 
 
     }// sf. OnCreate
