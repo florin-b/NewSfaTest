@@ -2,8 +2,6 @@ package my.logon.screen.beans;
 
 import java.util.List;
 
-import my.logon.screen.beans.DateArticolMathaus;
-
 public class ComandaMathaus {
 
 	private String sellingPlant;
