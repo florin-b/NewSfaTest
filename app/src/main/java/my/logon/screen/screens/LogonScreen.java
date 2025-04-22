@@ -10,9 +10,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,10 +29,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Timer;
@@ -151,11 +144,14 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
         //etUsername.setText("IRAPCIANU1");
         //etPassword.setText("pQRJym");
 
+        //etUsername.setText("CALLCENTERB2B");
+        //etPassword.setText("KfwRHz");
+
         //etUsername.setText("BANDREESCU");
         //etPassword.setText("tVFYqj");
 
-
-
+        //etUsername.setText("AVIS10");
+        //etPassword.setText("adada");
 
         checkBundleExtra();
 
@@ -209,71 +205,10 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
         });
     }
 
-    @SuppressWarnings("deprecation")
-    private String getIPConnection() {
-        String myIP = "0.0.0.0";
-
-        try {
-
-            ConnectivityManager connMgr = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-            final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-            final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-
-            if (wifi.isAvailable()) {
-
-                WifiManager myWifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
-                WifiInfo myWifiInfo = myWifiManager.getConnectionInfo();
-                int ipAddress = myWifiInfo.getIpAddress();
-
-                myIP = android.text.format.Formatter.formatIpAddress(ipAddress);
-
-            }
-            if (mobile.isAvailable()) {
-
-                myIP = GetLocalIpAddress();
-            } else {
-                myIP = "0.0.0.0";
-            }
-        } catch (Exception ex) {
-            Log.e("Error", ex.toString());
-        }
-
-        return myIP;
-
-    }
-
     private String getDeviceId() {
-
-        /*
-         * TelephonyManager tm = (TelephonyManager)
-         * getSystemService(Context.TELEPHONY_SERVICE); return tm.getDeviceId();
-         */
 
         return Build.VERSION.RELEASE;
 
-    }
-
-    private String GetLocalIpAddress() {
-        String retVal = "0.0.0.0";
-        try {
-
-            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
-                NetworkInterface intf = en.nextElement();
-                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-                    InetAddress inetAddress = enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress()) {
-                        retVal = inetAddress.getHostAddress().toString();
-                    }
-                }
-            }
-        } catch (SocketException ex) {
-            Log.e("Error", ex.toString());
-            retVal = "IP Error";
-        }
-
-        return retVal;
     }
 
     public static boolean isDebugMode(Context context) {
@@ -459,6 +394,9 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
         if (numeDepart.equals("LEFA"))
             dpt = "02";
 
+        if (numeDepart.equals("DP16"))
+            dpt = "16";
+
         return dpt;
 
     }
@@ -504,7 +442,7 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 
                     UserInfo uInfo = UserInfo.getInstance();
 
-                    String tempAgCod = token[4].toString();
+                    String tempAgCod = token[4];
 
                     if (tempAgCod.equalsIgnoreCase("-1")) {
                         lblResult.setText("Utilizator nedefinit!");
