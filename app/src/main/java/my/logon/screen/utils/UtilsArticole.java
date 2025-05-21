@@ -132,4 +132,12 @@ public class UtilsArticole {
 				|| codSintetic.equals("105") || codSintetic.equals("106");
 
 	}
+
+	public static boolean isArticolTrasport(String numeArticol){
+
+		if (numeArticol == null)
+			return false;
+
+		return numeArticol != null && numeArticol.toUpperCase().contains("SERV") && numeArticol.toUpperCase().contains("TRANSP");
+	}
 }
