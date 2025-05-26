@@ -596,8 +596,10 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 
         RaspunsClientSap raspunsClientSap = operatiiClient.deserializeRaspunsClient(result);
 
-        if (!raspunsClientSap.getCodClient().trim().isEmpty()) {
+        if (!raspunsClientSap.getCodClient().trim().isEmpty() && !raspunsClientSap.getCodClient().trim().equals("null")) {
             CreareComandaGed.codClientCUI = raspunsClientSap.getCodClient();
+
+            DateLivrare.getInstance().setDiviziiClient(raspunsClientSap.getDiviziiClient());
             valideazaDateClient();
         } else {
             setDateContactClientPF(null);
@@ -689,8 +691,8 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 
     }
 
-    private boolean isConditiiClientPFNou(){
-        if (isCustodiePF() && CreareComandaGed.codClientCUI.isEmpty() ) {
+    private boolean isConditiiClientPFNou() {
+        if (isCustodiePF() && CreareComandaGed.codClientCUI.isEmpty()) {
             afisCreareClientPFDialog();
             return false;
         }
@@ -698,11 +700,11 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
         return true;
     }
 
-    private boolean isCustodiePF(){
+    private boolean isCustodiePF() {
         return radioClPF.isChecked() && DateLivrare.getInstance().isComandaCustodie();
     }
 
-    private void afisCreareClientPFDialog(){
+    private void afisCreareClientPFDialog() {
 
         int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.6);
         int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.55);
@@ -1020,7 +1022,7 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
                 return;
             }
 
-            if (!isConditiiClientPFNou()){
+            if (!isConditiiClientPFNou()) {
                 return;
             }
 
@@ -1566,7 +1568,7 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 
     }
 
-    private void setDateContactClientPF(DateClientSap dateClientSap){
+    private void setDateContactClientPF(DateClientSap dateClientSap) {
 
         if (dateClientSap == null) {
             DateLivrare.getInstance().setCodJudetD("");
