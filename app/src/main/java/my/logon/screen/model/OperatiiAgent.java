@@ -58,7 +58,7 @@ public class OperatiiAgent implements AsyncTaskListener {
 		try {
 
 			Object json = new JSONTokener(JSONString).nextValue();
-			listObjAgenti = new ArrayList<Agent>();
+			listObjAgenti = new ArrayList<>();
 
 			if (json instanceof JSONArray) {
 				jsonObject = new JSONArray(JSONString);
@@ -68,6 +68,7 @@ public class OperatiiAgent implements AsyncTaskListener {
 					unAgent = new Agent();
 					unAgent.setNume(agentObject.getString("nume"));
 					unAgent.setCod(agentObject.getString("cod"));
+					unAgent.setDepart(agentObject.getString("depart"));
 					listObjAgenti.add(unAgent);
 
 				}
@@ -89,12 +90,14 @@ public class OperatiiAgent implements AsyncTaskListener {
 			temp = new HashMap<String, String>();
 			temp.put("numeAgent", "Agent");
 			temp.put("codAgent", " ");
+			temp.put("depart", " ");
 			listAgenti.add(temp);
 
 			if (optTotiAgentii) {
 				temp = new HashMap<String, String>();
 				temp.put("numeAgent", "Toti agentii");
 				temp.put("codAgent", "00000000");
+				temp.put("depart", " ");
 				listAgenti.add(temp);
 			}
 
@@ -102,6 +105,7 @@ public class OperatiiAgent implements AsyncTaskListener {
 				temp = new HashMap<String, String>();
 				temp.put("numeAgent", listObjAgenti.get(i).getNume());
 				temp.put("codAgent", listObjAgenti.get(i).getCod());
+				temp.put("depart", listObjAgenti.get(i).getDepart());
 				listAgenti.add(temp);
 			}
 

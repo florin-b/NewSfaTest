@@ -2418,6 +2418,13 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
     @Override
     public void comandaSalvata() {
 
+
+        if (isComandaDistrib  && listTaxeTransport != null) {
+            setCostTransportDepart();
+            setCostDescarcareDepart();
+        }
+
+
         if (isComandaDistrib && listTaxeTransport != null) {
             setCostTransportDepart();
             setCostDescarcareDepart();
@@ -2448,7 +2455,6 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
         if (isExceptieComandaIP()) {
 
         } else if (isComandaDistrib || !isComandaDistrib || isComandaCLP() || isComandaDL()) {
-            HelperMathaus.adaugaArticolTransport(HelperMathaus.getCostTransportDepart(listTaxeTransport, listArticoleComanda), "10", listArticoleComanda);
             HelperMathaus.adaugaArticolTransport(HelperMathaus.getCostTransportDepart(listTaxeTransport, ListaArticoleComanda.getInstance().getListArticoleLivrare()), "10", ListaArticoleComanda.getInstance().getListArticoleLivrare());
         }
 
