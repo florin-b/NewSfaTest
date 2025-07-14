@@ -43,6 +43,7 @@ public class BeanComandaCreata {
 	private EnumTipClientIP tipClientInstPublica;
 	private boolean isAprobDistrib;
 	private boolean isComandaACZC;
+	private String site;
 
 
 	public BeanComandaCreata() {
@@ -366,4 +367,11 @@ public class BeanComandaCreata {
 	}
 
 
+	public String getSite() {
+		return site;
+	}
+
+	public void setSite(String site) {
+		this.site = site;
+	}
 }

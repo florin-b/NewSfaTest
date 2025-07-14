@@ -1765,6 +1765,17 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             taxeMasiniDialog.setTipMasinaLivrareListener(this);
             taxeMasiniDialog.getWindow().setLayout(width, height);
             taxeMasiniDialog.show();
+
+        } else if (DateLivrare.getInstance().getTransport().equals("TCLI") && UtilsComenzi.existaPaleti(livrareMathaus)) {
+
+            int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.65);
+            int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.35);
+
+            TaxeMasiniDialog taxeMasiniDialog = new TaxeMasiniDialog(this, livrareMathaus);
+            taxeMasiniDialog.setTipMasinaLivrareListener(this);
+            taxeMasiniDialog.getWindow().setLayout(width, height);
+            taxeMasiniDialog.show();
+
         } else {
             HelperMathaus.setTransportTERT(livrareMathaus);
             setLivrariMathaus(livrareMathaus);
@@ -1975,6 +1986,10 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         if (UserInfo.getInstance().getTipUserSap().contains("KA"))
             codDepartLivr = "10";
 
+        String localCanal = "10";
+        if (UtilsUser.isUserCVOB())
+            localCanal = "60";
+
         for (ArticolComanda artCmd : articoleComanda) {
 
             List<BeanStocTCLI> listStocTCLI;
@@ -2020,7 +2035,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("antetComanda", opArticol.serializeAntetCmdMathaus(antetComanda));
         params.put("comandaMathaus", opArticol.serializeComandaMathaus(comandaMathaus));
-        params.put("canal", "10");
+        params.put("canal", localCanal);
         params.put("datePoligon", opArticol.serializeDatePoligon(DateLivrare.getInstance().getDatePoligonLivrare()));
 
         comandaDAO.getLivrariMathaus(params);
@@ -2683,7 +2698,6 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
 
     }
-
 
 
     @Override
