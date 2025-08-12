@@ -1507,6 +1507,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
             TaxeMasiniDialog taxeMasiniDialog = new TaxeMasiniDialog(this, livrareMathaus);
             taxeMasiniDialog.setTipMasinaLivrareListener(this);
+            taxeMasiniDialog.setCanalDistrib("20");
             taxeMasiniDialog.getWindow().setLayout(width, height);
             taxeMasiniDialog.show();
 
@@ -1517,6 +1518,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
             TaxeMasiniDialog taxeMasiniDialog = new TaxeMasiniDialog(this, livrareMathaus);
             taxeMasiniDialog.setTipMasinaLivrareListener(this);
+            taxeMasiniDialog.setCanalDistrib("20");
             taxeMasiniDialog.getWindow().setLayout(width, height);
             taxeMasiniDialog.show();
 
@@ -1565,9 +1567,8 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
     private void adaugaPaletComanda(ArticolPalet articolPalet) {
 
-        String depozitPalet = HelperCostDescarcare.getDepozitPalet(ListaArticoleComandaGed.getInstance().getListArticoleComanda(), articolPalet.getCodArticol());
 
-        ArticolComanda articol = HelperCostDescarcare.getArticolPalet(articolPalet, depozitPalet, articolPalet.getFiliala());
+        ArticolComanda articol = HelperCostDescarcare.getArticolPalet(articolPalet, articolPalet.getFiliala());
 
         if (articol.getCantitate() > 0)
             ListaArticoleComandaGed.getInstance().addArticolLivrareComanda(articol);
@@ -1795,11 +1796,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
     private boolean isPragNumerarComandaValid() {
 
-        double totalComandaNumerar = 0;
-
-        for (ArticolComanda articolCmd : ListaArticoleComandaGed.getInstance().getListArticoleLivrare()) {
-            totalComandaNumerar += articolCmd.getPretUnitarClient() * articolCmd.getCantUmb();
-        }
+        double totalComandaNumerar = UtilsComenzi.getTotalCuTva(livrareMathaus);
 
         DateLivrare dateLivrareInstance = DateLivrare.getInstance();
 
@@ -1809,9 +1806,6 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
                 Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de " + UserInfo.getInstance().getMaxNumerarPJuridica()
                         + " RON!", Toast.LENGTH_SHORT).show();
                 return false;
-            } else {
-                getTotalComenziNumerar();
-                return false;
             }
 
         } else if (isCondPF10_000()) {
@@ -1819,17 +1813,15 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
                 Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de " + UserInfo.getInstance().getMaxNumerarPFizica()
                         + " RON.", Toast.LENGTH_SHORT).show();
                 return false;
-            } else {
-                getTotalComenziNumerar();
-                return false;
             }
-        } else if (isGreutateMaximaComanda()) {
+        }
+
+        if (isGreutateMaximaComanda()) {
             Toast.makeText(getApplicationContext(), Constants.MSG_MASA_MAXIMA_CMD, Toast.LENGTH_LONG).show();
             return false;
-        } else {
-            isPragNumerarZiValid = true;
-            return true;
         }
+
+        return true;
 
     }
 
@@ -1841,7 +1833,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
                 return;
             }
 
-            if (!isPragNumerarZiValid && !isPragNumerarComandaValid()) {
+            if (!isPragNumerarComandaValid()) {
                 saveComandaMathaus = false;
                 return;
             }

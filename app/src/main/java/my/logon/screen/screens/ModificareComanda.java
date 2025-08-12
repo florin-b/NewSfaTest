@@ -1052,6 +1052,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
             TaxeMasiniDialog taxeMasiniDialog = new TaxeMasiniDialog(this, livrareMathaus);
             taxeMasiniDialog.setTipMasinaLivrareListener(this);
+            taxeMasiniDialog.setCanalDistrib(canalDistributie);
             taxeMasiniDialog.getWindow().setLayout(width, height);
             taxeMasiniDialog.show();
 
@@ -1062,6 +1063,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
             TaxeMasiniDialog taxeMasiniDialog = new TaxeMasiniDialog(this, livrareMathaus);
             taxeMasiniDialog.setTipMasinaLivrareListener(this);
+            taxeMasiniDialog.setCanalDistrib(canalDistributie);
             taxeMasiniDialog.getWindow().setLayout(width, height);
             taxeMasiniDialog.show();
 
@@ -1096,10 +1098,11 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
     private void adaugaPaletComanda(ArticolPalet articolPalet) {
 
-        String depozitPalet = HelperCostDescarcare.getDepozitPalet(listArticoleComanda, articolPalet.getCodArticol());
 
-        ArticolComanda articol = HelperCostDescarcare.getArticolPalet(articolPalet, depozitPalet, articolPalet.getFiliala());
-        ListaArticoleComanda.getInstance().addArticolLivrareComanda(articol);
+        ArticolComanda articol = HelperCostDescarcare.getArticolPalet(articolPalet, articolPalet.getFiliala());
+
+        if (articol.getCantitate() > 0)
+            ListaArticoleComanda.getInstance().addArticolLivrareComanda(articol);
 
 
     }
@@ -1306,7 +1309,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
     private boolean isPragNumerarComandaValid() {
 
-        double totalComandaNumerar = getTotalComanda();
+        double totalComandaNumerar = UtilsComenzi.getTotalCuTva(livrareMathaus);
 
         DateLivrare dateLivrareInstance = DateLivrare.getInstance();
 
@@ -1315,34 +1318,29 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
                 Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de " +
                         UserInfo.getInstance().getMaxNumerarPJuridica() + " RON!", Toast.LENGTH_SHORT).show();
                 return false;
-            } else {
-                getTotalComenziNumerar();
-                return false;
             }
         } else if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("N") || dateLivrareInstance.getTipPlata().equals("E1") || dateLivrareInstance.getTipPlata().equals("R")) && tipClientVar.equals("PF")) {
             if (totalComandaNumerar > UserInfo.getInstance().getMaxNumerarPFizica()) {
                 Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de " +
                         UserInfo.getInstance().getMaxNumerarPFizica() + " RON!", Toast.LENGTH_SHORT).show();
                 return false;
-            } else {
-                getTotalComenziNumerar();
-                return false;
             }
-        } else if (isGreutateMaximaComanda()) {
-            Toast.makeText(getApplicationContext(), Constants.MSG_MASA_MAXIMA_CMD, Toast.LENGTH_LONG).show();
-            return false;
-        } else {
-            isPragNumerarZiValid = true;
-            return true;
         }
 
+        if (isGreutateMaximaComanda()) {
+            Toast.makeText(getApplicationContext(), Constants.MSG_MASA_MAXIMA_CMD, Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+
+        return true;
 
     }
 
     private void performSaveCmd() {
         try {
 
-            if (!isPragNumerarZiValid && !isPragNumerarComandaValid()) {
+            if (!isPragNumerarComandaValid()) {
                 saveComandaMathaus = false;
                 return;
             }
