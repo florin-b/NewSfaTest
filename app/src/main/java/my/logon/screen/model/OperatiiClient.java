@@ -256,6 +256,7 @@ public class OperatiiClient implements AsyncTaskListener {
                     detaliiClient.setErrMsg(jsonObject.getString("errMsg"));
 
                 detaliiClient.setEmail(jsonObject.getString("email"));
+                detaliiClient.setCanalB2B(jsonObject.getString("canalB2B"));
             }
 
         } catch (JSONException e) {

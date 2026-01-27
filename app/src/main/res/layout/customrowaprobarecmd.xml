@@ -390,7 +390,7 @@
             android:layout_gravity="right"
             android:layout_weight="0.6"
             android:gravity="right"
-            android:text="Vechime stoc"
+            android:text="Stoc nociv"
             android:textColor="#707070"
             android:textSize="15sp"
             android:typeface="sans" />
