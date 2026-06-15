@@ -100,6 +100,7 @@ import my.logon.screen.model.ListaArticoleComanda;
 import my.logon.screen.model.OperatiiArticol;
 import my.logon.screen.model.OperatiiArticolImpl;
 import my.logon.screen.model.UserInfo;
+import my.logon.screen.utils.UtilsArticole;
 import my.logon.screen.utils.UtilsComenzi;
 import my.logon.screen.utils.UtilsUser;
 
@@ -1012,6 +1013,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             params.put("JSONArt", articoleFinaleStr);
             params.put("JSONComanda", comandaJson);
             params.put("JSONDateLivrare", serializeDateLivrare());
+            params.put("canal","10");
 
             comandaDAO.salveazaLivrareCustodie(params);
 
@@ -1327,6 +1329,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             globalAlertSDKA = "";
             globalAlertDVKA = "";
             globalSubCmp = "0";
+            boolean isServiciuInstalareAC = false;
 
 
             String tokPretArticol, tokCantArticol, tokCodArticol, tokDepozArticol, tokProcent, tokUM, tokProcentFact, tokDiscClient, tokProcAprob, tokMultiplu, tokValArticol, tokInfoArticol, tokCantUmb, tokUmb;
@@ -1470,6 +1473,9 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
                 if (isArtGedExceptie(articol))
                     articolCmd.setObservatii(articol.getObservatii());
 
+                if (UtilsArticole.isArticolServiciuAC(articol))
+                    isServiciuInstalareAC = true;
+
                 listArticole.add(articolCmd);
 
                 retVal += tokCodArticol + "#" + tokCantArticol + "#" + tokDepozArticol + "#" + tokPretArticol + "#" + tokProcent + "#" + tokUM + "#"
@@ -1477,6 +1483,9 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
                         + tokInfoArticol + "#" + tokCantUmb + "#" + tokUmb + "@";
 
             }
+
+            if (!isServiciuInstalareAC)
+                DateLivrare.getInstance().setAdresaInstalareAC(null);
 
             // adaugare material taxa verde
             if (CreareComanda.canalDistrib.equals("10")) {
@@ -1697,6 +1706,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             obj.put("zona", DateLivrare.getInstance().getDatePoligonLivrare().getTipZona());
             obj.put("appVer", UserInfo.getInstance().getAppVer());
             obj.put("canalB2B", DateLivrare.getInstance().getCanalB2B());
+
+            obj.put("adresaInstalareAC", opArticol.serializeAdresaInstalareAC());
 
         } catch (JSONException ex) {
             Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
@@ -1970,8 +1981,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         String filialaLivrareMathaus = CreareComanda.filialaAlternativa;
 
 
-        if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.COMANDA_LIVRARE &&
-                DateLivrare.getInstance().getCodFilialaCLP().equals("BV90"))
+        if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.COMANDA_LIVRARE)
             filialaLivrareMathaus = DateLivrare.getInstance().getCodFilialaCLP();
         else if (DateLivrare.getInstance().getDatePoligonLivrare() != null &&
                 !DateLivrare.getInstance().getDatePoligonLivrare().getFilialaPrincipala().trim().isEmpty() &&

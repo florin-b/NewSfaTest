@@ -113,6 +113,7 @@ import my.logon.screen.model.OperatiiArticolFactory;
 import my.logon.screen.model.OperatiiArticolImpl;
 import my.logon.screen.model.UserInfo;
 import my.logon.screen.patterns.UlSiteComparator;
+import my.logon.screen.utils.UtilsArticole;
 import my.logon.screen.utils.UtilsComenzi;
 import my.logon.screen.utils.UtilsComenziGed;
 import my.logon.screen.utils.UtilsUser;
@@ -1310,7 +1311,13 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
         ComandaMathaus comandaMathaus = new ComandaMathaus();
 
         String filialaLivrareMathaus = CreareComandaGed.filialaAlternativa;
-        if (DateLivrare.getInstance().getTipComandaGed() == TipCmdGed.COMANDA_LIVRARE && DateLivrare.getInstance().getCodFilialaCLP().equals("BV90"))
+
+        /*
+        if (DateLivrare.getInstance().getTipComandaGed() == TipCmdGed.COMANDA_LIVRARE &&
+                (DateLivrare.getInstance().getCodFilialaCLP().equals("BV90")))
+
+         */
+        if (DateLivrare.getInstance().getTipComandaGed() == TipCmdGed.COMANDA_LIVRARE)
             filialaLivrareMathaus = DateLivrare.getInstance().getCodFilialaCLP();
         else if ((DateLivrare.getInstance().getTipComandaGed() == TipCmdGed.COMANDA_VANZARE) && DateLivrare.getInstance().getTransport().equals("TCLI") &&
                 !DateLivrare.getInstance().getFilialaLivrareTCLI().getUnitLog().trim().isEmpty())
@@ -1887,6 +1894,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
             params.put("JSONArt", serializeArticole(prepareArtForDelivery()));
             params.put("JSONComanda", serializeComanda(comandaFinala));
             params.put("JSONDateLivrare", serializeDateLivrare());
+            params.put("canal","20");
 
             comandaDAO.salveazaLivrareCustodie(params);
 
@@ -1911,6 +1919,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
         JSONArray myArray = new JSONArray();
         JSONObject obj = null;
         TreeSet<String> aprobariCV = new TreeSet<String>();
+        boolean isServiciuInstalareAC = false;
 
         Collections.sort(listArticole, new UlSiteComparator());
 
@@ -1983,6 +1992,9 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
                         comandaFinala.setComandaBlocata("1");
                 }
 
+               if (UtilsArticole.isArticolServiciuAC(listArticole.get(i)))
+                    isServiciuInstalareAC = true;
+
             }
 
             if (DateLivrare.getInstance().isAdrLivrNoua() && UtilsUser.isAgentOrSD()) {
@@ -2004,6 +2016,9 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
             String strAprobariCV = new String(aprobariCV.toString());
             comandaFinala.setNecesarAprobariCV(strAprobariCV.substring(1, strAprobariCV.length() - 1));
         }
+
+        if (!isServiciuInstalareAC)
+            DateLivrare.getInstance().setAdresaInstalareAC(null);
 
         return myArray.toString();
 
@@ -2111,6 +2126,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
             obj.put("appVer", UserInfo.getInstance().getAppVer());
             obj.put("refHybris", DateLivrare.getInstance().getRefHybris());
             obj.put("tipClientDoc", UtilsComenzi.isComandaPFFaraFact() ? "PF_BON": " ");
+            obj.put("adresaInstalareAC", opArticol.serializeAdresaInstalareAC());
 
         } catch (Exception ex) {
             Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();

@@ -45,7 +45,7 @@ public class ArticolAprobareAdapter extends BaseAdapter {
 	public static class ViewHolder {
 		TextView textNrCrt, textNumeArt, textCodArt, textCantArt, textUmArt, textPretArt, textMonedaArt, textDepozit, textStatusArt, textProcRed, textAddCond,
 				textCmp, textProcCmp, textDisClient, textProcAprob, textMultipAprob, textInfoArticol, textPretSpecial, textIstoricPret, textVechimeStoc,
-				textMarjaT1Proc, textMarjaT1Val, textPMD, textMarjaT1Moneda;
+				textMarjaT1Proc, textMarjaT1Val, textPMD, textMarjaT1Moneda, textProcX, textPretMin;
 
 		LinearLayout layoutIstoricPret, layoutVechimeStoc, layoutMarjaT1, layoutPretMediuDistrib;
 	}
@@ -91,6 +91,8 @@ public class ArticolAprobareAdapter extends BaseAdapter {
 			viewHolder.layoutPretMediuDistrib = (LinearLayout) convertView.findViewById(R.id.layoutPretMediuDistrib);
 			viewHolder.textPMD = (TextView) convertView.findViewById(R.id.textPMD);
 			viewHolder.textMarjaT1Moneda = (TextView) convertView.findViewById(R.id.textMarjaT1Moneda);
+			viewHolder.textProcX = (TextView) convertView.findViewById(R.id.textProcX);
+			viewHolder.textPretMin = (TextView) convertView.findViewById(R.id.textPretMin);
 			convertView.setTag(viewHolder);
 
 		} else {
@@ -135,6 +137,9 @@ public class ArticolAprobareAdapter extends BaseAdapter {
 			viewHolder.textMarjaT1Val.setText(nf2.format(articol.getValT1()));
 			viewHolder.textMarjaT1Moneda.setText(articol.getMoneda());
 			viewHolder.textMarjaT1Proc.setText(nf2.format(articol.getProcT1()) + "%");
+
+			viewHolder.textProcX.setText(nf2.format(articol.getProcentX()) + "%");
+			viewHolder.textPretMin.setText(nf2.format(articol.getPretMinX()));
 
 			if (valoareCmp > 0) {
 				if (UserInfo.getInstance().getCodDepart().equals("07")) {
