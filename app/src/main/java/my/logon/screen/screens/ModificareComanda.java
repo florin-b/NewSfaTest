@@ -926,6 +926,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
         antetComanda.setNrCmdSap(comandaSelectata.getCmdSap());
         antetComanda.setStrada(DateLivrare.getInstance().getStrada());
         antetComanda.setCodFurnizor(UtilsComenzi.getCodFurnizorDL());
+        antetComanda.setCodAdresa(DateLivrare.getInstance().getAddrNumber());
 
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("antetComanda", opArticol.serializeAntetCmdMathaus(antetComanda));
@@ -1743,6 +1744,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
             obj.put("refHybris", DateLivrare.getInstance().getRefHybris());
             obj.put("tipClientDoc", UtilsComenzi.isComandaPFFaraFact() ? "PF_BON": " ");
             obj.put("adresaInstalareAC", opArticol.serializeAdresaInstalareAC());
+            obj.put("tonaje", opArticol.serializeTonaje());
 
         } catch (Exception ex) {
             Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();

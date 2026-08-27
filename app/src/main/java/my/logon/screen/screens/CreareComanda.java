@@ -1708,6 +1708,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
             obj.put("canalB2B", DateLivrare.getInstance().getCanalB2B());
 
             obj.put("adresaInstalareAC", opArticol.serializeAdresaInstalareAC());
+            obj.put("tonaje", opArticol.serializeTonaje());
 
         } catch (JSONException ex) {
             Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
@@ -2039,6 +2040,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
         antetComanda.setStrada(DateLivrare.getInstance().getStrada());
         antetComanda.setCodFurnizor(UtilsComenzi.getCodFurnizorDL());
         antetComanda.setLivrareCustodie(isLivrareCustodie());
+        antetComanda.setCodAdresa(DateLivrare.getInstance().getAddrNumber());
 
         copyLivrareMathaus(antetComanda, comandaMathaus);
 

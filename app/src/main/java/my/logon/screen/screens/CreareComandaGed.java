@@ -1384,6 +1384,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
         antetComanda.setCodFurnizor(UtilsComenzi.getCodFurnizorDL());
         antetComanda.setLivrareCustodie(isLivrareCustodie());
         antetComanda.setComandaSimulata(CreareComandaGed.tipComanda.equals("S"));
+        antetComanda.setCodAdresa(DateLivrare.getInstance().getAddrNumber());
 
         copyLivrareMathaus(antetComanda, comandaMathaus);
 
@@ -2127,6 +2128,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
             obj.put("refHybris", DateLivrare.getInstance().getRefHybris());
             obj.put("tipClientDoc", UtilsComenzi.isComandaPFFaraFact() ? "PF_BON": " ");
             obj.put("adresaInstalareAC", opArticol.serializeAdresaInstalareAC());
+            obj.put("tonaje", opArticol.serializeTonaje());
 
         } catch (Exception ex) {
             Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
